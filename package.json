@@ -1,0 +1,92 @@
+{
+  "name": "gitagotchi",
+  "displayName": "Gitagotchi",
+  "description": "A VSCode pet that grows from Git diffs, commits, and debugging progress.",
+  "version": "0.1.0",
+  "publisher": "gitagotchi",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:gitagotchi.feed",
+    "onCommand:gitagotchi.viewStats",
+    "onView:gitagotchi.sidebar"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "gitagotchi.feed",
+        "title": "Gitagotchi: Feed"
+      },
+      {
+        "command": "gitagotchi.viewStats",
+        "title": "Gitagotchi: View Stats"
+      },
+      {
+        "command": "gitagotchi.checkCommit",
+        "title": "Gitagotchi: Check Commit"
+      },
+      {
+        "command": "gitagotchi.leaderboard",
+        "title": "Gitagotchi: Leaderboard"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gitagotchi",
+          "title": "Gitagotchi",
+          "icon": "resources/gitagotchi.svg"
+        }
+      ]
+    },
+    "views": {
+      "gitagotchi": [
+        {
+          "id": "gitagotchi.sidebar",
+          "name": "Gitagotchi"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Gitagotchi",
+      "properties": {
+        "gitagotchi.leaderboard.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable hourly GitHub Gist leaderboard sync."
+        },
+        "gitagotchi.leaderboard.gistId": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub Gist ID containing leaderboard.json."
+        },
+        "gitagotchi.leaderboard.displayName": {
+          "type": "string",
+          "default": "",
+          "description": "Display name used on the leaderboard. Falls back to the GitHub login."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "check": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  },
+  "dependencies": {
+    "littlejsengine": "^1.18.1"
+  }
+}
