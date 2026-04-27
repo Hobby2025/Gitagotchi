@@ -1,15 +1,6 @@
 import * as cp from 'child_process';
 import { ActivityEvent } from '../core/events';
-
-type VscodeModule = typeof import('vscode');
-
-function getVscode(): VscodeModule | undefined {
-  try {
-    return require('vscode') as VscodeModule;
-  } catch {
-    return undefined;
-  }
-}
+import { getVscode } from './vscodeAdapter';
 
 function getWorkspaceCwd(): string | undefined {
   return getVscode()?.workspace.workspaceFolders?.[0]?.uri.fsPath;
@@ -18,7 +9,7 @@ function getWorkspaceCwd(): string | undefined {
 export function runGit(args: string[], cwd = getWorkspaceCwd()): Promise<string> {
   return new Promise((resolve, reject) => {
     if (!cwd) {
-      resolve('');
+      reject(new Error('Workspace folder is not available'));
       return;
     }
 
@@ -42,7 +33,12 @@ export async function getLatestCommit(): Promise<{ hash: string; message: string
     return undefined;
   }
 
-  const [hash, message = ''] = output.split(String.fromCharCode(0));
+  const parts = output.split(String.fromCharCode(0));
+  const hash = parts[0] ?? '';
+  const message = parts[1] ?? '';
+  if (!hash) {
+    return undefined;
+  }
   return { hash, message };
 }
 

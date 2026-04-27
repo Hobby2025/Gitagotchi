@@ -5,7 +5,7 @@ export function registerDebouncedSaveHandler(
   callback: () => void | Promise<void>,
   delayMs = 5000
 ): void {
-  let timer: NodeJS.Timeout | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(() => {
     if (timer) {

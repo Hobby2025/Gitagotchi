@@ -1,14 +1,5 @@
 import { ActivityEvent } from '../core/events';
-
-type VscodeModule = typeof import('vscode');
-
-function getVscode(): VscodeModule | undefined {
-  try {
-    return require('vscode') as VscodeModule;
-  } catch {
-    return undefined;
-  }
-}
+import { getVscode } from './vscodeAdapter';
 
 export function countWorkspaceDiagnostics(): number {
   return getVscode()?.languages.getDiagnostics().reduce((total, [, diagnostics]) => total + diagnostics.length, 0) ?? 0;
