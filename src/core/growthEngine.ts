@@ -166,7 +166,7 @@ export function applyActivity(
     lifeStatus: getLifeStatus(next)
   };
 
-  const resolved = resolveMonsterIdentity(resolveEvolution(nextWithLife));
+  const resolved = resolveMonsterIdentity(nextWithLife);
   const unlockedSkills = resolved.skills.filter((skill) => !previousSkills.includes(skill));
   const messages = createActivityMessages({
     occurredAt: event.occurredAt,

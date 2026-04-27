@@ -1,21 +1,5 @@
 import { PetArchetype, PetEvolution, PetState } from './petState';
 
-export function getEvolutionForLevel(level: number): PetEvolution {
-  if (level >= 30) {
-    return 'architect';
-  }
-  if (level >= 20) {
-    return 'senior';
-  }
-  if (level >= 10) {
-    return 'mid';
-  }
-  if (level >= 5) {
-    return 'junior';
-  }
-  return 'egg';
-}
-
 function hasCareForMid(state: PetState): boolean {
   return state.mood >= 45 && state.energy >= 25 && state.health >= 40 && state.lifeStatus !== 'dead';
 }
