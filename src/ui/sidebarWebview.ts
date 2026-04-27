@@ -48,6 +48,9 @@ export class GitagotchiSidebarProvider implements vscode.WebviewViewProvider {
   }
 
   update(state: PetState): void {
+    if (JSON.stringify(this.state) === JSON.stringify(state)) {
+      return;
+    }
     this.state = state;
     this.render();
   }
@@ -61,7 +64,11 @@ export class GitagotchiSidebarProvider implements vscode.WebviewViewProvider {
     const nonce = renderNonce();
     const mood = getMoodName(state);
     const sprite = getSpritePack(state.evolution, mood);
-    const pet = this.renderPet(sprite.frames[0], nonce);
+    const firstFrame = sprite.frames[0];
+    if (!firstFrame) {
+      throw new Error(`No frames available for evolution=${state.evolution} mood=${mood}`);
+    }
+    const pet = this.renderPet(firstFrame, nonce);
     const expPercent = Math.min(100, Math.round((state.exp / getRequiredExp(state.level)) * 100));
     const maxStyleScore = Math.max(100, ...Object.values(state.styleScores));
     const styleRows = (Object.entries(state.styleScores) as Array<[keyof typeof state.styleScores, number]>)
@@ -122,9 +129,9 @@ export class GitagotchiSidebarProvider implements vscode.WebviewViewProvider {
 </html>`;
   }
 
-  private renderPet(frame: PixelFrame, nonce: string): string {
-    if (!this.view || !this.extensionUri) {
-      throw new Error('LittleJS rendering requires a VSCode webview and extension URI');
+  private renderPet(frame: PixelFrame | undefined, nonce: string): string {
+    if (!frame || !this.view || !this.extensionUri) {
+      throw new Error('LittleJS rendering requires a valid frame, VSCode webview and extension URI');
     }
 
     const littleJsUri = this.view.webview.asWebviewUri(
