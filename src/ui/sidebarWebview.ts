@@ -39,6 +39,9 @@ export class GitagotchiSidebarProvider implements vscode.WebviewViewProvider {
       if (message.command === 'leaderboard') {
         void vscode.commands.executeCommand('gitagotchi.leaderboard');
       }
+      if (message.command === 'createLeaderboard') {
+        void vscode.commands.executeCommand('gitagotchi.createLeaderboard');
+      }
     });
 
     this.render();
@@ -108,6 +111,7 @@ export class GitagotchiSidebarProvider implements vscode.WebviewViewProvider {
   <button data-command="commit">${this.i18n.t('ui.commit')}</button>
   <button data-command="stats">${this.i18n.t('ui.viewStats')}</button>
   <button data-command="leaderboard">${this.i18n.t('ui.leaderboard')}</button>
+  <button data-command="createLeaderboard">${this.i18n.t('ui.createLeaderboard')}</button>
   <script nonce="${nonce}">
     const vscode = acquireVsCodeApi();
     document.querySelectorAll('button').forEach((button) => {

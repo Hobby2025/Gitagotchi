@@ -50,6 +50,35 @@ describe('GitHub Gist leaderboard adapter', () => {
     expect(calls[0].init?.body).toContain('leaderboard.json');
   });
 
+  it('creates a private gist with leaderboard.json and returns the gist id', async () => {
+    const calls: Array<{ url: string; init?: RequestInit }> = [];
+    const adapter = new GithubGistLeaderboardAdapter({
+      gistId: '',
+      token: 'token',
+      fetch: async (url, init) => {
+        calls.push({ url: String(url), init });
+        return response(201, { id: 'created-gist-id' });
+      }
+    });
+
+    const gistId = await adapter.create({
+      version: 1,
+      updatedAt: '2026-04-27T00:00:00.000Z',
+      players: []
+    });
+
+    expect(gistId).toBe('created-gist-id');
+    expect(calls[0].url).toBe('https://api.github.com/gists');
+    expect(calls[0].init?.method).toBe('POST');
+    expect(calls[0].init?.headers).toMatchObject({
+      Authorization: 'Bearer token'
+    });
+
+    const body = JSON.parse(String(calls[0].init?.body));
+    expect(body.public).toBe(false);
+    expect(body.files['leaderboard.json'].content).toContain('"players": []');
+  });
+
   it('returns undefined when gist id is missing', async () => {
     const adapter = new GithubGistLeaderboardAdapter({
       gistId: '',

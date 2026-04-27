@@ -10,7 +10,8 @@ import { clampStat, PetState } from './core/petState';
 import { createI18n, I18n } from './i18n';
 import { getGithubIdentity } from './leaderboard/githubAuth';
 import { GithubGistLeaderboardAdapter } from './leaderboard/githubGistAdapter';
-import { getLeaderboardConfig } from './leaderboard/leaderboardConfig';
+import { createEmptyLeaderboardDocument } from './leaderboard/leaderboardModel';
+import { getLeaderboardConfig, updateLeaderboardRoomConfig } from './leaderboard/leaderboardConfig';
 import { getPetLeaderboardScore, publishLeaderboard } from './leaderboard/leaderboardService';
 import { getNextSyncAt, shouldSyncLeaderboard } from './leaderboard/leaderboardScheduler';
 import { LeaderboardSyncStateStore } from './leaderboard/leaderboardSyncStateStore';
@@ -169,6 +170,31 @@ async function showLeaderboard(runtime: Runtime): Promise<void> {
   runtime.leaderboard.show(status);
 }
 
+async function createLeaderboard(runtime: Runtime): Promise<void> {
+  const identity = await getGithubIdentity(true);
+  if (!identity) {
+    runtime.leaderboard.show({ kind: 'signedOut' });
+    return;
+  }
+
+  try {
+    const now = new Date().toISOString();
+    const adapter = new GithubGistLeaderboardAdapter({
+      gistId: '',
+      token: identity.token
+    });
+    const gistId = await adapter.create(createEmptyLeaderboardDocument(now));
+
+    await updateLeaderboardRoomConfig(gistId);
+    runtime.leaderboard.show(await syncLeaderboardIfDue(runtime, true));
+  } catch (error) {
+    runtime.leaderboard.show({
+      kind: 'error',
+      message: error instanceof Error ? error.message : runtime.i18n.t('leaderboard.error')
+    });
+  }
+}
+
 export function activate(context: vscode.ExtensionContext): void {
   const i18n = createI18n(vscode.env.language);
   const store = new PetStateStore(context.globalState);
@@ -193,6 +219,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewStats', () => logs.show(store.load())));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.checkCommit', () => checkCommit(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.leaderboard', () => showLeaderboard(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.createLeaderboard', () => createLeaderboard(runtime)));
   context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => {
     void checkDiagnostics(runtime);
   }));

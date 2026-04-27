@@ -15,3 +15,10 @@ export function getLeaderboardConfig(): LeaderboardConfig {
     displayName: config.get<string>('displayName', '')
   };
 }
+
+export async function updateLeaderboardRoomConfig(gistId: string): Promise<void> {
+  const config = vscode.workspace.getConfiguration('gitagotchi.leaderboard');
+
+  await config.update('gistId', gistId, vscode.ConfigurationTarget.Global);
+  await config.update('enabled', true, vscode.ConfigurationTarget.Global);
+}

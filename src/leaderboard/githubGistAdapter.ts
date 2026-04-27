@@ -56,6 +56,30 @@ export class GithubGistLeaderboardAdapter implements LeaderboardSyncAdapter {
     await assertOk(response);
   }
 
+  async create(document: LeaderboardDocument, description = 'Gitagotchi Leaderboard'): Promise<string> {
+    const response = await this.fetch('https://api.github.com/gists', {
+      method: 'POST',
+      headers: this.headers(),
+      body: JSON.stringify({
+        description,
+        public: false,
+        files: {
+          'leaderboard.json': {
+            content: JSON.stringify(document, null, 2)
+          }
+        }
+      })
+    });
+
+    await assertOk(response);
+    const gist = await response.json() as { id?: string };
+    if (!gist.id) {
+      throw new Error('GitHub did not return a Gist ID');
+    }
+
+    return gist.id;
+  }
+
   private headers(): Record<string, string> {
     return {
       Accept: 'application/vnd.github+json',

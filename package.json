@@ -15,6 +15,9 @@
     "onStartupFinished",
     "onCommand:gitagotchi.feed",
     "onCommand:gitagotchi.viewStats",
+    "onCommand:gitagotchi.checkCommit",
+    "onCommand:gitagotchi.leaderboard",
+    "onCommand:gitagotchi.createLeaderboard",
     "onView:gitagotchi.sidebar"
   ],
   "main": "./dist/extension.js",
@@ -35,6 +38,10 @@
       {
         "command": "gitagotchi.leaderboard",
         "title": "Gitagotchi: Leaderboard"
+      },
+      {
+        "command": "gitagotchi.createLeaderboard",
+        "title": "Gitagotchi: Create Leaderboard"
       }
     ],
     "viewsContainers": {

@@ -15,6 +15,10 @@ describe('i18n', () => {
     expect(createI18n('en').t('ui.mood')).toBe('Mood');
     expect(createI18n('ja').t('ui.mood')).toBe('気分');
     expect(createI18n('zh').t('ui.mood')).toBe('心情');
+    expect(createI18n('ko').t('ui.createLeaderboard')).toBe('랭킹 방 만들기');
+    expect(createI18n('en').t('ui.createLeaderboard')).toBe('Create Leaderboard');
+    expect(createI18n('ja').t('ui.createLeaderboard')).toBe('ランキングを作成');
+    expect(createI18n('zh').t('ui.createLeaderboard')).toBe('创建排行榜');
   });
 
   it('formats modular reward and unlock messages by locale', () => {

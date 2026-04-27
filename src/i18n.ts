@@ -14,6 +14,7 @@ type TranslationKey =
   | 'ui.feed'
   | 'ui.commit'
   | 'ui.viewStats'
+  | 'ui.createLeaderboard'
   | 'ui.logsTitle'
   | 'ui.noActivity'
   | 'status.tooltip'
@@ -76,6 +77,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': 'Feed',
     'ui.commit': 'Commit',
     'ui.viewStats': 'View Stats',
+    'ui.createLeaderboard': 'Create Leaderboard',
     'ui.logsTitle': 'Gitagotchi Logs',
     'ui.noActivity': 'No activity yet.',
     'status.tooltip': 'Open Gitagotchi stats',
@@ -135,6 +137,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': '먹이 주기',
     'ui.commit': '커밋 확인',
     'ui.viewStats': '통계 보기',
+    'ui.createLeaderboard': '랭킹 방 만들기',
     'ui.logsTitle': 'Gitagotchi 기록',
     'ui.noActivity': '아직 활동이 없습니다.',
     'status.tooltip': 'Gitagotchi 통계 열기',
@@ -194,6 +197,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': 'エサをあげる',
     'ui.commit': 'コミット確認',
     'ui.viewStats': '統計を見る',
+    'ui.createLeaderboard': 'ランキングを作成',
     'ui.logsTitle': 'Gitagotchi ログ',
     'ui.noActivity': 'まだ活動がありません。',
     'status.tooltip': 'Gitagotchi の統計を開く',
@@ -253,6 +257,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': '喂食',
     'ui.commit': '检查提交',
     'ui.viewStats': '查看统计',
+    'ui.createLeaderboard': '创建排行榜',
     'ui.logsTitle': 'Gitagotchi 日志',
     'ui.noActivity': '还没有活动。',
     'status.tooltip': '打开 Gitagotchi 统计',
