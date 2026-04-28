@@ -11,18 +11,32 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onStartupFinished",
-    "onCommand:gitagotchi.feed",
-    "onCommand:gitagotchi.viewStats",
-    "onCommand:gitagotchi.checkCommit",
-    "onCommand:gitagotchi.leaderboard",
-    "onCommand:gitagotchi.createLeaderboard",
-    "onView:gitagotchi.sidebar"
+    "activationEvents": [
+      "onStartupFinished",
+      "onCommand:gitagotchi.openPet",
+      "onCommand:gitagotchi.renamePet",
+      "onCommand:gitagotchi.resetPet",
+      "onCommand:gitagotchi.feed",
+      "onCommand:gitagotchi.viewStats",
+      "onCommand:gitagotchi.checkCommit",
+      "onCommand:gitagotchi.leaderboard",
+      "onCommand:gitagotchi.createLeaderboard"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "gitagotchi.openPet",
+        "title": "Gitagotchi: Open Pet"
+      },
+      {
+        "command": "gitagotchi.renamePet",
+        "title": "Gitagotchi: Rename Pet"
+      },
+      {
+        "command": "gitagotchi.resetPet",
+        "title": "Gitagotchi: Reset Pet"
+      },
       {
         "command": "gitagotchi.feed",
         "title": "Gitagotchi: Feed"
@@ -44,24 +58,6 @@
         "title": "Gitagotchi: Create Leaderboard"
       }
     ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "gitagotchi",
-          "title": "Gitagotchi",
-          "icon": "resources/gitagotchi.svg"
-        }
-      ]
-    },
-    "views": {
-      "gitagotchi": [
-        {
-          "id": "gitagotchi.sidebar",
-          "name": "Gitagotchi",
-          "type": "webview"
-        }
-      ]
-    },
     "configuration": {
       "title": "Gitagotchi",
       "properties": {

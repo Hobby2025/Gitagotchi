@@ -25,18 +25,37 @@ describe('extension packaging', () => {
     expect(tsconfig.include).toEqual(['src/**/*.ts']);
   });
 
-  it('contributes the sidebar as a webview view', () => {
+  it('does not contribute an Activity Bar sidebar view', () => {
     const root = path.resolve(__dirname, '..');
     const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
       contributes: {
-        views: {
-          gitagotchi: Array<{ id: string; type?: string }>;
-        };
+        viewsContainers?: unknown;
+        views?: Record<string, unknown>;
       };
     };
+    const extensionSource = fs.readFileSync(path.join(root, 'src', 'extension.ts'), 'utf8');
 
-    const sidebar = manifest.contributes.views.gitagotchi.find((view) => view.id === 'gitagotchi.sidebar');
+    expect(manifest.contributes.viewsContainers).toBeUndefined();
+    expect(manifest.contributes.views).toBeUndefined();
+    expect(extensionSource).not.toContain('registerWebviewViewProvider');
+  });
 
-    expect(sidebar?.type).toBe('webview');
+  it('uses the status bar command to open the pet panel', () => {
+    const root = path.resolve(__dirname, '..');
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
+      activationEvents: string[];
+      contributes: {
+        commands: Array<{ command: string }>;
+      };
+    };
+    const statusBarSource = fs.readFileSync(path.join(root, 'src', 'ui', 'statusBar.ts'), 'utf8');
+    const extensionSource = fs.readFileSync(path.join(root, 'src', 'extension.ts'), 'utf8');
+
+    expect(manifest.activationEvents).toContain('onCommand:gitagotchi.openPet');
+    expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.openPet');
+    expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.renamePet');
+    expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.resetPet');
+    expect(statusBarSource).toContain("this.item.command = 'gitagotchi.openPet'");
+    expect(extensionSource).toContain('petPanel.show(store.load())');
   });
 });

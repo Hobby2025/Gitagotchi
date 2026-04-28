@@ -6,7 +6,11 @@ import { renderHtmlTemplate } from './webviewSecurity';
 export class GitagotchiLogPanel {
   private panel: vscode.WebviewPanel | undefined;
 
-  constructor(private readonly i18n: I18n = createI18n('en')) {}
+  constructor(private i18n: I18n = createI18n('en')) {}
+
+  setI18n(i18n: I18n): void {
+    this.i18n = i18n;
+  }
 
   show(state: PetState): void {
     if (!this.panel) {

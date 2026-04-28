@@ -6,7 +6,11 @@ import { createI18n, I18n } from '../i18n';
 export class GitagotchiLeaderboardPanel {
   private panel: vscode.WebviewPanel | undefined;
 
-  constructor(private readonly i18n: I18n = createI18n('en')) {}
+  constructor(private i18n: I18n = createI18n('en')) {}
+
+  setI18n(i18n: I18n): void {
+    this.i18n = i18n;
+  }
 
   show(status: LeaderboardStatus): void {
     if (!this.panel) {

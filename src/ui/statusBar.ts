@@ -1,35 +1,26 @@
 import * as vscode from 'vscode';
-import { getRequiredExp, PetState } from '../core/petState';
+import { PetState } from '../core/petState';
 import { createI18n, I18n } from '../i18n';
-
-const icons: Record<PetState['evolution'], string> = {
-  egg: '$(circle-filled)',
-  junior: '$(github-alt)',
-  mid: '$(hubot)',
-  senior: '$(mortar-board)',
-  architect: '$(rocket)'
-};
-
-const lifeLabels: Record<PetState['lifeStatus'], string> = {
-  alive: '',
-  sleeping: 'Zzz',
-  critical: '!',
-  dead: 'RIP'
-};
+import { renderStatusBarText, renderStatusBarTooltip } from './statusBarPresentation';
 
 export class GitagotchiStatusBar {
   private readonly item: vscode.StatusBarItem;
 
-  constructor(private readonly i18n: I18n = createI18n('en')) {
+  constructor(private i18n: I18n = createI18n('en')) {
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-    this.item.command = 'gitagotchi.viewStats';
-    this.item.tooltip = this.i18n.t('status.tooltip');
+    this.item.command = 'gitagotchi.openPet';
     this.item.show();
   }
 
   update(state: PetState): void {
-    const suffix = lifeLabels[state.lifeStatus] ? ` ${lifeLabels[state.lifeStatus]}` : '';
-    this.item.text = `${icons[state.evolution]} Lv.${state.level} ${state.exp}/${getRequiredExp(state.level)}${suffix}`;
+    this.item.text = renderStatusBarText(state);
+    const tooltip = new vscode.MarkdownString(renderStatusBarTooltip(state, this.i18n));
+    tooltip.supportThemeIcons = true;
+    this.item.tooltip = tooltip;
+  }
+
+  setI18n(i18n: I18n): void {
+    (this as unknown as Record<string, unknown>).i18n = i18n;
   }
 
   dispose(): void {

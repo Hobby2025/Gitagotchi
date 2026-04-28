@@ -18,13 +18,13 @@ import { LeaderboardSyncStateStore } from './leaderboard/leaderboardSyncStateSto
 import { LeaderboardStatus } from './leaderboard/leaderboardTypes';
 import { GitagotchiLeaderboardPanel } from './ui/leaderboardPanel';
 import { GitagotchiLogPanel } from './ui/logPanel';
-import { GitagotchiSidebarProvider } from './ui/sidebarWebview';
+import { GitagotchiPetPanel } from './ui/petPanel';
 import { GitagotchiStatusBar } from './ui/statusBar';
 
 type Runtime = {
   store: PetStateStore;
   statusBar: GitagotchiStatusBar;
-  sidebar: GitagotchiSidebarProvider;
+  petPanel: GitagotchiPetPanel;
   logs: GitagotchiLogPanel;
   leaderboard: GitagotchiLeaderboardPanel;
   leaderboardSyncState: LeaderboardSyncStateStore;
@@ -35,7 +35,7 @@ type Runtime = {
 async function persistAndRender(runtime: Runtime, state: PetState): Promise<void> {
   await runtime.store.save(state);
   runtime.statusBar.update(state);
-  runtime.sidebar.update(state);
+  runtime.petPanel.update(state);
 }
 
 async function applyEvent(runtime: Runtime, event: ActivityEvent): Promise<void> {
@@ -108,6 +108,51 @@ async function feed(runtime: Runtime): Promise<void> {
       occurredAt: new Date().toISOString()
     }, ...state.logs].slice(0, 20)
   });
+}
+
+async function renamePet(runtime: Runtime, prompt = 'Name your Gitagotchi'): Promise<void> {
+  const state = runtime.store.load();
+  const value = await vscode.window.showInputBox({
+    prompt,
+    placeHolder: 'Mochi',
+    value: state.name ?? '',
+    ignoreFocusOut: true,
+    validateInput(input) {
+      return input.trim() ? undefined : 'Name is required.';
+    }
+  });
+
+  if (value === undefined) {
+    return;
+  }
+
+  await persistAndRender(runtime, {
+    ...state,
+    name: value.trim()
+  });
+}
+
+async function ensurePetName(runtime: Runtime): Promise<void> {
+  if (!runtime.store.load().name?.trim()) {
+    await renamePet(runtime, 'Name your Gitagotchi to begin');
+  }
+}
+
+async function resetPet(runtime: Runtime): Promise<void> {
+  const choice = await vscode.window.showWarningMessage(
+    'Reset Gitagotchi? This clears the current pet name, level, stats, skills, and logs.',
+    { modal: true },
+    'Reset'
+  );
+
+  if (choice !== 'Reset') {
+    return;
+  }
+
+  const reset = await runtime.store.reset();
+  runtime.statusBar.update(reset);
+  runtime.petPanel.update(reset);
+  await renamePet(runtime, 'Name your new Gitagotchi');
 }
 
 async function syncLeaderboardIfDue(runtime: Runtime, createSession: boolean): Promise<LeaderboardStatus> {
@@ -199,13 +244,13 @@ export function activate(context: vscode.ExtensionContext): void {
   const i18n = createI18n(vscode.env.language);
   const store = new PetStateStore(context.globalState);
   const statusBar = new GitagotchiStatusBar(i18n);
-  const sidebar = new GitagotchiSidebarProvider(i18n, context.extensionUri);
+  const petPanel = new GitagotchiPetPanel(i18n, context.extensionUri);
   const logs = new GitagotchiLogPanel(i18n);
   const leaderboard = new GitagotchiLeaderboardPanel(i18n);
   const runtime: Runtime = {
     store,
     statusBar,
-    sidebar,
+    petPanel,
     logs,
     leaderboard,
     leaderboardSyncState: new LeaderboardSyncStateStore(context.globalState),
@@ -214,12 +259,26 @@ export function activate(context: vscode.ExtensionContext): void {
   };
 
   context.subscriptions.push(statusBar);
-  context.subscriptions.push(vscode.window.registerWebviewViewProvider(GitagotchiSidebarProvider.viewType, sidebar));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openPet', () => petPanel.show(store.load())));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.renamePet', () => renamePet(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.resetPet', () => resetPet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.feed', () => feed(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewStats', () => logs.show(store.load())));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.checkCommit', () => checkCommit(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.leaderboard', () => showLeaderboard(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.createLeaderboard', () => createLeaderboard(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.changeLanguage', (locale?: string) => {
+    if (!locale) {
+      return;
+    }
+    const newI18n = createI18n(locale);
+    runtime.i18n = newI18n;
+    statusBar.setI18n(newI18n);
+    statusBar.update(store.load());
+    petPanel.setI18n(newI18n);
+    logs.setI18n(newI18n);
+    leaderboard.setI18n(newI18n);
+  }));
   context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => {
     void checkDiagnostics(runtime);
   }));
@@ -234,7 +293,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
   const initial = store.load();
   statusBar.update(initial);
-  sidebar.update(initial);
+  void ensurePetName(runtime);
 }
 
 export function deactivate(): void {}

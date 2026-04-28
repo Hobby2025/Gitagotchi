@@ -5,7 +5,9 @@ Git diffs, commits, diagnostics improvements, and idle time.
 
 ## Features
 
-- Activity Bar view with an animated Gitagotchi pet.
+- Status Bar entrypoint with a rich hover tooltip.
+- Click-to-open Gitagotchi pet panel with the animated monster and quick actions.
+- First-run pet naming prompt with a rename command.
 - Growth from unstaged Git diffs and new commits.
 - Diagnostics-based feedback when problems are resolved or introduced.
 - Pet state, levels, evolution stages, style scores, and skill unlocks.
@@ -29,13 +31,18 @@ npm run check
 3. Open the Run and Debug panel.
 4. Start `Run Gitagotchi Extension`.
 5. In the Extension Development Host window, open a Git repository workspace.
-6. Open the Gitagotchi Activity Bar view.
-7. Exercise these commands from the Command Palette:
+6. Enter a pet name when the first-run prompt appears.
+7. Find the Gitagotchi item in the VS Code Status Bar.
+8. Hover over it and confirm the pet stats tooltip appears.
+9. Click it and confirm the Gitagotchi pet panel opens with the monster sprite.
+10. Exercise these quick actions from the pet panel:
    - `Gitagotchi: Feed`
    - `Gitagotchi: View Stats`
    - `Gitagotchi: Check Commit`
    - `Gitagotchi: Leaderboard`
    - `Gitagotchi: Create Leaderboard`
+   - `Gitagotchi: Rename Pet`
+   - `Gitagotchi: Reset Pet`
 
 ## Leaderboard Setup
 
