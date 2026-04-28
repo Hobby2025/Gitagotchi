@@ -1,4 +1,5 @@
-import { PetEvolution, PetMood } from '../core/petState';
+import { PetEvolution, PetMood, PetState } from '../core/petState';
+import { getDeveloperToolSpritePack } from './developerToolSprites';
 import { spritePacks } from './spritePacks';
 import { SpritePack } from './spriteTypes';
 
@@ -23,4 +24,8 @@ export function getSpritePack(evolution: PetEvolution, mood: PetMood): SpritePac
   }
 
   return spritePacks[0];
+}
+
+export function getPetSpritePack(state: PetState, mood: PetMood): SpritePack {
+  return getDeveloperToolSpritePack(state, mood);
 }
