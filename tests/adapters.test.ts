@@ -46,6 +46,8 @@ describe('adapters', () => {
     expect(loaded.level).toBe(5);
     expect(loaded.counters.refactor).toBe(2);
     expect(loaded.counters.feature).toBe(0);
+    expect(loaded.stage).toBe('hatchling');
+    expect(loaded.lineage).toBe('buildling');
   });
 
   it('saves state with schema version tag', async () => {
@@ -55,7 +57,36 @@ describe('adapters', () => {
     await store.save({ ...initial, level: 3 });
 
     const raw = memento.get<Record<string, unknown>>('gitagotchi.petState');
-    expect(raw?._schemaVersion).toBe(1);
+    expect(raw?._schemaVersion).toBe(2);
     expect(raw?.level).toBe(3);
+  });
+
+  it('persists the pet name once configured', async () => {
+    const memento = new MemoryMemento();
+    const store = new PetStateStore(memento, '2026-04-27T00:00:00.000Z');
+    const initial = store.load();
+
+    await store.save({ ...initial, name: 'Mochi' });
+
+    expect(store.load().name).toBe('Mochi');
+  });
+
+  it('resets the pet to a fresh unnamed initial state', async () => {
+    const memento = new MemoryMemento();
+    const store = new PetStateStore(memento, '2026-04-27T00:00:00.000Z');
+    const initial = store.load();
+    await store.save({ ...initial, name: 'Mochi', level: 9, exp: 44, hunger: 90 });
+
+    const reset = await store.reset('2026-04-28T00:00:00.000Z');
+
+    expect(reset.name).toBeUndefined();
+    expect(reset.level).toBe(1);
+    expect(reset.exp).toBe(0);
+    expect(reset.stage).toBe('egg');
+    expect(reset.lineage).toBeUndefined();
+    expect(reset.affinity).toBeUndefined();
+    expect(reset.hunger).toBe(20);
+    expect(reset.lastActiveAt).toBe('2026-04-28T00:00:00.000Z');
+    expect(store.load().level).toBe(1);
   });
 });

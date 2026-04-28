@@ -1,4 +1,5 @@
 import { createInitialPetState, getLifeStatus, PetState } from '../core/petState';
+import { resolveEvolution } from '../core/evolutionEngine';
 
 export type MementoLike = {
   get<T>(key: string): T | undefined;
@@ -17,7 +18,7 @@ export class MemoryMemento implements MementoLike {
   }
 }
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 type VersionedState = { _schemaVersion?: number } & Partial<PetState>;
 
@@ -25,6 +26,13 @@ function migrate(saved: VersionedState): VersionedState {
   const version = saved._schemaVersion ?? 0;
 
   if (version < 1) {
+    saved = {
+      ...saved,
+      _schemaVersion: 1
+    };
+  }
+
+  if (version < 2) {
     return {
       ...saved,
       _schemaVersion: SCHEMA_VERSION
@@ -65,13 +73,21 @@ export class PetStateStore {
       logs: saved.logs ?? base.logs
     };
 
-    return {
+    const withLife = {
       ...merged,
       lifeStatus: saved.lifeStatus ?? getLifeStatus(merged)
     };
+
+    return resolveEvolution(withLife);
   }
 
   async save(state: PetState): Promise<void> {
     await this.memento.update(this.key, { ...state, _schemaVersion: SCHEMA_VERSION });
+  }
+
+  async reset(now: string = new Date().toISOString()): Promise<PetState> {
+    const state = createInitialPetState(now);
+    await this.save(state);
+    return state;
   }
 }

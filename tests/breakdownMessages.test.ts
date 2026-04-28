@@ -50,7 +50,7 @@ describe('growth breakdown and message blocks', () => {
 
     expect(messages).toEqual([
       { kind: 'reward', text: '+42 EXP from 2 bonuses' },
-      { kind: 'style', text: 'Cleaner +20' },
+      { kind: 'style', text: 'Refactor Craft +20' },
       { kind: 'unlock', text: 'Learned Deep Clean' }
     ]);
   });

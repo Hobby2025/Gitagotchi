@@ -17,10 +17,12 @@ describe('resolveEvolution', () => {
     const state = {
       ...createInitialPetState('2026-04-27T00:00:00.000Z'),
       level: 30,
-      counters: { refactor: 8, feature: 8, debug: 4 }
+      counters: { refactor: 8, feature: 8, debug: 4 },
+      styleScores: { builder: 130, cleaner: 130, debugger: 130, scholar: 130, streak: 130 }
     };
 
     expect(resolveEvolution(state).evolution).toBe('architect');
+    expect(resolveEvolution(state).stage).toBe('ultimate');
   });
 
   it('assigns archetypes from activity counters', () => {
@@ -53,9 +55,24 @@ describe('resolveEvolution', () => {
       health: 80,
       mood: 80,
       energy: 70,
-      counters: { refactor: 3, feature: 3, debug: 3 } // total 9 < 20
+      counters: { refactor: 8, feature: 8, debug: 4 },
+      styleScores: { builder: 130, cleaner: 130, debugger: 40, scholar: 130, streak: 130 }
     };
 
     expect(resolveEvolution(state).evolution).toBe('senior');
+    expect(resolveEvolution(state).stage).toBe('specialist');
+  });
+
+  it('persists monster branch fields from dominant developer ability', () => {
+    const base = createInitialPetState('2026-04-27T00:00:00.000Z');
+    const state = resolveEvolution({
+      ...base,
+      level: 20,
+      styleScores: { builder: 10, cleaner: 5, debugger: 90, scholar: 30, streak: 40 }
+    });
+
+    expect(state.stage).toBe('specialist');
+    expect(state.lineage).toBe('debugon');
+    expect(state.affinity).toBe('debugger');
   });
 });

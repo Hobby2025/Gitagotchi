@@ -25,7 +25,8 @@ describe('level design and life cycle', () => {
       mood: 80,
       energy: 80,
       health: 80,
-      counters: { refactor: 8, feature: 8, debug: 4 }
+      counters: { refactor: 8, feature: 8, debug: 4 },
+      styleScores: { builder: 120, cleaner: 120, debugger: 120, scholar: 120, streak: 120 }
     }).evolution).toBe('architect');
   });
 

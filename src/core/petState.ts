@@ -1,4 +1,7 @@
 export type PetEvolution = 'egg' | 'junior' | 'mid' | 'senior' | 'architect';
+export type PetStage = 'egg' | 'hatchling' | 'toolkit' | 'specialist' | 'ultimate';
+export type PetLineage = 'buildling' | 'refact' | 'debugon' | 'archivox';
+export type PetAffinity = 'builder' | 'cleaner' | 'debugger' | 'scholar' | 'streak';
 export type PetArchetype = 'balanced' | 'cleanCoder' | 'builder' | 'debugger';
 export type PetMood = 'happy' | 'normal' | 'sad' | 'sleeping';
 export type PetLifeStatus = 'alive' | 'sleeping' | 'critical' | 'dead';
@@ -40,6 +43,7 @@ export type PetMessage = {
 };
 
 export type PetState = {
+  name?: string;
   level: number;
   exp: number;
   hunger: number;
@@ -48,6 +52,9 @@ export type PetState = {
   health: number;
   lifeStatus: PetLifeStatus;
   evolution: PetEvolution;
+  stage: PetStage;
+  lineage?: PetLineage;
+  affinity?: PetAffinity;
   archetype: PetArchetype;
   species: PetSpecies;
   styleScores: StyleScores;
@@ -70,6 +77,7 @@ export function createInitialPetState(now: string = new Date().toISOString()): P
     health: 100,
     lifeStatus: 'alive',
     evolution: 'egg',
+    stage: 'egg',
     archetype: 'balanced',
     species: 'bytepup',
     styleScores: {
