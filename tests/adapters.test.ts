@@ -37,7 +37,6 @@ describe('adapters', () => {
 
   it('migrates v0 storage data to current schema', async () => {
     const memento = new MemoryMemento();
-    // v0 데이터: _schemaVersion 없음
     const v0 = { level: 5, exp: 50, hunger: 30, counters: { refactor: 2 } };
     await memento.update('gitagotchi.petState', v0);
 
@@ -46,7 +45,7 @@ describe('adapters', () => {
 
     expect(loaded.level).toBe(5);
     expect(loaded.counters.refactor).toBe(2);
-    expect(loaded.counters.feature).toBe(0); // 기본값 보정 확인
+    expect(loaded.counters.feature).toBe(0);
   });
 
   it('saves state with schema version tag', async () => {

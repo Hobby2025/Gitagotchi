@@ -17,24 +17,14 @@ export class MemoryMemento implements MementoLike {
   }
 }
 
-/**
- * 저장 데이터의 스키마 버전입니다.
- * 데이터 구조 변경 시 이 값을 올리고 migrate 함수를 추가합니다.
- */
 const SCHEMA_VERSION = 1;
 
 type VersionedState = { _schemaVersion?: number } & Partial<PetState>;
 
-/**
- * 이전 버전의 저장 데이터를 현재 스키마로 마이그레이션합니다.
- * @param saved - 디스크에서 로드한 원본 데이터
- * @returns 현재 스키마에 맞게 보정된 상태
- */
 function migrate(saved: VersionedState): VersionedState {
   const version = saved._schemaVersion ?? 0;
 
   if (version < 1) {
-    // v0 → v1: counters, styleScores, skills, species, logs 기본값 보정
     return {
       ...saved,
       _schemaVersion: SCHEMA_VERSION

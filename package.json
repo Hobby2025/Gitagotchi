@@ -57,7 +57,8 @@
       "gitagotchi": [
         {
           "id": "gitagotchi.sidebar",
-          "name": "Gitagotchi"
+          "name": "Gitagotchi",
+          "type": "webview"
         }
       ]
     },
@@ -83,7 +84,8 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "clean": "node ./scripts/clean-dist.cjs",
+    "build": "npm run clean && tsc -p tsconfig.json",
     "test": "vitest run",
     "check": "npm run build && npm test"
   },
