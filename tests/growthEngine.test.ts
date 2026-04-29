@@ -20,7 +20,9 @@ describe('growth engine', () => {
 
     expect(result.expDelta).toBe(33);
     expect(result.moodDelta).toBe(5);
-    expect(result.hungerDelta).toBe(-2);
+    expect(result.hungerDelta).toBe(-3);
+    expect(result.energyDelta).toBe(2);
+    expect(result.healthDelta).toBe(5);
     expect(result.reasons).toEqual([
       'Code changes',
       'Refactoring',
@@ -29,7 +31,7 @@ describe('growth engine', () => {
     ]);
   });
 
-  it('rewards useful commit messages once commit events are emitted', () => {
+  it('rewards useful commit messages with automatic care recovery', () => {
     const state = createInitialPetState('2026-04-27T00:00:00.000Z');
     const event: ActivityEvent = {
       type: 'commit',
@@ -38,10 +40,24 @@ describe('growth engine', () => {
       occurredAt: '2026-04-27T00:01:00.000Z'
     };
 
-    expect(createDefaultGrowthEngine().evaluate(event, state).expDelta).toBe(30);
+    const result = createDefaultGrowthEngine().evaluate(event, state);
+
+    expect(result.expDelta).toBe(30);
+    expect(result.hungerDelta).toBe(-5);
+    expect(result.energyDelta).toBe(4);
+    expect(result.healthDelta).toBe(3);
+    expect(result.breakdown).toContainEqual({
+      id: 'commit-message',
+      label: 'Refactor commit',
+      expDelta: 30,
+      moodDelta: 5,
+      hungerDelta: -5,
+      energyDelta: 4,
+      healthDelta: 3
+    });
   });
 
-  it('raises mood and exp when diagnostics are resolved', () => {
+  it('raises mood, exp, and health when diagnostics are resolved', () => {
     const state = createInitialPetState('2026-04-27T00:00:00.000Z');
     const event: ActivityEvent = {
       type: 'diagnostics',
@@ -54,7 +70,39 @@ describe('growth engine', () => {
 
     expect(result.expDelta).toBe(48);
     expect(result.moodDelta).toBe(9);
+    expect(result.hungerDelta).toBe(-2);
+    expect(result.energyDelta).toBe(1);
+    expect(result.healthDelta).toBe(12);
     expect(result.reasons).toEqual(['Diagnostics resolved']);
+  });
+
+  it('restores energy when coding resumes after idle time', () => {
+    const state = {
+      ...createInitialPetState('2026-04-20T00:00:00.000Z'),
+      energy: 15,
+      lifeStatus: 'sleeping' as const
+    };
+    const event: ActivityEvent = {
+      type: 'diff',
+      stats: {
+        added: 12,
+        deleted: 0,
+        files: 1,
+        touchedFiles: ['src/return.ts']
+      },
+      occurredAt: '2026-04-23T00:01:00.000Z'
+    };
+
+    const next = applyActivity(state, event, createDefaultGrowthEngine());
+
+    expect(next.energy).toBe(35);
+    expect(next.lifeStatus).toBe('alive');
+    expect(next.logs[0].breakdown).toContainEqual({
+      id: 'return-from-idle',
+      label: 'Return from idle',
+      energyDelta: 20,
+      moodDelta: 2
+    });
   });
 
   it('applies idle decay as hunger increase and energy loss', () => {
@@ -115,6 +163,6 @@ describe('growth engine', () => {
     const result = createDefaultGrowthEngine().evaluate(event, state);
 
     expect(result.expDelta).toBe(167);
-    expect(result.breakdown).toContainEqual({ id: 'base-diff', label: 'Code changes', expDelta: 167, moodDelta: 2, healthDelta: 1 });
+    expect(result.breakdown).toContainEqual({ id: 'base-diff', label: 'Code changes', expDelta: 167, moodDelta: 2, hungerDelta: -3, healthDelta: 1 });
   });
 });

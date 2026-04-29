@@ -8,6 +8,7 @@ import { diagnosticsRule } from './rules/diagnosticsRule';
 import { fileTypeBonusRule } from './rules/fileTypeBonusRule';
 import { idleDecayRule } from './rules/idleDecayRule';
 import { refactorRule } from './rules/refactorRule';
+import { returnFromIdleRule } from './rules/returnFromIdleRule';
 import { applySkillBonuses } from './skillEngine';
 import { balanceStyleDelta, calculateStyleDelta, mergeStyleScores } from './styleScoring';
 import { createActivityMessages } from '../messages/messageEngine';
@@ -77,6 +78,7 @@ export const defaultGrowthRules: GrowthRule[] = [
   fileTypeBonusRule,
   commitMessageRule,
   diagnosticsRule,
+  returnFromIdleRule,
   idleDecayRule
 ];
 

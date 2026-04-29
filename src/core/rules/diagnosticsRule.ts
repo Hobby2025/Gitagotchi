@@ -18,15 +18,15 @@ export const diagnosticsRule: GrowthRule = {
       return {
         expDelta: delta * 16,
         moodDelta: delta * 3,
-        hungerDelta: -1,
-        energyDelta: 0,
-        healthDelta: delta * 2,
+        hungerDelta: -2,
+        energyDelta: 1,
+        healthDelta: delta * 4,
         styleScoresDelta: {},
         countersDelta: {
           debug: 1
         },
         reasons: ['Diagnostics resolved'],
-        breakdown: [{ id: 'diagnostics.resolved', label: 'Diagnostics resolved', expDelta: delta * 16, moodDelta: delta * 3, healthDelta: delta * 2 }]
+        breakdown: [{ id: 'diagnostics.resolved', label: 'Diagnostics resolved', expDelta: delta * 16, moodDelta: delta * 3, hungerDelta: -2, energyDelta: 1, healthDelta: delta * 4 }]
       };
     }
 

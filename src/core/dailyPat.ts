@@ -33,7 +33,7 @@ export function applyDailyPat(state: PetState, now: Date, i18n: I18n): PetState 
     : false;
   const expDelta = alreadyPattedToday ? 0 : DAILY_PAT_EXP;
   const moodDelta = alreadyPattedToday ? REPEAT_PAT_MOOD : DAILY_PAT_MOOD;
-  const message = alreadyPattedToday ? i18n.t('log.alreadyPatted') : i18n.t('log.patted');
+  const message = i18n.t('log.patted');
   const { level, exp } = addExp(state, expDelta);
 
   const next = resolveEvolution({
@@ -43,11 +43,13 @@ export function applyDailyPat(state: PetState, now: Date, i18n: I18n): PetState 
     mood: clampStat(state.mood + moodDelta),
     lastActiveAt: occurredAt,
     lastPattedAt: occurredAt,
-    logs: [{
-      message,
-      expDelta,
-      occurredAt,
-    }, ...state.logs].slice(0, 20),
+    logs: alreadyPattedToday
+      ? state.logs
+      : [{
+        message,
+        expDelta,
+        occurredAt,
+      }, ...state.logs].slice(0, 20),
   });
   const withLife = {
     ...next,

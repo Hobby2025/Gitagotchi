@@ -29,8 +29,8 @@ describe('growth breakdown and message blocks', () => {
 
     expect(next.logs[0].message).toBe('+36 EXP from 4 bonuses');
     expect(next.logs[0].breakdown).toEqual([
-      { id: 'base-diff', label: 'Code changes', expDelta: 12, moodDelta: 2, healthDelta: 1 },
-      { id: 'refactor', label: 'Refactoring', expDelta: 8, moodDelta: 3, healthDelta: 1 },
+      { id: 'base-diff', label: 'Code changes', expDelta: 12, moodDelta: 2, hungerDelta: -3, healthDelta: 1 },
+      { id: 'refactor', label: 'Refactoring', expDelta: 8, moodDelta: 3, energyDelta: 1, healthDelta: 2 },
       { id: 'skill.deepClean', label: 'Deep Clean skill', expDelta: 12, moodDelta: 2 },
       { id: 'skill.focusFlow', label: 'Focus Flow skill', expDelta: 4, energyDelta: 1 }
     ]);

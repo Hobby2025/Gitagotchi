@@ -31,13 +31,13 @@ export const fileTypeBonusRule: GrowthRule = {
     if (event.stats.touchedFiles.some(isTestFile)) {
       expDelta += 12;
       reasons.push('Test changes');
-      breakdown.push({ id: 'file.test', label: 'Test changes', expDelta: 12 });
+      breakdown.push({ id: 'file.test', label: 'Test changes', expDelta: 12, healthDelta: 1 });
     }
 
     if (event.stats.touchedFiles.some(isReadme)) {
       expDelta += 4;
       reasons.push('README changes');
-      breakdown.push({ id: 'file.readme', label: 'README changes', expDelta: 4 });
+      breakdown.push({ id: 'file.readme', label: 'README changes', expDelta: 4, energyDelta: 1, healthDelta: 1 });
     }
 
     if (event.stats.touchedFiles.some(isConfig)) {
@@ -50,8 +50,8 @@ export const fileTypeBonusRule: GrowthRule = {
       expDelta,
       moodDelta: 0,
       hungerDelta: 0,
-      energyDelta: 0,
-      healthDelta: 0,
+      energyDelta: event.stats.touchedFiles.some(isReadme) ? 1 : 0,
+      healthDelta: (event.stats.touchedFiles.some(isTestFile) ? 1 : 0) + (event.stats.touchedFiles.some(isReadme) ? 1 : 0),
       styleScoresDelta: {},
       countersDelta: {},
       reasons,

@@ -12,14 +12,14 @@ export const refactorRule: GrowthRule = {
       expDelta: 8,
       moodDelta: 3,
       hungerDelta: 0,
-      energyDelta: 0,
-      healthDelta: 1,
+      energyDelta: 1,
+      healthDelta: 2,
       styleScoresDelta: {},
       countersDelta: {
         refactor: 1
       },
       reasons: ['Refactoring'],
-      breakdown: [{ id: 'refactor', label: 'Refactoring', expDelta: 8, moodDelta: 3, healthDelta: 1 }]
+      breakdown: [{ id: 'refactor', label: 'Refactoring', expDelta: 8, moodDelta: 3, energyDelta: 1, healthDelta: 2 }]
     };
   }
 };

@@ -23,7 +23,7 @@ describe('status bar presentation', () => {
     expect(tooltip).toContain('Lineage: refact');
     expect(tooltip).toContain(`EXP: 0/${getRequiredExp(1)}`);
     expect(tooltip).toContain('Mood: 70%');
-    expect(tooltip).toContain('Hunger: 20%');
+    expect(tooltip).toContain('Fullness: 80%');
     expect(tooltip).toContain('Energy: 80%');
     expect(tooltip).toContain('Health: 100%');
     expect(tooltip).toContain('Click to open Gitagotchi.');

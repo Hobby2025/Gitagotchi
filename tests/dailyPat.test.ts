@@ -18,12 +18,17 @@ describe('daily pat bonus', () => {
     });
   });
 
-  it('does not grant repeat EXP on the same local day', () => {
+  it('does not grant repeat EXP or add noisy logs on the same local day', () => {
     const state = {
       ...createInitialPetState('2026-04-28T00:00:00.000Z'),
       exp: 10,
       mood: 78,
       lastPattedAt: '2026-04-29T00:00:00.000Z',
+      logs: [{
+        message: 'Important commit',
+        expDelta: 30,
+        occurredAt: '2026-04-29T13:00:00.000Z'
+      }]
     };
 
     const next = applyDailyPat(state, new Date('2026-04-29T23:30:00+09:00'), createI18n('en'));
@@ -31,11 +36,7 @@ describe('daily pat bonus', () => {
     expect(next.exp).toBe(10);
     expect(next.mood).toBe(79);
     expect(next.lastPattedAt).toBe('2026-04-29T14:30:00.000Z');
-    expect(next.logs[0]).toMatchObject({
-      message: 'Already patted today',
-      expDelta: 0,
-      occurredAt: '2026-04-29T14:30:00.000Z',
-    });
+    expect(next.logs).toEqual(state.logs);
   });
 
   it('grants another bonus on a new local day', () => {

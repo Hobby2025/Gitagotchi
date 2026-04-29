@@ -34,7 +34,7 @@ export function renderStatusBarTooltip(state: PetState, i18n: I18n): string {
     "",
     `${i18n.t("ui.exp")}: ${state.exp}/${getRequiredExp(state.level)}`,
     `${i18n.t("ui.mood")}: ${state.mood}%`,
-    `${i18n.t("ui.hunger")}: ${state.hunger}%`,
+    `${i18n.t("ui.fullness")}: ${100 - state.hunger}%`,
     `${i18n.t("ui.energy")}: ${state.energy}%`,
     `${i18n.t("ui.health")}: ${state.health}%`,
     "",

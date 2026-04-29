@@ -26,9 +26,9 @@ export const commitMessageRule: GrowthRule = {
     return {
       expDelta: 18 + bonus,
       moodDelta: 5,
-      hungerDelta: -3,
-      energyDelta: -2,
-      healthDelta: 2,
+      hungerDelta: -5,
+      energyDelta: 4,
+      healthDelta: 3,
       styleScoresDelta: {},
       countersDelta: {
         feature: /\bfeat\b/i.test(event.message) ? 1 : 0,
@@ -36,7 +36,7 @@ export const commitMessageRule: GrowthRule = {
         debug: /\b(fix|hotfix)\b/i.test(event.message) ? 1 : 0
       },
       reasons: [reason],
-      breakdown: [{ id: 'commit-message', label: reason, expDelta: 18 + bonus, moodDelta: 5, healthDelta: 2 }]
+      breakdown: [{ id: 'commit-message', label: reason, expDelta: 18 + bonus, moodDelta: 5, hungerDelta: -5, energyDelta: 4, healthDelta: 3 }]
     };
   }
 };

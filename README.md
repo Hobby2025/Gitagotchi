@@ -5,8 +5,8 @@ Gitagotchi is a small developer pet for VS Code. It grows from your local develo
 ## Features
 
 - Check your Gitagotchi status directly from the VS Code Status Bar.
-- Open a pet panel with name, level, EXP, mood, hunger, energy, and health.
-- Grow from Git diffs, new commits, and diagnostic improvements.
+- Open a pet panel with name, level, EXP, mood, fullness, energy, health, care pulses, and skills.
+- Grow and recover from Git diffs, new commits, diagnostic improvements, refactoring, tests, docs, and returning from idle time.
 - Pat your pet once per day for bonus EXP and mood.
 - Unlock different lineages, affinities, species, and skills based on your work style.
 - Open the Dex to review every Gitagotchi form you have discovered.
@@ -26,9 +26,11 @@ You can open the pet panel outside a Git repository, but Git-based growth works 
 
 Gitagotchi grows from local development signals.
 
-- Code changes: unstaged Git diffs are analyzed for EXP and style score rewards.
-- Commits: new commits trigger growth rewards.
-- Diagnostics: reducing VS Code diagnostic problems rewards debugging progress.
+- Code changes: unstaged Git diffs are analyzed for EXP, style score rewards, fullness, and health recovery.
+- Commits: new commits trigger larger growth and care recovery rewards.
+- Diagnostics: reducing VS Code diagnostic problems rewards debugging progress and restores health.
+- Tests, docs, and refactoring: focused maintenance work adds care bonuses.
+- Return from idle: coding again after time away restores some energy.
 - Idle time: long periods without activity can lower some pet stats.
 
 Style scores influence how your pet evolves. Feature work, refactoring, debugging, documentation changes, and commit rhythm can all affect its lineage and affinity.
@@ -45,6 +47,12 @@ The pet panel includes these actions:
 - `Dex`: open the discovered-form collection.
 - `Rename`: change your pet's name.
 - `Reset`: reset the current pet's name, level, stats, skills, and logs.
+
+The pet panel also shows:
+
+- `Care Pulse`: recent coding activity that restored fullness, energy, or health.
+- `Next Boost`: the kind of work most likely to help the lowest current stat.
+- `Skills`: unlocked work-style skills and their trigger hints.
 
 ## Dex and Reset Behavior
 
@@ -72,7 +80,7 @@ Reset clears:
 
 - Name
 - Level and EXP
-- Mood, hunger, energy, and health
+- Mood, fullness, energy, and health
 - Growth stage and lineage
 - Skills
 - Activity logs
