@@ -3,23 +3,23 @@ import { PixelFrame, SpritePack } from './spriteTypes';
 
 const palette = {
   '.': 'transparent',
-  k: '#0f172a',
-  s: '#334155',
-  d: '#1e293b',
+  k: '#1f2937',
+  s: '#64748b',
+  d: '#475569',
   w: '#f8fafc',
-  g: '#86efac',
-  y: '#facc15',
-  o: '#fb923c',
-  a: '#f97316',
-  c: '#22d3ee',
-  t: '#14b8a6',
-  r: '#f87171',
-  q: '#ef4444',
-  b: '#60a5fa',
-  n: '#2563eb',
-  m: '#c084fc',
-  v: '#a78bfa',
-  p: '#f472b6'
+  g: '#bbf7d0',
+  y: '#fde68a',
+  o: '#fdba74',
+  a: '#fb923c',
+  c: '#67e8f9',
+  t: '#5eead4',
+  r: '#fca5a5',
+  q: '#fb7185',
+  b: '#93c5fd',
+  n: '#60a5fa',
+  m: '#d8b4fe',
+  v: '#c4b5fd',
+  p: '#f9a8d4'
 };
 
 const styleOrder: StyleScoreKey[] = ['builder', 'cleaner', 'debugger', 'scholar', 'streak'];
@@ -853,12 +853,38 @@ function frame(width: number, height: number, pixels: string[]): PixelFrame {
   };
 }
 
+function setRowToken(row: string, x: number, token: string): string {
+  if (x < 0 || x >= row.length) {
+    return row;
+  }
+
+  return `${row.slice(0, x)}${token}${row.slice(x + 1)}`;
+}
+
+function addCuteBlush(pixels: string[]): string[] {
+  const height = pixels.length;
+  const width = pixels[0]?.length ?? 0;
+  const cheekY = Math.max(3, Math.min(height - 4, Math.floor(height * 0.42)));
+  const leftCheekX = Math.max(1, Math.floor(width * 0.34));
+  const rightCheekX = Math.min(width - 2, Math.ceil(width * 0.66));
+
+  return pixels.map((row, y) => {
+    if (y !== cheekY) {
+      return row;
+    }
+
+    return setRowToken(setRowToken(row, leftCheekX, 'p'), rightCheekX, 'p');
+  });
+}
+
 function pack(id: string, evolution: PetEvolution, mood: PetMood, pixels: string[]): SpritePack {
+  const designedPixels = id === 'egg-common-normal' ? pixels : addCuteBlush(pixels);
+
   return {
     id,
     evolution,
     mood,
-    frames: [frame(pixels[0]?.length ?? 0, pixels.length, pixels)]
+    frames: [frame(designedPixels[0]?.length ?? 0, designedPixels.length, designedPixels)]
   };
 }
 

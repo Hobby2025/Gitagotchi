@@ -100,6 +100,24 @@ describe('sprite packs', () => {
     expect(new Set(developerToolSpritePacks.map((sprite) => sprite.frames[0].pixels.join('|'))).size).toBe(33);
   });
 
+  it('uses a softer cute palette with blush accents on every creature', () => {
+    const firstPalette = developerToolSpritePacks[0].frames[0].palette;
+
+    expect(firstPalette.k).toBe('#1f2937');
+    expect(firstPalette.o).toBe('#fdba74');
+    expect(firstPalette.c).toBe('#67e8f9');
+    expect(firstPalette.r).toBe('#fca5a5');
+    expect(firstPalette.b).toBe('#93c5fd');
+    expect(firstPalette.p).toBe('#f9a8d4');
+
+    for (const sprite of developerToolSpritePacks) {
+      const pixels = sprite.frames[0].pixels.join('');
+      const blushPixels = pixels.split('').filter((token) => token === 'p').length;
+
+      expect(blushPixels, sprite.id).toBeGreaterThanOrEqual(sprite.evolution === 'egg' ? 0 : 2);
+    }
+  });
+
   it('gives each lineage a distinct visual signature across growth stages', () => {
     const base = createInitialPetState('2026-04-28T00:00:00.000Z');
     const stages: Array<{ evolution: PetEvolution; stage: typeof base.stage }> = [
