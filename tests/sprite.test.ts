@@ -8,7 +8,7 @@ describe('sprite packs', () => {
     const sprite = getSpritePack('junior', 'happy');
 
     expect(sprite.evolution).toBe('junior');
-    expect(sprite.mood).toBe('happy');
+    expect(sprite.mood).toBe('normal');
     expect(validateSpritePack(sprite)).toBe(true);
   });
 
@@ -69,11 +69,35 @@ describe('sprite packs', () => {
   });
 
   it('keeps every developer-tool creature sprite structurally valid', () => {
-    expect(developerToolSpritePacks.length).toBeGreaterThan(0);
+    expect(developerToolSpritePacks).toHaveLength(33);
 
     for (const sprite of developerToolSpritePacks) {
       expect(validateSpritePack(sprite), sprite.id).toBe(true);
     }
+  });
+
+  it('implements the complete 33 monster designs from the evolution design document', () => {
+    const expectedIds = [
+      'egg-common-normal',
+      'buildling-hatchling-normal',
+      'refact-hatchling-normal',
+      'debugon-hatchling-normal',
+      'archivox-hatchling-normal',
+      'buildling-toolkit-normal',
+      'refact-toolkit-normal',
+      'debugon-toolkit-normal',
+      'archivox-toolkit-normal',
+      ...(['buildling', 'refact', 'debugon', 'archivox'] as const).flatMap((lineage) => (
+        (['builder', 'cleaner', 'debugger', 'scholar', 'streak'] as const).map((affinity) => `${lineage}-specialist-${affinity}-normal`)
+      )),
+      'buildling-ultimate-normal',
+      'refact-ultimate-normal',
+      'debugon-ultimate-normal',
+      'archivox-ultimate-normal'
+    ];
+
+    expect(developerToolSpritePacks.map((sprite) => sprite.id)).toEqual(expectedIds);
+    expect(new Set(developerToolSpritePacks.map((sprite) => sprite.frames[0].pixels.join('|'))).size).toBe(33);
   });
 
   it('gives each lineage a distinct visual signature across growth stages', () => {
