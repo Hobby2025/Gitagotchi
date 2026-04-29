@@ -69,9 +69,9 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
     .map((action) => `<button class="action-btn${action.primary ? ' action-primary' : ''}" data-command="${action.command}"><span class="action-rune">${action.rune}</span><span class="action-label">${action.label}</span></button>`)
     .join('');
 
-  const flags: Record<string, string> = { en: '🇺🇸', ko: '🇰🇷', ja: '🇯🇵', zh: '🇨🇳' };
+  const languageLabels: Record<string, string> = { en: 'EN', ko: 'KO', ja: 'JA', zh: 'ZH' };
   const langButtons = (['en', 'ko', 'ja', 'zh'] as const)
-    .map((locale) => `<button class="lang-btn ${locale === i18n.locale ? 'active' : ''}" data-locale="${locale}" title="${locale.toUpperCase()}">${flags[locale]}</button>`)
+    .map((locale) => `<button class="lang-btn ${locale === i18n.locale ? 'active' : ''}" data-locale="${locale}" title="${locale.toUpperCase()}">${languageLabels[locale]}</button>`)
     .join('');
 
   return `<!doctype html>
@@ -82,10 +82,11 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
   <style>
     * { box-sizing: border-box; }
     body { color: var(--vscode-foreground); font-family: var(--vscode-font-family); margin: 0; padding: 20px; background: var(--vscode-editor-background); }
-    .lang-bar { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 12px; }
-    .lang-btn { padding: 4px 6px; font-size: 18px; line-height: 1; background: transparent; border: 1px solid transparent; border-radius: 4px; cursor: pointer; opacity: 0.5; transition: opacity .15s ease, border-color .15s ease; }
-    .lang-btn:hover { opacity: 1; border-color: var(--vscode-panel-border); }
-    .lang-btn.active { opacity: 1; border-color: var(--vscode-panel-border); background: var(--vscode-editorWidget-background); }
+    .page-shell { width: min(920px, 100%); display: grid; gap: 12px; }
+    .lang-bar { display: flex; justify-content: flex-end; gap: 6px; }
+    .lang-btn { min-width: 36px; min-height: 28px; padding: 4px 7px; font-family: var(--vscode-editor-font-family); font-size: 11px; font-weight: 800; line-height: 1; background: var(--vscode-editorWidget-background); color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-panel-border); border-radius: 4px; cursor: pointer; opacity: 0.74; transition: opacity .15s ease, color .15s ease, border-color .15s ease, background .15s ease; }
+    .lang-btn:hover { opacity: 1; color: var(--vscode-foreground); border-color: var(--lineage-accent, var(--vscode-focusBorder)); }
+    .lang-btn.active { opacity: 1; color: var(--vscode-foreground); border-color: var(--lineage-accent, var(--vscode-focusBorder)); background: color-mix(in srgb, var(--vscode-editorWidget-background) 74%, var(--lineage-accent, var(--vscode-focusBorder))); }
     .hud-shell { width: min(920px, 100%); display: grid; grid-template-columns: minmax(260px, 300px) minmax(360px, 1fr); gap: 16px; align-items: stretch; }
     .monster-card, .systems-card { border: 1px solid color-mix(in srgb, var(--vscode-panel-border) 78%, var(--lineage-accent)); background: color-mix(in srgb, var(--vscode-sideBar-background) 91%, var(--lineage-accent)); border-radius: 8px; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 14px 34px rgba(0,0,0,.18); }
     .monster-card { position: relative; min-height: 420px; display: grid; grid-template-rows: auto 1fr auto auto; gap: 13px; padding: 14px; overflow: hidden; }
@@ -138,17 +139,20 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
     .action-btn.action-primary { border-color: var(--lineage-accent); background: linear-gradient(180deg, color-mix(in srgb, var(--lineage-accent) 38%, var(--vscode-editorWidget-background)), color-mix(in srgb, var(--vscode-sideBar-background) 72%, var(--lineage-accent))); }
     .action-rune { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid color-mix(in srgb, var(--lineage-soft) 60%, var(--vscode-panel-border)); border-radius: 4px; background: color-mix(in srgb, var(--vscode-editor-background) 76%, var(--lineage-soft)); font-family: var(--vscode-editor-font-family); font-size: 10px; font-weight: 800; letter-spacing: 0; }
     .action-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0; }
+    .page-footer { width: min(920px, 100%); color: var(--vscode-descriptionForeground); font-size: 11px; text-align: right; }
     @media (max-width: 680px) {
       .hud-shell { grid-template-columns: 1fr; }
       .stat-deck, .skill-matrix, .meta-strip, .action-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .meta-strip div { border-right: 0; border-bottom: 1px solid var(--vscode-panel-border); }
+      .page-footer { text-align: left; }
     }
   </style>
 </head>
 <body>
+  <main class="page-shell" style="${lineageTheme}">
   <div class="lang-bar">${langButtons}</div>
   <div class="hud-shell">
-    <section class="monster-card" style="${lineageTheme}">
+    <section class="monster-card">
       <div class="card-topline">
         <span class="card-lineage">${lineage}</span>
         <strong class="card-level">Lv.${state.level}</strong>
@@ -166,7 +170,7 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
         <div class="expbar" aria-label="Card EXP"><span style="width:${expPercent}%"></span></div>
       </div>
     </section>
-    <section class="systems-card" style="${lineageTheme}">
+    <section class="systems-card">
       <div class="topline"><strong class="level-badge">Lv.${state.level}</strong><div class="title-stack"><span>Runtime Profile</span><strong>${petName}</strong></div><span class="exp-readout">${state.exp}/${getRequiredExp(state.level)} ${i18n.t('ui.exp')}</span></div>
       <div class="expbar" aria-label="EXP"><span style="width:${expPercent}%"></span></div>
       <div class="stat-deck">
@@ -185,6 +189,8 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
       <div class="action-dock">${actionButtons}</div>
     </section>
   </div>
+  <footer class="page-footer">Copyright 2026 Gitagotchi. All rights reserved.</footer>
+  </main>
   <script nonce="${options.nonce}">
     const vscode = acquireVsCodeApi();
     document.querySelectorAll('button[data-command]').forEach((button) => {
