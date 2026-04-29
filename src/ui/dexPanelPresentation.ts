@@ -27,7 +27,7 @@ function renderEntry(entry: PetDexEntry, index: number): string {
   const lineage = entry.unlocked ? (entry.lineage ?? 'common') : '?';
   const affinity = entry.unlocked ? (entry.affinity ?? 'base') : '?';
   const sprite = entry.unlocked
-    ? renderSpriteHtml(entry.sprite.frames[0], 'dex-sprite', `${entry.id} sprite`)
+    ? renderSpriteHtml(entry.sprite.frames[0], 'dex-sprite', `${entry.id} sprite`, { maxPixelSize: 4 })
     : '<div class="dex-unknown" aria-label="Locked Gitagotchi sprite">?</div>';
 
   return `<article class="dex-card${entry.unlocked ? '' : ' locked'}" style="${getLineageTheme(entry.lineage)}" data-dex-id="${renderHtmlTemplate.escape(entry.id)}" data-unlocked="${entry.unlocked}">
@@ -69,12 +69,12 @@ export function renderDexPanelHtml(options: DexPanelRenderOptions): string {
     .section-heading h2 { margin: 0; font-size: 13px; line-height: 1; text-transform: uppercase; letter-spacing: .08em; }
     .section-heading span { color: var(--vscode-descriptionForeground); font-family: var(--vscode-editor-font-family); font-size: 12px; }
     .dex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(172px, 1fr)); gap: 10px; }
-    .dex-card { position: relative; min-height: 236px; display: grid; grid-template-rows: auto 126px auto auto; gap: 9px; padding: 10px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--vscode-panel-border) 74%, var(--lineage-accent)); border-radius: 8px; background: color-mix(in srgb, var(--vscode-sideBar-background) 90%, var(--lineage-accent)); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
-    .dex-card::before { content: ""; position: absolute; inset: 34px 12px auto; height: 104px; background: radial-gradient(circle, var(--lineage-glow), transparent 70%); pointer-events: none; }
+    .dex-card { position: relative; min-height: 256px; display: grid; grid-template-rows: auto 144px auto auto; gap: 9px; padding: 10px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--vscode-panel-border) 74%, var(--lineage-accent)); border-radius: 8px; background: color-mix(in srgb, var(--vscode-sideBar-background) 90%, var(--lineage-accent)); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
+    .dex-card::before { content: ""; position: absolute; inset: 34px 12px auto; height: 120px; background: radial-gradient(circle, var(--lineage-glow), transparent 70%); pointer-events: none; }
     .dex-card-top, .dex-sprite-stage, .dex-card h3, .dex-tags { position: relative; z-index: 1; }
     .dex-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--vscode-descriptionForeground); font-family: var(--vscode-editor-font-family); font-size: 11px; }
     .dex-card-top strong { color: var(--vscode-foreground); text-transform: uppercase; letter-spacing: .06em; }
-    .dex-sprite-stage { display: grid; place-items: center; min-height: 126px; border: 1px solid color-mix(in srgb, var(--lineage-accent) 40%, var(--vscode-panel-border)); border-radius: 7px; background: color-mix(in srgb, var(--vscode-editorWidget-background) 84%, var(--lineage-accent)); }
+    .dex-sprite-stage { display: grid; place-items: center; min-height: 144px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--lineage-accent) 40%, var(--vscode-panel-border)); border-radius: 7px; background: color-mix(in srgb, var(--vscode-editorWidget-background) 84%, var(--lineage-accent)); }
     .dex-sprite { display: grid; grid-template-columns: repeat(var(--cols), var(--px)); grid-template-rows: repeat(var(--rows), var(--px)); image-rendering: pixelated; filter: drop-shadow(0 8px 0 rgba(0,0,0,.18)) drop-shadow(0 0 12px var(--lineage-glow)); }
     .sprite-pixel { width: var(--px); height: var(--px); }
     .dex-unknown { display: grid; place-items: center; width: 82px; height: 82px; border: 1px dashed color-mix(in srgb, var(--vscode-descriptionForeground) 64%, transparent); border-radius: 8px; color: var(--vscode-descriptionForeground); background: var(--vscode-editor-background); font-family: var(--vscode-editor-font-family); font-size: 46px; font-weight: 800; }

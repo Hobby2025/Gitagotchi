@@ -18,6 +18,8 @@ describe('dex panel', () => {
     expect(html).toContain('data-dex-id="archivox-ultimate-normal"');
     expect((html.match(/data-dex-id="/g) ?? []).length).toBe(33);
     expect(html).toContain('aria-label="egg-common-normal sprite"');
+    expect(html).toContain('aria-label="archivox-ultimate-normal sprite" style="--cols:32;--rows:32;--px:4px"');
+    expect(html).toContain('grid-template-rows: auto 144px auto auto');
   });
 
   it('renders locked entries as question-mark placeholders for future discovery rules', () => {
