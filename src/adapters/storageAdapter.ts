@@ -18,7 +18,7 @@ export class MemoryMemento implements MementoLike {
   }
 }
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 type VersionedState = { _schemaVersion?: number } & Partial<PetState>;
 
@@ -33,8 +33,16 @@ function migrate(saved: VersionedState): VersionedState {
   }
 
   if (version < 2) {
+    saved = {
+      ...saved,
+      _schemaVersion: 2
+    };
+  }
+
+  if (version < 3) {
     return {
       ...saved,
+      discoveredSpriteIds: saved.discoveredSpriteIds ?? ['egg-common-normal'],
       _schemaVersion: SCHEMA_VERSION
     };
   }
@@ -69,6 +77,7 @@ export class PetStateStore {
         ...saved.styleScores
       },
       skills: saved.skills ?? base.skills,
+      discoveredSpriteIds: saved.discoveredSpriteIds ?? base.discoveredSpriteIds,
       species: saved.species ?? base.species,
       logs: saved.logs ?? base.logs
     };

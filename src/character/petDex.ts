@@ -1,6 +1,7 @@
 import { developerToolSpritePacks } from './developerToolSprites';
+import { getDeveloperToolSpritePack } from './developerToolSprites';
 import { SpritePack } from './spriteTypes';
-import { PetAffinity, PetLineage, PetStage } from '../core/petState';
+import { getMoodName, PetAffinity, PetLineage, PetStage, PetState } from '../core/petState';
 
 export type PetDexEntry = {
   id: string;
@@ -12,6 +13,7 @@ export type PetDexEntry = {
 };
 
 export type PetDexOptions = {
+  state?: PetState;
   unlockedIds?: ReadonlySet<string>;
 };
 
@@ -45,6 +47,8 @@ function parseSpriteId(id: string): Omit<PetDexEntry, 'id' | 'sprite' | 'unlocke
 }
 
 export function createPetDexEntries(options: PetDexOptions = {}): PetDexEntry[] {
+  const unlockedIds = options.unlockedIds ?? (options.state ? new Set(options.state.discoveredSpriteIds) : undefined);
+
   return developerToolSpritePacks.map((sprite) => {
     const metadata = parseSpriteId(sprite.id);
 
@@ -52,9 +56,21 @@ export function createPetDexEntries(options: PetDexOptions = {}): PetDexEntry[] 
       id: sprite.id,
       sprite,
       ...metadata,
-      unlocked: options.unlockedIds ? options.unlockedIds.has(sprite.id) : true
+      unlocked: unlockedIds ? unlockedIds.has(sprite.id) : true
     };
   });
+}
+
+export function discoverCurrentPetSprite(state: PetState): PetState {
+  const sprite = getDeveloperToolSpritePack(state, getMoodName(state));
+  if (state.discoveredSpriteIds.includes(sprite.id)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    discoveredSpriteIds: [...state.discoveredSpriteIds, sprite.id]
+  };
 }
 
 export function groupPetDexEntries(entries: PetDexEntry[]): Array<[PetStage, PetDexEntry[]]> {

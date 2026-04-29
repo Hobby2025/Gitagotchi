@@ -48,6 +48,7 @@ describe('adapters', () => {
     expect(loaded.counters.feature).toBe(0);
     expect(loaded.stage).toBe('hatchling');
     expect(loaded.lineage).toBe('buildling');
+    expect(loaded.discoveredSpriteIds).toEqual(['egg-common-normal']);
   });
 
   it('saves state with schema version tag', async () => {
@@ -57,7 +58,7 @@ describe('adapters', () => {
     await store.save({ ...initial, level: 3 });
 
     const raw = memento.get<Record<string, unknown>>('gitagotchi.petState');
-    expect(raw?._schemaVersion).toBe(2);
+    expect(raw?._schemaVersion).toBe(3);
     expect(raw?.level).toBe(3);
   });
 
@@ -85,6 +86,7 @@ describe('adapters', () => {
     expect(reset.stage).toBe('egg');
     expect(reset.lineage).toBeUndefined();
     expect(reset.affinity).toBeUndefined();
+    expect(reset.discoveredSpriteIds).toEqual(['egg-common-normal']);
     expect(reset.hunger).toBe(20);
     expect(reset.lastActiveAt).toBe('2026-04-28T00:00:00.000Z');
     expect(store.load().level).toBe(1);

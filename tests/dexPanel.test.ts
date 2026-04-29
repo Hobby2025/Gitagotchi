@@ -1,4 +1,5 @@
 import { createPetDexEntries } from '../src/character/petDex';
+import { createInitialPetState } from '../src/core/petState';
 import { renderDexPanelHtml } from '../src/ui/dexPanelPresentation';
 
 describe('dex panel', () => {
@@ -34,5 +35,23 @@ describe('dex panel', () => {
     expect(html).toContain('data-dex-id="buildling-hatchling-normal" data-unlocked="false"');
     expect(html).toContain('class="dex-unknown" aria-label="Locked Gitagotchi sprite">?</div>');
     expect(html).toContain('<h3>Unknown pet</h3>');
+  });
+
+  it('renders only discovered state entries when provided by the dex panel', () => {
+    const entries = createPetDexEntries({
+      state: {
+        ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+        discoveredSpriteIds: ['egg-common-normal']
+      }
+    });
+    const html = renderDexPanelHtml({
+      cspSource: 'vscode-resource:',
+      nonce: 'abc',
+      entries
+    });
+
+    expect(html).toContain('1/33 unlocked');
+    expect(html).toContain('data-dex-id="egg-common-normal" data-unlocked="true"');
+    expect(html).toContain('data-dex-id="buildling-hatchling-normal" data-unlocked="false"');
   });
 });

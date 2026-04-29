@@ -59,6 +59,7 @@ export type PetState = {
   species: PetSpecies;
   styleScores: StyleScores;
   skills: PetSkill[];
+  discoveredSpriteIds: string[];
   lastActiveAt: string;
   lastCommitHash?: string;
   counters: PetCounters;
@@ -88,6 +89,7 @@ export function createInitialPetState(now: string = new Date().toISOString()): P
       streak: 0
     },
     skills: [],
+    discoveredSpriteIds: ['egg-common-normal'],
     lastActiveAt: now,
     counters: {
       refactor: 0,

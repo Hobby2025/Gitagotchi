@@ -56,6 +56,7 @@ describe('extension packaging', () => {
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.renamePet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.resetPet');
     expect(statusBarSource).toContain("this.item.command = 'gitagotchi.openPet'");
-    expect(extensionSource).toContain('petPanel.show(store.load())');
+    expect(extensionSource).toContain('discoverCurrentPetSprite(store.load())');
+    expect(extensionSource).toContain('petPanel.show(state)');
   });
 });

@@ -9,6 +9,7 @@ import { applyActivity } from './core/growthEngine';
 import { clampStat, PetState } from './core/petState';
 import { createI18n, I18n } from './i18n';
 import { getGithubIdentity } from './leaderboard/githubAuth';
+import { discoverCurrentPetSprite } from './character/petDex';
 import { GithubGistLeaderboardAdapter } from './leaderboard/githubGistAdapter';
 import { createEmptyLeaderboardDocument } from './leaderboard/leaderboardModel';
 import { getLeaderboardConfig, updateLeaderboardRoomConfig } from './leaderboard/leaderboardConfig';
@@ -35,9 +36,11 @@ type Runtime = {
 };
 
 async function persistAndRender(runtime: Runtime, state: PetState): Promise<void> {
-  await runtime.store.save(state);
-  runtime.statusBar.update(state);
-  runtime.petPanel.update(state);
+  const discovered = discoverCurrentPetSprite(state);
+  await runtime.store.save(discovered);
+  runtime.statusBar.update(discovered);
+  runtime.petPanel.update(discovered);
+  runtime.dex.update(discovered);
 }
 
 async function applyEvent(runtime: Runtime, event: ActivityEvent): Promise<void> {
@@ -263,12 +266,20 @@ export function activate(context: vscode.ExtensionContext): void {
   };
 
   context.subscriptions.push(statusBar);
-  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openPet', () => petPanel.show(store.load())));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openPet', async () => {
+    const state = discoverCurrentPetSprite(store.load());
+    await store.save(state);
+    petPanel.show(state);
+  }));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.renamePet', () => renamePet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.resetPet', () => resetPet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.feed', () => feed(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewStats', () => logs.show(store.load())));
-  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openDex', () => dex.show()));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openDex', async () => {
+    const state = discoverCurrentPetSprite(store.load());
+    await store.save(state);
+    dex.show(state);
+  }));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.checkCommit', () => checkCommit(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.leaderboard', () => showLeaderboard(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.createLeaderboard', () => createLeaderboard(runtime)));
