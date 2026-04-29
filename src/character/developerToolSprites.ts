@@ -353,14 +353,18 @@ function lineageFromStyle(style: StyleScoreKey): PetLineage {
 }
 
 const eggPixels = [
-  '..kkkk..',
-  '.kyyyyk.',
-  'kyyggyyk',
-  'kygkkgyk',
-  'kygkkgyk',
-  'kyyggyyk',
-  '.kyyyyk.',
-  '..kkkk..'
+  '....kkkk....',
+  '...kyyyyk...',
+  '..kyywwyyk..',
+  '.kyygccgyyk.',
+  '.kygcsscgyk.',
+  'kyygskksgyyk',
+  'kyygskksgyyk',
+  '.kygcsscgyk.',
+  '.kyygccgyyk.',
+  '..kyywwyyk..',
+  '...kyssyk...',
+  '....kkkk....'
 ];
 
 const lineageOrder: PetLineage[] = ['buildling', 'refact', 'debugon', 'archivox'];

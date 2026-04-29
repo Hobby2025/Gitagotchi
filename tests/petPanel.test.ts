@@ -1,4 +1,4 @@
-import { createInitialPetState } from '../src/core/petState';
+﻿import { createInitialPetState } from '../src/core/petState';
 import { createI18n } from '../src/i18n';
 import { renderPetPanelHtml } from '../src/ui/petPanelPresentation';
 
@@ -36,6 +36,26 @@ describe('pet panel', () => {
     expect(html).toContain('data-command="createLeaderboard"');
     expect(html).toContain('data-command="rename"');
     expect(html).toContain('data-command="reset"');
+  });
+
+  it('renders action controls as themed game commands', () => {
+    const state = {
+      ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+      name: 'Arc'
+    };
+
+    const html = renderPetPanelHtml(state, createI18n('ko'), {
+      cspSource: 'vscode-resource:',
+      nonce: 'abc'
+    });
+
+    expect(html).toContain('class="action-dock"');
+    expect(html).toContain('class="action-btn action-primary" data-command="feed"');
+    expect(html).toContain('class="action-btn" data-command="commit"');
+    expect(html).toContain('class="action-rune">FD</span>');
+    expect(html).toContain('class="action-rune">GC</span>');
+    expect(html).toContain('<span class="action-label">먹이 주기</span>');
+    expect(html).toContain('<span class="action-label">커밋 확인</span>');
   });
 
   it('scales ultimate pixel art into the pet stage', () => {

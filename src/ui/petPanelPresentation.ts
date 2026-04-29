@@ -82,6 +82,18 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
       return `<div class="skill-node"><span>${i18n.t(`style.${key}`)}</span><strong>${value}</strong><i style="width:${percent}%"></i></div>`;
     })
     .join('');
+  const actions = [
+    { command: 'feed', rune: 'FD', label: i18n.t('ui.feed'), primary: true },
+    { command: 'commit', rune: 'GC', label: i18n.t('ui.commit') },
+    { command: 'stats', rune: 'ST', label: i18n.t('ui.viewStats') },
+    { command: 'leaderboard', rune: 'LB', label: i18n.t('ui.leaderboard') },
+    { command: 'createLeaderboard', rune: 'RM', label: i18n.t('ui.createLeaderboard') },
+    { command: 'rename', rune: 'RN', label: 'Rename' },
+    { command: 'reset', rune: 'RS', label: 'Reset' }
+  ];
+  const actionButtons = actions
+    .map((action) => `<button class="action-btn${action.primary ? ' action-primary' : ''}" data-command="${action.command}"><span class="action-rune">${action.rune}</span><span class="action-label">${action.label}</span></button>`)
+    .join('');
 
   const flags: Record<string, string> = { en: '🇺🇸', ko: '🇰🇷', ja: '🇯🇵', zh: '🇨🇳' };
   const langButtons = (['en', 'ko', 'ja', 'zh'] as const)
@@ -143,13 +155,18 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
     .skill-matrix { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
     .skill-node { min-height: 58px; padding: 8px; }
     .skill-node i { background: var(--lineage-soft); }
-    .action-dock { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 2px; }
-    button { min-height: 32px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--vscode-button-border, transparent); color: var(--vscode-button-foreground); background: var(--vscode-button-background); font-size: 12px; white-space: nowrap; transition: transform .16s ease, background .16s ease; }
+    .action-dock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding-top: 2px; }
+    button { min-height: 32px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--vscode-button-border, transparent); color: var(--vscode-button-foreground); background: var(--vscode-button-background); font-size: 12px; white-space: nowrap; transition: transform .16s ease, background .16s ease, border-color .16s ease; }
     button:hover { background: var(--vscode-button-hoverBackground); }
     button:active { transform: translateY(1px) scale(.99); }
+    .action-btn { min-height: 44px; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 7px; align-items: center; padding: 7px 8px; border-color: color-mix(in srgb, var(--lineage-accent) 48%, var(--vscode-panel-border)); background: linear-gradient(180deg, color-mix(in srgb, var(--vscode-editorWidget-background) 84%, var(--lineage-accent)), color-mix(in srgb, var(--vscode-sideBar-background) 88%, var(--lineage-accent))); color: var(--vscode-foreground); box-shadow: inset 0 1px 0 rgba(255,255,255,.07); }
+    .action-btn:hover { border-color: var(--lineage-accent); background: color-mix(in srgb, var(--vscode-editorWidget-background) 74%, var(--lineage-accent)); }
+    .action-btn.action-primary { border-color: var(--lineage-accent); background: linear-gradient(180deg, color-mix(in srgb, var(--lineage-accent) 38%, var(--vscode-editorWidget-background)), color-mix(in srgb, var(--vscode-sideBar-background) 72%, var(--lineage-accent))); }
+    .action-rune { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid color-mix(in srgb, var(--lineage-soft) 60%, var(--vscode-panel-border)); border-radius: 4px; background: color-mix(in srgb, var(--vscode-editor-background) 76%, var(--lineage-soft)); font-family: var(--vscode-editor-font-family); font-size: 10px; font-weight: 800; letter-spacing: 0; }
+    .action-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0; }
     @media (max-width: 680px) {
       .hud-shell { grid-template-columns: 1fr; }
-      .stat-deck, .skill-matrix, .meta-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stat-deck, .skill-matrix, .meta-strip, .action-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .meta-strip div { border-right: 0; border-bottom: 1px solid var(--vscode-panel-border); }
     }
   </style>
@@ -191,15 +208,7 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
         <div><span>${i18n.t('ui.affinity')}</span><strong>${affinity}</strong></div>
       </div>
       <div class="skill-matrix">${styleRows}</div>
-      <div class="action-dock">
-        <button data-command="feed">${i18n.t('ui.feed')}</button>
-        <button data-command="commit">${i18n.t('ui.commit')}</button>
-        <button data-command="stats">${i18n.t('ui.viewStats')}</button>
-        <button data-command="leaderboard">${i18n.t('ui.leaderboard')}</button>
-        <button data-command="createLeaderboard">${i18n.t('ui.createLeaderboard')}</button>
-        <button data-command="rename">Rename</button>
-        <button data-command="reset">Reset</button>
-      </div>
+      <div class="action-dock">${actionButtons}</div>
     </section>
   </div>
   <script nonce="${options.nonce}">

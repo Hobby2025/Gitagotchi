@@ -12,7 +12,7 @@ describe('LittleJS renderer', () => {
 
     expect(html).toContain('id="gitagotchi-littlejs"');
     expect(html).toContain('type="application/json"');
-    expect(html).toContain('"width":8');
+    expect(html).toContain('"width":12');
     expect(html).toContain('vscode-resource:/gitagotchiLittleJsRuntime.js');
   });
 

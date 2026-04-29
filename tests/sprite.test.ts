@@ -26,6 +26,17 @@ describe('sprite packs', () => {
     expect(sprite.frames[0].pixels.every((row) => row.length === sprite.frames[0].width)).toBe(true);
   });
 
+  it('renders the starter egg as a detailed kernel sprite', () => {
+    const sprite = getPetSpritePack(createInitialPetState('2026-04-28T00:00:00.000Z'), 'normal');
+    const frame = sprite.frames[0];
+    const usedTokens = new Set(frame.pixels.join('').replaceAll('.', '').split(''));
+
+    expect(frame.width).toBe(12);
+    expect(frame.height).toBe(12);
+    expect(usedTokens.size).toBeGreaterThanOrEqual(6);
+    expect(frame.pixels.join('|')).toContain('gskksg');
+  });
+
   it('selects developer-tool creature sprites from pet state', () => {
     const base = createInitialPetState('2026-04-28T00:00:00.000Z');
 
