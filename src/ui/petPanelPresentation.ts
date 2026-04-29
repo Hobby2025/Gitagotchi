@@ -12,6 +12,7 @@ import { renderHtmlTemplate } from "./webviewSecurity";
 export type PetPanelRenderOptions = {
   cspSource: string;
   nonce: string;
+  now?: Date;
 };
 
 function meterClass(value: number, inverted = false): string {
@@ -61,6 +62,19 @@ function getLineageTheme(lineage?: PetLineage): string {
   return `--lineage-accent:${theme.accent};--lineage-glow:${theme.glow};--lineage-soft:${theme.soft}`;
 }
 
+function getLocalDayKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function wasPattedToday(state: PetState, now: Date): boolean {
+  return state.lastPattedAt
+    ? getLocalDayKey(new Date(state.lastPattedAt)) === getLocalDayKey(now)
+    : false;
+}
+
 export function renderPetPanelHtml(
   state: PetState,
   i18n: I18n,
@@ -85,6 +99,10 @@ export function renderPetPanelHtml(
   const lineage = renderHtmlTemplate.escape(state.lineage ?? "unbranched");
   const affinity = renderHtmlTemplate.escape(state.affinity ?? "unfocused");
   const lineageTheme = getLineageTheme(state.lineage);
+  const pattedTodayLabel = renderHtmlTemplate.escape(i18n.t("ui.pattedToday"));
+  const patHeart = wasPattedToday(state, options.now ?? new Date())
+    ? `<div class="pixel-heart" aria-label="${pattedTodayLabel}" title="${pattedTodayLabel}"><span class="heart-pixel heart-1"></span><span class="heart-pixel heart-2"></span><span class="heart-pixel heart-3"></span><span class="heart-pixel heart-4"></span><span class="heart-pixel heart-5"></span><span class="heart-pixel heart-6"></span><span class="heart-pixel heart-7"></span><span class="heart-pixel heart-8"></span><span class="heart-pixel heart-9"></span></div>`
+    : "";
   const expPercent = Math.min(
     100,
     Math.round((state.exp / getRequiredExp(state.level)) * 100),
@@ -101,7 +119,7 @@ export function renderPetPanelHtml(
     })
     .join("");
   const actions = [
-    { command: "feed", rune: "FD", label: i18n.t("ui.feed"), primary: true },
+    { command: "pat", rune: "PT", label: i18n.t("ui.pat"), primary: true },
     { command: "commit", rune: "GC", label: i18n.t("ui.commit") },
     { command: "stats", rune: "ST", label: i18n.t("ui.viewStats") },
     { command: "dex", rune: "DX", label: "Dex" },
@@ -127,6 +145,15 @@ export function renderPetPanelHtml(
         `<button class="lang-btn ${locale === i18n.locale ? "active" : ""}" data-locale="${locale}" title="${locale.toUpperCase()}">${languageLabels[locale]}</button>`,
     )
     .join("");
+  const helpLabel = renderHtmlTemplate.escape(i18n.t("ui.help"));
+  const guideTitle = renderHtmlTemplate.escape(i18n.t("guide.title"));
+  const guideGrowthTitle = renderHtmlTemplate.escape(i18n.t("guide.growthTitle"));
+  const guideGrowthBody = renderHtmlTemplate.escape(i18n.t("guide.growthBody"));
+  const guideUsageTitle = renderHtmlTemplate.escape(i18n.t("guide.usageTitle"));
+  const guideUsageBody = renderHtmlTemplate.escape(i18n.t("guide.usageBody"));
+  const guidePatTitle = renderHtmlTemplate.escape(i18n.t("guide.patTitle"));
+  const guidePatBody = renderHtmlTemplate.escape(i18n.t("guide.patBody"));
+  const guideClose = renderHtmlTemplate.escape(i18n.t("guide.close"));
 
   return `<!doctype html>
 <html lang="en">
@@ -137,10 +164,12 @@ export function renderPetPanelHtml(
     * { box-sizing: border-box; }
     body { color: var(--vscode-foreground); font-family: var(--vscode-font-family); margin: 0; padding: 20px; background: var(--vscode-editor-background); }
     .page-shell { width: min(920px, 100%); display: grid; gap: 12px; }
-    .lang-bar { display: flex; justify-content: flex-end; gap: 6px; }
+    .lang-bar { display: flex; justify-content: flex-end; gap: 6px; align-items: center; }
     .lang-btn { min-width: 36px; min-height: 28px; padding: 4px 7px; font-family: var(--vscode-editor-font-family); font-size: 11px; font-weight: 800; line-height: 1; background: var(--vscode-editorWidget-background); color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-panel-border); border-radius: 4px; cursor: pointer; opacity: 0.74; transition: opacity .15s ease, color .15s ease, border-color .15s ease, background .15s ease; }
     .lang-btn:hover { opacity: 1; color: var(--vscode-foreground); border-color: var(--lineage-accent, var(--vscode-focusBorder)); }
     .lang-btn.active { opacity: 1; color: var(--vscode-foreground); border-color: var(--lineage-accent, var(--vscode-focusBorder)); background: color-mix(in srgb, var(--vscode-editorWidget-background) 74%, var(--lineage-accent, var(--vscode-focusBorder))); }
+    .guide-btn { width: 28px; min-width: 28px; height: 28px; min-height: 28px; padding: 0; display: grid; place-items: center; border-radius: 999px; font-family: var(--vscode-editor-font-family); font-size: 13px; font-weight: 900; line-height: 1; color: var(--vscode-foreground); background: color-mix(in srgb, var(--vscode-editorWidget-background) 76%, var(--lineage-accent)); border: 1px solid color-mix(in srgb, var(--lineage-accent) 60%, var(--vscode-panel-border)); cursor: pointer; opacity: .86; }
+    .guide-btn:hover { opacity: 1; border-color: var(--lineage-accent); background: color-mix(in srgb, var(--vscode-editorWidget-background) 64%, var(--lineage-accent)); }
     .hud-shell { width: min(920px, 100%); display: grid; grid-template-columns: minmax(260px, 300px) minmax(360px, 1fr); gap: 16px; align-items: stretch; }
     .monster-card, .systems-card { border: 1px solid color-mix(in srgb, var(--vscode-panel-border) 78%, var(--lineage-accent)); background: color-mix(in srgb, var(--vscode-sideBar-background) 91%, var(--lineage-accent)); border-radius: 8px; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 14px 34px rgba(0,0,0,.18); }
     .monster-card { position: relative; min-height: 420px; display: grid; grid-template-rows: auto 1fr auto auto; gap: 13px; padding: 14px; overflow: hidden; }
@@ -153,6 +182,18 @@ export function renderPetPanelHtml(
     .sprite-stage { align-self: center; justify-self: center; display: grid; place-items: center; width: 190px; height: 190px; border: 1px solid color-mix(in srgb, var(--lineage-accent) 42%, transparent); border-radius: 8px; background: radial-gradient(circle at 50% 58%, var(--lineage-glow), transparent 66%), linear-gradient(180deg, color-mix(in srgb, var(--vscode-editorWidget-background) 78%, var(--lineage-accent)), transparent); }
     .monster-sprite { display: grid; grid-template-columns: repeat(var(--cols), var(--px)); grid-template-rows: repeat(var(--rows), var(--px)); gap: 0; image-rendering: pixelated; filter: drop-shadow(0 12px 0 rgba(0,0,0,.26)) drop-shadow(0 0 16px var(--lineage-glow)); animation: bob 1.8s ease-in-out infinite; }
     .sprite-pixel { width: var(--px); height: var(--px); }
+    .pixel-heart { position: absolute; z-index: 2; right: 34px; top: 54px; display: grid; grid-template-columns: repeat(5, 5px); grid-template-rows: repeat(5, 5px); width: 25px; height: 25px; image-rendering: pixelated; filter: drop-shadow(0 0 7px rgba(251,113,133,.55)); animation: heart-float 1.6s ease-in-out infinite; pointer-events: none; }
+    .heart-pixel { width: 5px; height: 5px; background: #fb7185; box-shadow: inset -1px -1px 0 rgba(159,18,57,.45); }
+    .heart-1 { grid-column: 2; grid-row: 1; }
+    .heart-2 { grid-column: 4; grid-row: 1; }
+    .heart-3 { grid-column: 1; grid-row: 2; }
+    .heart-4 { grid-column: 2; grid-row: 2; }
+    .heart-5 { grid-column: 3; grid-row: 2; }
+    .heart-6 { grid-column: 4; grid-row: 2; }
+    .heart-7 { grid-column: 5; grid-row: 2; }
+    .heart-8 { grid-column: 2 / span 3; grid-row: 3; width: 15px; }
+    .heart-9 { grid-column: 3; grid-row: 4; }
+    @keyframes heart-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     .nameplate { width: 100%; display: grid; gap: 7px; justify-items: center; padding: 10px 8px; border-top: 1px solid color-mix(in srgb, var(--lineage-accent) 40%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--lineage-accent) 40%, transparent); background: color-mix(in srgb, var(--vscode-editorWidget-background) 74%, transparent); }
     .name { margin: 0; max-width: 100%; overflow-wrap: anywhere; font-size: 25px; line-height: 1.05; text-align: center; letter-spacing: 0; }
@@ -194,6 +235,17 @@ export function renderPetPanelHtml(
     .action-rune { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid color-mix(in srgb, var(--lineage-soft) 60%, var(--vscode-panel-border)); border-radius: 4px; background: color-mix(in srgb, var(--vscode-editor-background) 76%, var(--lineage-soft)); font-family: var(--vscode-editor-font-family); font-size: 10px; font-weight: 800; letter-spacing: 0; }
     .action-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0; }
     .page-footer { width: min(920px, 100%); color: var(--vscode-descriptionForeground); font-size: 11px; text-align: right; }
+    .guide-overlay[hidden] { display: none; }
+    .guide-overlay { position: fixed; inset: 0; z-index: 20; display: grid; place-items: start center; padding: 58px 20px 20px; background: rgba(0,0,0,.32); }
+    .guide-panel { width: min(520px, 100%); border: 1px solid color-mix(in srgb, var(--lineage-accent) 56%, var(--vscode-panel-border)); border-radius: 8px; background: var(--vscode-editorWidget-background); color: var(--vscode-foreground); box-shadow: 0 18px 48px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.06); overflow: hidden; }
+    .guide-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--vscode-panel-border); background: color-mix(in srgb, var(--vscode-editorWidget-background) 80%, var(--lineage-accent)); }
+    .guide-header h2 { margin: 0; font-size: 15px; line-height: 1.25; letter-spacing: 0; }
+    .guide-close { width: 28px; min-width: 28px; height: 28px; min-height: 28px; padding: 0; border-radius: 999px; display: grid; place-items: center; font-size: 16px; line-height: 1; }
+    .guide-body { display: grid; gap: 12px; padding: 14px; }
+    .guide-section { display: grid; gap: 5px; padding-bottom: 11px; border-bottom: 1px solid color-mix(in srgb, var(--vscode-panel-border) 72%, transparent); }
+    .guide-section:last-child { padding-bottom: 0; border-bottom: 0; }
+    .guide-section h3 { margin: 0; color: var(--lineage-accent); font-size: 12px; line-height: 1.25; letter-spacing: 0; }
+    .guide-section p { margin: 0; color: var(--vscode-descriptionForeground); font-size: 12px; line-height: 1.55; }
     @media (max-width: 680px) {
       .hud-shell { grid-template-columns: 1fr; }
       .stat-deck, .skill-matrix, .meta-strip, .action-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -204,14 +256,27 @@ export function renderPetPanelHtml(
 </head>
 <body>
   <main class="page-shell" style="${lineageTheme}">
-  <div class="lang-bar">${langButtons}</div>
+  <div class="lang-bar">${langButtons}<button class="guide-btn" type="button" data-guide-open aria-label="${helpLabel}" title="${helpLabel}">?</button></div>
+  <section id="guide-panel" class="guide-overlay" hidden aria-label="${guideTitle}">
+    <div class="guide-panel" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+      <div class="guide-header">
+        <h2 id="guide-title">${guideTitle}</h2>
+        <button class="guide-close" type="button" data-guide-close aria-label="${guideClose}" title="${guideClose}">×</button>
+      </div>
+      <div class="guide-body">
+        <section class="guide-section"><h3>${guideGrowthTitle}</h3><p>${guideGrowthBody}</p></section>
+        <section class="guide-section"><h3>${guideUsageTitle}</h3><p>${guideUsageBody}</p></section>
+        <section class="guide-section"><h3>${guidePatTitle}</h3><p>${guidePatBody}</p></section>
+      </div>
+    </div>
+  </section>
   <div class="hud-shell">
     <section class="monster-card">
       <div class="card-topline">
         <span class="card-lineage">${lineage}</span>
         <strong class="card-level">Lv.${state.level}</strong>
       </div>
-      <div class="sprite-stage">${pet}</div>
+      <div class="sprite-stage">${pet}${patHeart}</div>
       <div class="nameplate">
         <h1 class="name">${petName}</h1>
         <div class="callsign">Gitagotchi Lv.${state.level}</div>
@@ -252,6 +317,27 @@ export function renderPetPanelHtml(
     });
     document.querySelectorAll('button[data-locale]').forEach((button) => {
       button.addEventListener('click', () => vscode.postMessage({ command: 'changeLanguage', locale: button.dataset.locale }));
+    });
+    const guidePanel = document.getElementById('guide-panel');
+    const guideOpen = document.querySelector('[data-guide-open]');
+    const guideCloseButtons = document.querySelectorAll('[data-guide-close]');
+    guideOpen?.addEventListener('click', () => {
+      guidePanel.hidden = false;
+    });
+    guideCloseButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        guidePanel.hidden = true;
+      });
+    });
+    guidePanel?.addEventListener('click', (event) => {
+      if (event.target === guidePanel) {
+        guidePanel.hidden = true;
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && guidePanel && !guidePanel.hidden) {
+        guidePanel.hidden = true;
+      }
     });
   </script>
 </body>

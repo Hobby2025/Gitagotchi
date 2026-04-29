@@ -1,4 +1,4 @@
-import { createInitialPetState } from "../src/core/petState";
+﻿import { createInitialPetState } from "../src/core/petState";
 import { createI18n } from "../src/i18n";
 import { renderPetPanelHtml } from "../src/ui/petPanelPresentation";
 
@@ -18,6 +18,27 @@ describe("pet panel chrome", () => {
     expect(html).toContain('data-locale="ko" title="KO">KO</button>');
     expect(html).toContain('data-locale="ja" title="JA">JA</button>');
     expect(html).toContain('data-locale="zh" title="ZH">ZH</button>');
+  });
+
+  it("renders a localized help button and guide next to language controls", () => {
+    const html = renderPetPanelHtml(
+      createInitialPetState("2026-04-28T00:00:00.000Z"),
+      createI18n("ko"),
+      {
+        cspSource: "vscode-resource:",
+        nonce: "abc",
+      },
+    );
+
+    expect(html).toContain('class="guide-btn"');
+    expect(html).toContain('aria-label="도움말"');
+    expect(html).toContain('title="도움말">?</button>');
+    expect(html).toContain('id="guide-panel"');
+    expect(html).toContain('Gitagotchi 가이드');
+    expect(html).toContain('성장 방향');
+    expect(html).toContain('커밋, 코드 변경, 문제 해결로 경험치와 스타일 점수를 얻습니다.');
+    expect(html).toContain('data-guide-open');
+    expect(html).toContain('data-guide-close');
   });
 
   it("renders a page footer copyright notice", () => {

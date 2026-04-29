@@ -5,28 +5,30 @@ import { resolveEvolution } from '../src/core/evolutionEngine';
 
 describe('level design and life cycle', () => {
   it('uses a steeper level curve after the first level', () => {
-    expect(getRequiredExp(1)).toBe(100);
-    expect(getRequiredExp(2)).toBe(135);
-    expect(getRequiredExp(5)).toBe(330);
-    expect(getRequiredExp(10)).toBe(975);
-    expect(getRequiredExp(20)).toBe(3465);
-    expect(getRequiredExp(30)).toBe(7625);
+    expect(getRequiredExp(1)).toBe(250);
+    expect(getRequiredExp(2)).toBe(400);
+    expect(getRequiredExp(5)).toBe(1100);
+    expect(getRequiredExp(10)).toBe(3500);
+    expect(getRequiredExp(20)).toBe(13000);
+    expect(getRequiredExp(30)).toBe(30000);
+    expect(getRequiredExp(50)).toBe(90000);
+    expect(getRequiredExp(90)).toBe(300000);
   });
 
   it('requires care gates for advanced evolutions', () => {
     const base = createInitialPetState('2026-04-27T00:00:00.000Z');
 
-    expect(resolveEvolution({ ...base, level: 10, mood: 20, energy: 80, health: 80 }).evolution).toBe('junior');
-    expect(resolveEvolution({ ...base, level: 10, mood: 55, energy: 35, health: 80 }).evolution).toBe('mid');
-    expect(resolveEvolution({ ...base, level: 20, mood: 80, energy: 80, health: 45 }).evolution).toBe('mid');
+    expect(resolveEvolution({ ...base, level: 30, mood: 20, energy: 80, health: 80 }).evolution).toBe('junior');
+    expect(resolveEvolution({ ...base, level: 30, mood: 55, energy: 35, health: 80 }).evolution).toBe('mid');
+    expect(resolveEvolution({ ...base, level: 60, mood: 80, energy: 80, health: 45 }).evolution).toBe('mid');
     expect(resolveEvolution({
       ...base,
-      level: 30,
+      level: 90,
       mood: 80,
       energy: 80,
       health: 80,
-      counters: { refactor: 8, feature: 8, debug: 4 },
-      styleScores: { builder: 120, cleaner: 120, debugger: 120, scholar: 120, streak: 120 }
+      counters: { refactor: 35, feature: 35, debug: 20 },
+      styleScores: { builder: 300, cleaner: 300, debugger: 300, scholar: 300, streak: 300 }
     }).evolution).toBe('architect');
   });
 

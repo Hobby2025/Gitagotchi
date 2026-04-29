@@ -12,6 +12,9 @@ describe('i18n', () => {
 
   it('translates UI labels for Korean, English, Japanese, and Chinese', () => {
     expect(createI18n('ko').t('ui.mood')).toBe('기분');
+    expect(createI18n('ko').t('ui.pat')).toBe('만져주기');
+    expect(createI18n('ko').t('ui.help')).toBe('도움말');
+    expect(createI18n('en').t('guide.title')).toBe('Gitagotchi Guide');
     expect(createI18n('en').t('ui.mood')).toBe('Mood');
     expect(createI18n('ja').t('ui.mood')).toBe('気分');
     expect(createI18n('zh').t('ui.mood')).toBe('心情');

@@ -29,7 +29,7 @@ describe('pet panel', () => {
     expect(html).toContain('Commit Streak');
     expect(html).toContain('Mood');
     expect(html).toContain('Hunger');
-    expect(html).toContain('data-command="feed"');
+    expect(html).toContain('data-command="pat"');
     expect(html).toContain('data-command="commit"');
     expect(html).toContain('data-command="stats"');
     expect(html).toContain('data-command="dex"');
@@ -51,12 +51,12 @@ describe('pet panel', () => {
     });
 
     expect(html).toContain('class="action-dock"');
-    expect(html).toContain('class="action-btn action-primary" data-command="feed"');
+    expect(html).toContain('class="action-btn action-primary" data-command="pat"');
     expect(html).toContain('class="action-btn" data-command="commit"');
-    expect(html).toContain('class="action-rune">FD</span>');
+    expect(html).toContain('class="action-rune">PT</span>');
     expect(html).toContain('class="action-rune">GC</span>');
     expect(html).toContain('class="action-rune">DX</span>');
-    expect(html).toContain('<span class="action-label">먹이 주기</span>');
+    expect(html).toContain('<span class="action-label">만져주기</span>');
     expect(html).toContain('<span class="action-label">커밋 확인</span>');
   });
 
@@ -106,5 +106,40 @@ describe('pet panel', () => {
     expect(html).toContain('class="card-lineage">debugon</span>');
     expect(html).toContain('class="affinity-chip">debugger</span>');
     expect(html).toContain('class="card-rarity">specialist</span>');
+  });
+
+  it('shows a dotted heart next to the character on the day the pet was patted', () => {
+    const state = {
+      ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+      lastPattedAt: '2026-04-29T00:00:00.000Z'
+    };
+
+    const html = renderPetPanelHtml(state, createI18n('en'), {
+      cspSource: 'vscode-resource:',
+      nonce: 'abc',
+      now: new Date('2026-04-29T12:00:00+09:00')
+    });
+
+    expect(html).toContain('<div class="sprite-stage">');
+    expect(html).toContain('class="pixel-heart"');
+    expect(html).toContain('class="heart-pixel heart-1"');
+    expect(html).toMatch(/<div class="sprite-stage">[\s\S]*monster-sprite[\s\S]*pixel-heart[\s\S]*<\/div>/);
+    expect(html).toContain('aria-label="Patted today"');
+    expect(html).not.toContain('class="pat-heart"');
+  });
+
+  it('does not show the floating heart after the pat day passes', () => {
+    const state = {
+      ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+      lastPattedAt: '2026-04-29T00:00:00.000Z'
+    };
+
+    const html = renderPetPanelHtml(state, createI18n('en'), {
+      cspSource: 'vscode-resource:',
+      nonce: 'abc',
+      now: new Date('2026-04-30T12:00:00+09:00')
+    });
+
+    expect(html).not.toContain('class="pixel-heart"');
   });
 });

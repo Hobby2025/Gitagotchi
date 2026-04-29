@@ -61,12 +61,13 @@ export type PetState = {
   skills: PetSkill[];
   discoveredSpriteIds: string[];
   lastActiveAt: string;
+  lastPattedAt?: string;
   lastCommitHash?: string;
   counters: PetCounters;
   logs: PetLogEntry[];
 };
 
-export const DEFAULT_LEVEL_EXP = 100;
+export const DEFAULT_LEVEL_EXP = 250;
 
 export function createInitialPetState(now: string = new Date().toISOString()): PetState {
   return {
@@ -106,20 +107,22 @@ export function clampStat(value: number): number {
 
 export function getRequiredExp(level: number): number {
   const exactCurve: Record<number, number> = {
-    1: 100,
-    2: 135,
-    5: 330,
-    10: 975,
-    20: 3465,
-    30: 7625
+    1: 250,
+    2: 400,
+    5: 1100,
+    10: 3500,
+    20: 13000,
+    30: 30000,
+    50: 90000,
+    90: 300000
   };
 
   if (exactCurve[level]) {
     return exactCurve[level];
   }
 
-  const scaled = DEFAULT_LEVEL_EXP + Math.pow(Math.max(0, level - 1), 2.08) * 25 + Math.max(0, level - 1) * 10;
-  return Math.round(scaled / 5) * 5;
+  const scaled = DEFAULT_LEVEL_EXP + Math.pow(Math.max(0, level - 1), 2.32) * 96 + Math.max(0, level - 1) * 75;
+  return Math.round(scaled / 25) * 25;
 }
 
 export function getMoodName(state: PetState): PetMood {

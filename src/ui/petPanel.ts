@@ -26,8 +26,8 @@ export class GitagotchiPetPanel {
       );
 
       this.panel.webview.onDidReceiveMessage((message: { command?: string; locale?: string }) => {
-        if (message.command === 'feed') {
-          void vscode.commands.executeCommand('gitagotchi.feed');
+        if (message.command === 'pat') {
+          void vscode.commands.executeCommand('gitagotchi.patPet');
         }
         if (message.command === 'commit') {
           void vscode.commands.executeCommand('gitagotchi.checkCommit');

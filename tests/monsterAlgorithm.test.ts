@@ -43,8 +43,8 @@ describe('monster-style growth algorithm', () => {
 
     expect(resolveMonsterIdentity({
       ...base,
-      level: 31,
-      styleScores: { builder: 40, cleaner: 40, debugger: 40, scholar: 40, streak: 160 }
+      level: 90,
+      styleScores: { builder: 40, cleaner: 40, debugger: 40, scholar: 40, streak: 320 }
     }).species).toBe('architect-drake');
   });
 

@@ -5,8 +5,9 @@ import { PetStateStore } from './adapters/storageAdapter';
 import { registerDebouncedSaveHandler, registerInterval } from './adapters/vscodeEventAdapter';
 import { analyzeDiff } from './core/diffAnalyzer';
 import { ActivityEvent } from './core/events';
+import { applyDailyPat } from './core/dailyPat';
 import { applyActivity } from './core/growthEngine';
-import { clampStat, PetState } from './core/petState';
+import { PetState } from './core/petState';
 import { createI18n, I18n } from './i18n';
 import { discoverCurrentPetSprite } from './character/petDex';
 import { GitagotchiDexPanel } from './ui/dexPanel';
@@ -51,7 +52,7 @@ async function checkDiff(runtime: Runtime): Promise<void> {
       occurredAt: new Date().toISOString()
     });
   } catch {
-    // Git is optional: non-repository workspaces simply do not feed diff events.
+    // Git is optional: non-repository workspaces simply do not apply diff events.
   }
 }
 
@@ -89,18 +90,9 @@ async function applyIdle(runtime: Runtime): Promise<void> {
   });
 }
 
-async function feed(runtime: Runtime): Promise<void> {
-  const state = runtime.store.load();
-  await persistAndRender(runtime, {
-    ...state,
-    hunger: clampStat(state.hunger - 20),
-    mood: clampStat(state.mood + 5),
-    logs: [{
-      message: runtime.i18n.t('log.fed'),
-      expDelta: 0,
-      occurredAt: new Date().toISOString()
-    }, ...state.logs].slice(0, 20)
-  });
+async function patPet(runtime: Runtime): Promise<void> {
+  const next = applyDailyPat(runtime.store.load(), new Date(), runtime.i18n);
+  await persistAndRender(runtime, next);
 }
 
 async function renamePet(runtime: Runtime, prompt = 'Name your Gitagotchi'): Promise<void> {
@@ -173,7 +165,7 @@ export function activate(context: vscode.ExtensionContext): void {
   }));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.renamePet', () => renamePet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.resetPet', () => resetPet(runtime)));
-  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.feed', () => feed(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.patPet', () => patPet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewStats', () => logs.show(store.load())));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openDex', async () => {
     const state = discoverCurrentPetSprite(store.load());

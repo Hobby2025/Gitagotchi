@@ -14,11 +14,21 @@ type TranslationKey =
   | 'ui.type'
   | 'ui.skills'
   | 'ui.styleScores'
-  | 'ui.feed'
+  | 'ui.pat'
+  | 'ui.pattedToday'
+  | 'ui.help'
   | 'ui.commit'
   | 'ui.viewStats'
   | 'ui.logsTitle'
   | 'ui.noActivity'
+  | 'guide.title'
+  | 'guide.growthTitle'
+  | 'guide.growthBody'
+  | 'guide.usageTitle'
+  | 'guide.usageBody'
+  | 'guide.patTitle'
+  | 'guide.patBody'
+  | 'guide.close'
   | 'status.tooltip'
   | 'message.reward'
   | 'message.unlock'
@@ -46,7 +56,8 @@ type TranslationKey =
   | 'breakdown.skill.fieldGuide'
   | 'breakdown.skill.focusFlow'
   | 'breakdown.skill.commitRoar'
-  | 'log.fed'
+  | 'log.patted'
+  | 'log.alreadyPatted'
   | 'log.noGrowthDead';
 
 type Dictionary = Record<TranslationKey, string>;
@@ -66,11 +77,21 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.type': 'Type',
     'ui.skills': 'Skills',
     'ui.styleScores': 'Style Scores',
-    'ui.feed': 'Feed',
+    'ui.pat': 'Pat',
+    'ui.pattedToday': 'Patted today',
+    'ui.help': 'Help',
     'ui.commit': 'Commit',
     'ui.viewStats': 'View Stats',
     'ui.logsTitle': 'Gitagotchi Logs',
     'ui.noActivity': 'No activity yet.',
+    'guide.title': 'Gitagotchi Guide',
+    'guide.growthTitle': 'Growth Direction',
+    'guide.growthBody': 'Gain EXP and style scores from commits, code changes, and resolved problems.',
+    'guide.usageTitle': 'How to Use',
+    'guide.usageBody': 'Open the pet panel from the status bar, check commits, view stats, and open Dex to track discoveries.',
+    'guide.patTitle': 'Daily Pat',
+    'guide.patBody': 'Pat once per day for bonus EXP and mood. Extra pats keep the pet happier without more EXP.',
+    'guide.close': 'Close',
     'status.tooltip': 'Open Gitagotchi stats',
     'message.reward': '{exp} EXP from {count} bonuses',
     'message.unlock': 'Learned {skill}',
@@ -98,7 +119,8 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.fieldGuide': 'Field Guide skill',
     'breakdown.skill.focusFlow': 'Focus Flow skill',
     'breakdown.skill.commitRoar': 'Commit Roar skill',
-    'log.fed': 'Fed Gitagotchi',
+    'log.patted': 'Patted Gitagotchi',
+    'log.alreadyPatted': 'Already patted today',
     'log.noGrowthDead': 'No growth while dead'
   },
   ko: {
@@ -115,11 +137,21 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.type': '타입',
     'ui.skills': '스킬',
     'ui.styleScores': '스타일 점수',
-    'ui.feed': '먹이 주기',
+    'ui.pat': '만져주기',
+    'ui.pattedToday': '오늘 만져줌',
+    'ui.help': '도움말',
     'ui.commit': '커밋 확인',
     'ui.viewStats': '통계 보기',
     'ui.logsTitle': 'Gitagotchi 기록',
     'ui.noActivity': '아직 활동이 없습니다.',
+    'guide.title': 'Gitagotchi 가이드',
+    'guide.growthTitle': '성장 방향',
+    'guide.growthBody': '커밋, 코드 변경, 문제 해결로 경험치와 스타일 점수를 얻습니다.',
+    'guide.usageTitle': '사용법',
+    'guide.usageBody': '상태바에서 펫 패널을 열고, 커밋 확인, 통계 보기, Dex 열기로 성장과 발견을 확인합니다.',
+    'guide.patTitle': '하루 한 번 만져주기',
+    'guide.patBody': '하루 한 번 만져주면 보너스 경험치와 기분을 얻습니다. 같은 날 추가로 만지면 경험치 없이 기분만 조금 오릅니다.',
+    'guide.close': '닫기',
     'status.tooltip': 'Gitagotchi 통계 열기',
     'message.reward': '{exp} EXP, 보너스 {count}개',
     'message.unlock': '{skill} 습득',
@@ -147,7 +179,8 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.fieldGuide': 'Field Guide 스킬',
     'breakdown.skill.focusFlow': 'Focus Flow 스킬',
     'breakdown.skill.commitRoar': 'Commit Roar 스킬',
-    'log.fed': 'Gitagotchi에게 먹이를 줬습니다',
+    'log.patted': 'Gitagotchi를 만져줬습니다',
+    'log.alreadyPatted': '오늘은 이미 만져줬습니다',
     'log.noGrowthDead': '죽은 상태에서는 성장하지 않습니다'
   },
   ja: {
@@ -164,11 +197,21 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.type': 'タイプ',
     'ui.skills': 'スキル',
     'ui.styleScores': 'スタイルスコア',
-    'ui.feed': 'エサをあげる',
+    'ui.pat': 'なでる',
+    'ui.pattedToday': '今日なでました',
+    'ui.help': 'ヘルプ',
     'ui.commit': 'コミット確認',
     'ui.viewStats': '統計を見る',
     'ui.logsTitle': 'Gitagotchi ログ',
     'ui.noActivity': 'まだ活動がありません。',
+    'guide.title': 'Gitagotchi ガイド',
+    'guide.growthTitle': '成長方針',
+    'guide.growthBody': 'コミット、コード変更、問題解決で EXP とスタイルスコアを獲得します。',
+    'guide.usageTitle': '使い方',
+    'guide.usageBody': 'ステータスバーからペットパネルを開き、コミット確認、統計、Dex で成長と発見を確認します。',
+    'guide.patTitle': '1日1回なでる',
+    'guide.patBody': '1日1回なでるとボーナス EXP と気分を得ます。同じ日に追加でなでると EXP なしで気分が少し上がります。',
+    'guide.close': '閉じる',
     'status.tooltip': 'Gitagotchi の統計を開く',
     'message.reward': '{exp} EXP、ボーナス {count} 個',
     'message.unlock': '{skill} を習得',
@@ -196,7 +239,8 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.fieldGuide': 'Field Guide スキル',
     'breakdown.skill.focusFlow': 'Focus Flow スキル',
     'breakdown.skill.commitRoar': 'Commit Roar スキル',
-    'log.fed': 'Gitagotchi にエサをあげました',
+    'log.patted': 'Gitagotchi をなでました',
+    'log.alreadyPatted': '今日はもうなでました',
     'log.noGrowthDead': '倒れている間は成長しません'
   },
   zh: {
@@ -213,11 +257,21 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.type': '类型',
     'ui.skills': '技能',
     'ui.styleScores': '风格分数',
-    'ui.feed': '喂食',
+    'ui.pat': '抚摸',
+    'ui.pattedToday': '今天已抚摸',
+    'ui.help': '帮助',
     'ui.commit': '检查提交',
     'ui.viewStats': '查看统计',
     'ui.logsTitle': 'Gitagotchi 日志',
     'ui.noActivity': '还没有活动。',
+    'guide.title': 'Gitagotchi 指南',
+    'guide.growthTitle': '成长方向',
+    'guide.growthBody': '通过提交、代码变更和解决问题获得 EXP 与风格分数。',
+    'guide.usageTitle': '使用方法',
+    'guide.usageBody': '从状态栏打开宠物面板，通过检查提交、查看统计和打开 Dex 跟踪成长与发现。',
+    'guide.patTitle': '每日抚摸',
+    'guide.patBody': '每天抚摸一次可获得额外 EXP 和心情。同一天再次抚摸不会增加 EXP，只会稍微提升心情。',
+    'guide.close': '关闭',
     'status.tooltip': '打开 Gitagotchi 统计',
     'message.reward': '{exp} EXP，{count} 个奖励',
     'message.unlock': '学会 {skill}',
@@ -245,7 +299,8 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.fieldGuide': 'Field Guide 技能',
     'breakdown.skill.focusFlow': 'Focus Flow 技能',
     'breakdown.skill.commitRoar': 'Commit Roar 技能',
-    'log.fed': '已喂食 Gitagotchi',
+    'log.patted': '已抚摸 Gitagotchi',
+    'log.alreadyPatted': '今天已经抚摸过了',
     'log.noGrowthDead': '死亡状态无法成长'
   }
 };

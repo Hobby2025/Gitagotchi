@@ -1,5 +1,5 @@
 import { applyActivity, createDefaultGrowthEngine } from '../src/core/growthEngine';
-import { createInitialPetState } from '../src/core/petState';
+import { createInitialPetState, getRequiredExp } from '../src/core/petState';
 import { ActivityEvent } from '../src/core/events';
 
 describe('growth engine', () => {
@@ -76,7 +76,7 @@ describe('growth engine', () => {
   it('applies bounded state changes and level ups', () => {
     const state = {
       ...createInitialPetState('2026-04-27T00:00:00.000Z'),
-      exp: 95,
+      exp: getRequiredExp(1) - 5,
       hunger: 1,
       mood: 98
     };

@@ -35,7 +35,7 @@ npm run check
 8. Hover over it and confirm the pet stats tooltip appears.
 9. Click it and confirm the Gitagotchi pet panel opens with the monster sprite.
 10. Exercise these quick actions from the pet panel:
-   - `Gitagotchi: Feed`
+   - `Gitagotchi: Pat Pet`
    - `Gitagotchi: View Stats`
    - `Gitagotchi: Check Commit`
    - `Gitagotchi: Rename Pet`

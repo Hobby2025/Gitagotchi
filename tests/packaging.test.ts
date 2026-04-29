@@ -58,9 +58,12 @@ describe('extension packaging', () => {
     const extensionSource = fs.readFileSync(path.join(root, 'src', 'extension.ts'), 'utf8');
 
     expect(manifest.activationEvents).toContain('onCommand:gitagotchi.openPet');
+    expect(manifest.activationEvents).toContain('onCommand:gitagotchi.patPet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.openPet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.renamePet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.resetPet');
+    expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.patPet');
+    expect(manifest.contributes.commands.map((command) => command.command)).not.toContain('gitagotchi.feed');
     expect(statusBarSource).toContain("this.item.command = 'gitagotchi.openPet'");
     expect(extensionSource).toContain('discoverCurrentPetSprite(store.load())');
     expect(extensionSource).toContain('petPanel.show(state)');

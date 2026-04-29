@@ -1,6 +1,6 @@
 import { PetAffinity, PetArchetype, PetEvolution, PetLineage, PetStage, PetState, StyleScoreKey } from './petState';
 
-const ULTIMATE_STYLE_THRESHOLD = 120;
+const ULTIMATE_STYLE_THRESHOLD = 300;
 const styleOrder: StyleScoreKey[] = ['builder', 'cleaner', 'debugger', 'scholar', 'streak'];
 
 function hasCareForMid(state: PetState): boolean {
@@ -13,7 +13,7 @@ function hasCareForSenior(state: PetState): boolean {
 
 function hasMasteryForArchitect(state: PetState): boolean {
   const total = state.counters.refactor + state.counters.feature + state.counters.debug;
-  return total >= 20 &&
+  return total >= 90 &&
     styleOrder.every((key) => state.styleScores[key] >= ULTIMATE_STYLE_THRESHOLD) &&
     state.health >= 70 &&
     state.mood >= 70 &&
@@ -22,19 +22,19 @@ function hasMasteryForArchitect(state: PetState): boolean {
 }
 
 export function getGatedEvolution(state: PetState): PetEvolution {
-  if (state.level >= 30 && hasMasteryForArchitect(state)) {
+  if (state.level >= 90 && hasMasteryForArchitect(state)) {
     return 'architect';
   }
 
-  if (state.level >= 20 && hasCareForSenior(state)) {
+  if (state.level >= 60 && hasCareForSenior(state)) {
     return 'senior';
   }
 
-  if (state.level >= 10 && hasCareForMid(state)) {
+  if (state.level >= 30 && hasCareForMid(state)) {
     return 'mid';
   }
 
-  if (state.level >= 5) {
+  if (state.level >= 12) {
     return 'junior';
   }
 

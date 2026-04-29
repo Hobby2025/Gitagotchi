@@ -7,7 +7,7 @@ function dominantStyle(state: PetState): StyleScoreKey {
 }
 
 function speciesFor(state: PetState): PetSpecies {
-  if (state.level >= 30 && state.styleScores.streak >= 120) {
+  if (state.level >= 90 && state.styleScores.streak >= 300) {
     return 'architect-drake';
   }
 
@@ -30,7 +30,7 @@ function speciesFor(state: PetState): PetSpecies {
     return 'documancer';
   }
 
-  return state.level >= 30 ? 'architect-drake' : 'bytepup';
+  return state.level >= 90 ? 'architect-drake' : 'bytepup';
 }
 
 function unlockSkills(state: PetState, species: PetSpecies): PetSkill[] {
@@ -48,7 +48,7 @@ function unlockSkills(state: PetState, species: PetSpecies): PetSkill[] {
   if (state.mood >= 80 && state.health >= 80 && state.styleScores.streak >= 5) {
     skills.add('focusFlow');
   }
-  if (state.level >= 5 && state.styleScores.streak >= 20) {
+  if (state.level >= 12 && state.styleScores.streak >= 20) {
     skills.add('commitRoar');
   }
 
