@@ -5,6 +5,11 @@
   "version": "0.1.0",
   "publisher": "gitagotchi",
   "license": "MIT",
+  "icon": "resources/gitagotchi-icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hobby2025/Gitagotchi.git"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -87,12 +92,14 @@
   "scripts": {
     "clean": "node ./scripts/clean-dist.cjs",
     "build": "npm run clean && tsc -p tsconfig.json",
+    "package": "vsce package",
     "test": "vitest run",
     "check": "npm run build && npm test"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
     "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.9.1",
     "typescript": "^5.8.0",
     "vitest": "^3.0.0"
   },

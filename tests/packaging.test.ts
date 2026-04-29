@@ -7,10 +7,16 @@ describe('extension packaging', () => {
     const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
       main: string;
       scripts: Record<string, string>;
+      repository?: { type: string; url: string };
     };
 
     expect(manifest.main).toBe('./dist/extension.js');
     expect(manifest.scripts.build).toContain('npm run clean');
+    expect(manifest.scripts.package).toBe('vsce package');
+    expect(manifest.repository).toEqual({
+      type: 'git',
+      url: 'https://github.com/Hobby2025/Gitagotchi.git',
+    });
   });
 
   it('keeps tests out of the product TypeScript build', () => {
@@ -58,5 +64,25 @@ describe('extension packaging', () => {
     expect(statusBarSource).toContain("this.item.command = 'gitagotchi.openPet'");
     expect(extensionSource).toContain('discoverCurrentPetSprite(store.load())');
     expect(extensionSource).toContain('petPanel.show(state)');
+  });
+
+  it('keeps local workspace artifacts out of the VSIX package', () => {
+    const root = path.resolve(__dirname, '..');
+    const ignore = fs.readFileSync(path.join(root, '.vscodeignore'), 'utf8');
+
+    expect(ignore).toContain('.superpowers/**');
+    expect(ignore).toContain('.vscode/**');
+    expect(ignore).toContain('src/**');
+    expect(ignore).toContain('tests/**');
+  });
+
+  it('declares a marketplace icon asset', () => {
+    const root = path.resolve(__dirname, '..');
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
+      icon?: string;
+    };
+
+    expect(manifest.icon).toBe('resources/gitagotchi-icon.png');
+    expect(fs.existsSync(path.join(root, manifest.icon ?? ''))).toBe(true);
   });
 });

@@ -1,8 +1,13 @@
-import { getPetSpritePack } from '../character/evolutionSprites';
-import { getMoodName, getRequiredExp, PetLineage, PetState } from '../core/petState';
-import { I18n } from '../i18n';
-import { renderSpriteHtml } from './spriteHtml';
-import { renderHtmlTemplate } from './webviewSecurity';
+import { getPetSpritePack } from "../character/evolutionSprites";
+import {
+  getMoodName,
+  getRequiredExp,
+  PetLineage,
+  PetState,
+} from "../core/petState";
+import { I18n } from "../i18n";
+import { renderSpriteHtml } from "./spriteHtml";
+import { renderHtmlTemplate } from "./webviewSecurity";
 
 export type PetPanelRenderOptions = {
   cspSource: string;
@@ -12,67 +17,122 @@ export type PetPanelRenderOptions = {
 function meterClass(value: number, inverted = false): string {
   const score = inverted ? 100 - value : value;
   if (score >= 70) {
-    return 'good';
+    return "good";
   }
   if (score >= 35) {
-    return 'warn';
+    return "warn";
   }
-  return 'bad';
+  return "bad";
 }
 
 function getLineageTheme(lineage?: PetLineage): string {
-  const themes: Record<PetLineage | 'unbranched', { accent: string; glow: string; soft: string }> = {
-    buildling: { accent: '#fb923c', glow: 'rgba(251,146,60,.28)', soft: '#facc15' },
-    refact: { accent: '#22d3ee', glow: 'rgba(34,211,238,.26)', soft: '#14b8a6' },
-    debugon: { accent: '#f87171', glow: 'rgba(248,113,113,.28)', soft: '#f472b6' },
-    archivox: { accent: '#60a5fa', glow: 'rgba(96,165,250,.28)', soft: '#c084fc' },
-    unbranched: { accent: '#86efac', glow: 'rgba(134,239,172,.24)', soft: '#facc15' }
+  const themes: Record<
+    PetLineage | "unbranched",
+    { accent: string; glow: string; soft: string }
+  > = {
+    buildling: {
+      accent: "#fb923c",
+      glow: "rgba(251,146,60,.28)",
+      soft: "#facc15",
+    },
+    refact: {
+      accent: "#22d3ee",
+      glow: "rgba(34,211,238,.26)",
+      soft: "#14b8a6",
+    },
+    debugon: {
+      accent: "#f87171",
+      glow: "rgba(248,113,113,.28)",
+      soft: "#f472b6",
+    },
+    archivox: {
+      accent: "#60a5fa",
+      glow: "rgba(96,165,250,.28)",
+      soft: "#c084fc",
+    },
+    unbranched: {
+      accent: "#86efac",
+      glow: "rgba(134,239,172,.24)",
+      soft: "#facc15",
+    },
   };
-  const theme = themes[lineage ?? 'unbranched'];
+  const theme = themes[lineage ?? "unbranched"];
 
   return `--lineage-accent:${theme.accent};--lineage-glow:${theme.glow};--lineage-soft:${theme.soft}`;
 }
 
-export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPanelRenderOptions): string {
+export function renderPetPanelHtml(
+  state: PetState,
+  i18n: I18n,
+  options: PetPanelRenderOptions,
+): string {
   const mood = getMoodName(state);
   const sprite = getPetSpritePack(state, mood);
   const firstFrame = sprite.frames[0];
   if (!firstFrame) {
-    throw new Error(`No frames available for evolution=${state.evolution} mood=${mood}`);
+    throw new Error(
+      `No frames available for evolution=${state.evolution} mood=${mood}`,
+    );
   }
 
-  const petName = renderHtmlTemplate.escape(state.name?.trim() || 'Gitagotchi');
-  const pet = renderSpriteHtml(firstFrame, 'monster-sprite', 'Gitagotchi monster sprite');
+  const petName = renderHtmlTemplate.escape(state.name?.trim() || "Gitagotchi");
+  const pet = renderSpriteHtml(
+    firstFrame,
+    "monster-sprite",
+    "Gitagotchi monster sprite",
+  );
   const stage = renderHtmlTemplate.escape(state.stage);
-  const lineage = renderHtmlTemplate.escape(state.lineage ?? 'unbranched');
-  const affinity = renderHtmlTemplate.escape(state.affinity ?? 'unfocused');
+  const lineage = renderHtmlTemplate.escape(state.lineage ?? "unbranched");
+  const affinity = renderHtmlTemplate.escape(state.affinity ?? "unfocused");
   const lineageTheme = getLineageTheme(state.lineage);
-  const expPercent = Math.min(100, Math.round((state.exp / getRequiredExp(state.level)) * 100));
+  const expPercent = Math.min(
+    100,
+    Math.round((state.exp / getRequiredExp(state.level)) * 100),
+  );
   const maxStyleScore = Math.max(100, ...Object.values(state.styleScores));
-  const styleRows = (Object.entries(state.styleScores) as Array<[keyof typeof state.styleScores, number]>)
+  const styleRows = (
+    Object.entries(state.styleScores) as Array<
+      [keyof typeof state.styleScores, number]
+    >
+  )
     .map(([key, value]) => {
       const percent = Math.min(100, Math.round((value / maxStyleScore) * 100));
       return `<div class="skill-node"><span>${i18n.t(`style.${key}`)}</span><strong>${value}</strong><i style="width:${percent}%"></i></div>`;
     })
-    .join('');
+    .join("");
   const actions = [
-    { command: 'feed', rune: 'FD', label: i18n.t('ui.feed'), primary: true },
-    { command: 'commit', rune: 'GC', label: i18n.t('ui.commit') },
-    { command: 'stats', rune: 'ST', label: i18n.t('ui.viewStats') },
-    { command: 'dex', rune: 'DX', label: 'Dex' },
-    { command: 'leaderboard', rune: 'LB', label: i18n.t('ui.leaderboard') },
-    { command: 'createLeaderboard', rune: 'RM', label: i18n.t('ui.createLeaderboard') },
-    { command: 'rename', rune: 'RN', label: 'Rename' },
-    { command: 'reset', rune: 'RS', label: 'Reset' }
+    { command: "feed", rune: "FD", label: i18n.t("ui.feed"), primary: true },
+    { command: "commit", rune: "GC", label: i18n.t("ui.commit") },
+    { command: "stats", rune: "ST", label: i18n.t("ui.viewStats") },
+    { command: "dex", rune: "DX", label: "Dex" },
+    { command: "leaderboard", rune: "LB", label: i18n.t("ui.leaderboard") },
+    {
+      command: "createLeaderboard",
+      rune: "RM",
+      label: i18n.t("ui.createLeaderboard"),
+    },
+    { command: "rename", rune: "RN", label: "Rename" },
+    { command: "reset", rune: "RS", label: "Reset" },
   ];
   const actionButtons = actions
-    .map((action) => `<button class="action-btn${action.primary ? ' action-primary' : ''}" data-command="${action.command}"><span class="action-rune">${action.rune}</span><span class="action-label">${action.label}</span></button>`)
-    .join('');
+    .map(
+      (action) =>
+        `<button class="action-btn${action.primary ? " action-primary" : ""}" data-command="${action.command}"><span class="action-rune">${action.rune}</span><span class="action-label">${action.label}</span></button>`,
+    )
+    .join("");
 
-  const languageLabels: Record<string, string> = { en: 'EN', ko: 'KO', ja: 'JA', zh: 'ZH' };
-  const langButtons = (['en', 'ko', 'ja', 'zh'] as const)
-    .map((locale) => `<button class="lang-btn ${locale === i18n.locale ? 'active' : ''}" data-locale="${locale}" title="${locale.toUpperCase()}">${languageLabels[locale]}</button>`)
-    .join('');
+  const languageLabels: Record<string, string> = {
+    en: "EN",
+    ko: "KO",
+    ja: "JA",
+    zh: "ZH",
+  };
+  const langButtons = (["en", "ko", "ja", "zh"] as const)
+    .map(
+      (locale) =>
+        `<button class="lang-btn ${locale === i18n.locale ? "active" : ""}" data-locale="${locale}" title="${locale.toUpperCase()}">${languageLabels[locale]}</button>`,
+    )
+    .join("");
 
   return `<!doctype html>
 <html lang="en">
@@ -171,25 +231,25 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
       </div>
     </section>
     <section class="systems-card">
-      <div class="topline"><strong class="level-badge">Lv.${state.level}</strong><div class="title-stack"><span>Runtime Profile</span><strong>${petName}</strong></div><span class="exp-readout">${state.exp}/${getRequiredExp(state.level)} ${i18n.t('ui.exp')}</span></div>
+      <div class="topline"><strong class="level-badge">Lv.${state.level}</strong><div class="title-stack"><span>Runtime Profile</span><strong>${petName}</strong></div><span class="exp-readout">${state.exp}/${getRequiredExp(state.level)} ${i18n.t("ui.exp")}</span></div>
       <div class="expbar" aria-label="EXP"><span style="width:${expPercent}%"></span></div>
       <div class="stat-deck">
-        <div class="stat-card ${meterClass(state.mood)}"><span class="label">${i18n.t('ui.mood')}</span><strong>${state.mood}%</strong><i style="width:${state.mood}%"></i></div>
-        <div class="stat-card ${meterClass(state.hunger, true)}"><span class="label">${i18n.t('ui.hunger')}</span><strong>${state.hunger}%</strong><i style="width:${state.hunger}%"></i></div>
-        <div class="stat-card ${meterClass(state.energy)}"><span class="label">${i18n.t('ui.energy')}</span><strong>${state.energy}%</strong><i style="width:${state.energy}%"></i></div>
-        <div class="stat-card ${meterClass(state.health)}"><span class="label">${i18n.t('ui.health')}</span><strong>${state.health}%</strong><i style="width:${state.health}%"></i></div>
+        <div class="stat-card ${meterClass(state.mood)}"><span class="label">${i18n.t("ui.mood")}</span><strong>${state.mood}%</strong><i style="width:${state.mood}%"></i></div>
+        <div class="stat-card ${meterClass(state.hunger, true)}"><span class="label">${i18n.t("ui.hunger")}</span><strong>${state.hunger}%</strong><i style="width:${state.hunger}%"></i></div>
+        <div class="stat-card ${meterClass(state.energy)}"><span class="label">${i18n.t("ui.energy")}</span><strong>${state.energy}%</strong><i style="width:${state.energy}%"></i></div>
+        <div class="stat-card ${meterClass(state.health)}"><span class="label">${i18n.t("ui.health")}</span><strong>${state.health}%</strong><i style="width:${state.health}%"></i></div>
       </div>
       <div class="meta-strip">
-        <div><span>${i18n.t('ui.status')}</span><strong>${renderHtmlTemplate.escape(state.lifeStatus)}</strong></div>
-        <div><span>${i18n.t('ui.stage')}</span><strong>${stage}</strong></div>
-        <div><span>${i18n.t('ui.lineage')}</span><strong>${lineage}</strong></div>
-        <div><span>${i18n.t('ui.affinity')}</span><strong>${affinity}</strong></div>
+        <div><span>${i18n.t("ui.status")}</span><strong>${renderHtmlTemplate.escape(state.lifeStatus)}</strong></div>
+        <div><span>${i18n.t("ui.stage")}</span><strong>${stage}</strong></div>
+        <div><span>${i18n.t("ui.lineage")}</span><strong>${lineage}</strong></div>
+        <div><span>${i18n.t("ui.affinity")}</span><strong>${affinity}</strong></div>
       </div>
       <div class="skill-matrix">${styleRows}</div>
       <div class="action-dock">${actionButtons}</div>
     </section>
   </div>
-  <footer class="page-footer">Copyright 2026 Gitagotchi. All rights reserved.</footer>
+  <footer class="page-footer">Copyright 2026 Hobby. All rights reserved.</footer>
   </main>
   <script nonce="${options.nonce}">
     const vscode = acquireVsCodeApi();

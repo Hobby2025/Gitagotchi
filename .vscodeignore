@@ -1,5 +1,10 @@
 src/**
 tests/**
+docs/**
+scripts/**
+.superpowers/**
+.vscode/**
+.gitignore
 *.config.ts
 tsconfig.json
 node_modules/**
