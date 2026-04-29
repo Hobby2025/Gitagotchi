@@ -95,7 +95,11 @@ export class PetStateStore {
   }
 
   async reset(now: string = new Date().toISOString()): Promise<PetState> {
-    const state = createInitialPetState(now);
+    const previous = this.load();
+    const state = {
+      ...createInitialPetState(now),
+      discoveredSpriteIds: previous.discoveredSpriteIds
+    };
     await this.save(state);
     return state;
   }

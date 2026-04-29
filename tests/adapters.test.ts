@@ -72,11 +72,18 @@ describe('adapters', () => {
     expect(store.load().name).toBe('Mochi');
   });
 
-  it('resets the pet to a fresh unnamed initial state', async () => {
+  it('resets the pet to a fresh unnamed initial state while preserving discovered sprites', async () => {
     const memento = new MemoryMemento();
     const store = new PetStateStore(memento, '2026-04-27T00:00:00.000Z');
     const initial = store.load();
-    await store.save({ ...initial, name: 'Mochi', level: 9, exp: 44, hunger: 90 });
+    await store.save({
+      ...initial,
+      name: 'Mochi',
+      level: 9,
+      exp: 44,
+      hunger: 90,
+      discoveredSpriteIds: ['egg-common-normal', 'buildling-hatchling-normal']
+    });
 
     const reset = await store.reset('2026-04-28T00:00:00.000Z');
 
@@ -86,9 +93,10 @@ describe('adapters', () => {
     expect(reset.stage).toBe('egg');
     expect(reset.lineage).toBeUndefined();
     expect(reset.affinity).toBeUndefined();
-    expect(reset.discoveredSpriteIds).toEqual(['egg-common-normal']);
+    expect(reset.discoveredSpriteIds).toEqual(['egg-common-normal', 'buildling-hatchling-normal']);
     expect(reset.hunger).toBe(20);
     expect(reset.lastActiveAt).toBe('2026-04-28T00:00:00.000Z');
     expect(store.load().level).toBe(1);
+    expect(store.load().discoveredSpriteIds).toEqual(['egg-common-normal', 'buildling-hatchling-normal']);
   });
 });
