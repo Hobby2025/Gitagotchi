@@ -28,14 +28,28 @@ describe('pet panel', () => {
     expect(html).toContain('Docs Literacy');
     expect(html).toContain('Commit Streak');
     expect(html).toContain('Mood');
-    expect(html).toContain('Hunger');
+    expect(html).toContain('Fullness');
+    expect(html).toContain('<strong>80%</strong>');
+    expect(html).toContain('Skills');
+    expect(html).not.toContain('Care Pulse');
+    expect(html).not.toContain('Next Boost');
+    expect(html).not.toContain('No skills yet');
     expect(html).toContain('data-command="pat"');
     expect(html).toContain('data-command="commit"');
     expect(html).toContain('data-command="stats"');
+    expect(html).toContain('data-command="skills"');
     expect(html).toContain('data-command="dex"');
+    expect(html).not.toContain('data-command="feed"');
+    expect(html).not.toContain('data-command="rest"');
+    expect(html).not.toContain('data-command="medicine"');
     expect(html).toContain('data-command="rename"');
     expect(html).toContain('data-command="reset"');
     expect(html).toMatch(/<div class="top-actions">[\s\S]*data-command="rename"[\s\S]*data-command="reset"[\s\S]*data-guide-open/);
+    expect(html).toContain('Care Recovery');
+    expect(html).toContain('Code changes: Fullness +3, Health +1');
+    expect(html).toContain('Commits: Fullness +5, Energy +4, Health +3');
+    expect(html).toContain('Diagnostics resolved: Fullness +2, Energy +1, Health +4 per issue');
+    expect(html).toContain('Returning from idle: Energy +8 per day away, up to +20');
     expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="rename"[\s\S]*<\/div>/);
     expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="reset"[\s\S]*<\/div>/);
     expect(html).not.toContain('data-command="leaderboard"');
@@ -58,11 +72,51 @@ describe('pet panel', () => {
     expect(html).toContain('class="action-btn" data-command="commit"');
     expect(html).toContain('class="action-rune">PT</span>');
     expect(html).toContain('class="action-rune">GC</span>');
+    expect(html).toContain('class="action-rune">SK</span>');
     expect(html).toContain('class="action-rune">DX</span>');
     expect(html).not.toContain('class="action-rune">RN</span>');
+    expect(html).not.toContain('class="action-rune">FD</span>');
     expect(html).not.toContain('class="action-rune">RS</span>');
+    expect(html).not.toContain('class="action-rune">MD</span>');
     expect(html).toContain('<span class="action-label">만져주기</span>');
     expect(html).toContain('<span class="action-label">커밋 확인</span>');
+  });
+
+  it('keeps care pulse, boost hints, and equipped skill details out of the card', () => {
+    const state = {
+      ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+      name: 'Pulse',
+      hunger: 65,
+      energy: 34,
+      health: 52,
+      skills: ['deepClean', 'focusFlow'] as const,
+      logs: [{
+        message: '+24 EXP from 2 bonuses',
+        expDelta: 24,
+        occurredAt: '2026-04-29T00:00:00.000Z',
+        breakdown: [
+          { id: 'base-diff', label: 'Code changes', expDelta: 12, hungerDelta: -3, healthDelta: 1 },
+          { id: 'return-from-idle', label: 'Return from idle', energyDelta: 20, moodDelta: 2 }
+        ]
+      }]
+    };
+
+    const html = renderPetPanelHtml(state, createI18n('en'), {
+      cspSource: 'vscode-resource:',
+      nonce: 'abc'
+    });
+
+    expect(html).toContain('Fullness');
+    expect(html).toContain('<strong>35%</strong>');
+    expect(html).not.toContain('class="care-grid"');
+    expect(html).not.toContain('class="care-panel"');
+    expect(html).not.toContain('Fullness +3</span>');
+    expect(html).not.toContain('Health +1</span>');
+    expect(html).not.toContain('Energy +20</span>');
+    expect(html).not.toContain('Deep Clean');
+    expect(html).not.toContain('Focus Flow');
+    expect(html).not.toContain('Refactor-heavy diffs');
+    expect(html).not.toContain('No skills yet');
   });
 
   it('scales ultimate pixel art into the pet stage', () => {

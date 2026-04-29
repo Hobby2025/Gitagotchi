@@ -2,7 +2,7 @@
   "name": "gitagotchi",
   "displayName": "Gitagotchi",
   "description": "A VSCode pet that grows from Git diffs, commits, and debugging progress.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "publisher": "stjoo0925",
   "license": "MIT",
   "icon": "resources/gitagotchi-icon.png",
@@ -23,6 +23,7 @@
     "onCommand:gitagotchi.resetPet",
     "onCommand:gitagotchi.patPet",
     "onCommand:gitagotchi.viewStats",
+    "onCommand:gitagotchi.viewSkills",
     "onCommand:gitagotchi.openDex",
     "onCommand:gitagotchi.checkCommit"
   ],
@@ -48,6 +49,10 @@
       {
         "command": "gitagotchi.viewStats",
         "title": "Gitagotchi: View Stats"
+      },
+      {
+        "command": "gitagotchi.viewSkills",
+        "title": "Gitagotchi: View Skills"
       },
       {
         "command": "gitagotchi.openDex",

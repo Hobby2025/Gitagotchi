@@ -13,6 +13,7 @@ import { discoverCurrentPetSprite } from './character/petDex';
 import { GitagotchiDexPanel } from './ui/dexPanel';
 import { GitagotchiLogPanel } from './ui/logPanel';
 import { GitagotchiPetPanel } from './ui/petPanel';
+import { GitagotchiSkillPanel } from './ui/skillPanel';
 import { GitagotchiStatusBar } from './ui/statusBar';
 
 type Runtime = {
@@ -20,6 +21,7 @@ type Runtime = {
   statusBar: GitagotchiStatusBar;
   petPanel: GitagotchiPetPanel;
   logs: GitagotchiLogPanel;
+  skills: GitagotchiSkillPanel;
   dex: GitagotchiDexPanel;
   diagnosticsCount: number;
   i18n: I18n;
@@ -30,6 +32,7 @@ async function persistAndRender(runtime: Runtime, state: PetState): Promise<void
   await runtime.store.save(discovered);
   runtime.statusBar.update(discovered);
   runtime.petPanel.update(discovered);
+  runtime.skills.update(discovered);
   runtime.dex.update(discovered);
 }
 
@@ -146,12 +149,14 @@ export function activate(context: vscode.ExtensionContext): void {
   const statusBar = new GitagotchiStatusBar(i18n);
   const petPanel = new GitagotchiPetPanel(i18n, context.extensionUri);
   const logs = new GitagotchiLogPanel(i18n);
+  const skills = new GitagotchiSkillPanel(i18n);
   const dex = new GitagotchiDexPanel();
   const runtime: Runtime = {
     store,
     statusBar,
     petPanel,
     logs,
+    skills,
     dex,
     diagnosticsCount: countWorkspaceDiagnostics(),
     i18n
@@ -167,6 +172,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.resetPet', () => resetPet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.patPet', () => patPet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewStats', () => logs.show(store.load())));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewSkills', () => skills.show(store.load())));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openDex', async () => {
     const state = discoverCurrentPetSprite(store.load());
     await store.save(state);
@@ -183,6 +189,7 @@ export function activate(context: vscode.ExtensionContext): void {
     statusBar.update(store.load());
     petPanel.setI18n(newI18n);
     logs.setI18n(newI18n);
+    skills.setI18n(newI18n);
   }));
   context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => {
     void checkDiagnostics(runtime);

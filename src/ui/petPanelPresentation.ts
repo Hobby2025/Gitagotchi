@@ -1,4 +1,4 @@
-import { getPetSpritePack } from "../character/evolutionSprites";
+﻿import { getPetSpritePack } from "../character/evolutionSprites";
 import {
   getMoodName,
   getRequiredExp,
@@ -75,6 +75,20 @@ function wasPattedToday(state: PetState, now: Date): boolean {
     : false;
 }
 
+function renderGuideCareList(i18n: I18n): string {
+  const keys = [
+    "guide.care.code",
+    "guide.care.commit",
+    "guide.care.diagnostics",
+    "guide.care.refactor",
+    "guide.care.testsDocs",
+    "guide.care.returnIdle",
+    "guide.care.idle",
+  ];
+
+  return `<ul class="guide-care-list">${keys.map((key) => `<li>${renderHtmlTemplate.escape(i18n.t(key))}</li>`).join("")}</ul>`;
+}
+
 export function renderPetPanelHtml(
   state: PetState,
   i18n: I18n,
@@ -107,6 +121,7 @@ export function renderPetPanelHtml(
     100,
     Math.round((state.exp / getRequiredExp(state.level)) * 100),
   );
+  const fullness = 100 - state.hunger;
   const maxStyleScore = Math.max(100, ...Object.values(state.styleScores));
   const styleRows = (
     Object.entries(state.styleScores) as Array<
@@ -122,6 +137,7 @@ export function renderPetPanelHtml(
     { command: "pat", rune: "PT", label: i18n.t("ui.pat"), primary: true },
     { command: "commit", rune: "GC", label: i18n.t("ui.commit") },
     { command: "stats", rune: "ST", label: i18n.t("ui.viewStats") },
+    { command: "skills", rune: "SK", label: i18n.t("ui.skills") },
     { command: "dex", rune: "DX", label: "Dex" },
   ];
   const actionButtons = actions
@@ -147,6 +163,9 @@ export function renderPetPanelHtml(
   const guideTitle = renderHtmlTemplate.escape(i18n.t("guide.title"));
   const guideGrowthTitle = renderHtmlTemplate.escape(i18n.t("guide.growthTitle"));
   const guideGrowthBody = renderHtmlTemplate.escape(i18n.t("guide.growthBody"));
+  const guideCareTitle = renderHtmlTemplate.escape(i18n.t("guide.careTitle"));
+  const guideCareIntro = renderHtmlTemplate.escape(i18n.t("guide.careIntro"));
+  const guideCareList = renderGuideCareList(i18n);
   const guideUsageTitle = renderHtmlTemplate.escape(i18n.t("guide.usageTitle"));
   const guideUsageBody = renderHtmlTemplate.escape(i18n.t("guide.usageBody"));
   const guidePatTitle = renderHtmlTemplate.escape(i18n.t("guide.patTitle"));
@@ -227,7 +246,7 @@ export function renderPetPanelHtml(
     .skill-matrix { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
     .skill-node { min-height: 58px; padding: 8px; }
     .skill-node i { background: var(--lineage-soft); }
-    .action-dock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding-top: 2px; }
+    .action-dock { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; padding-top: 2px; }
     button { min-height: 32px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--vscode-button-border, transparent); color: var(--vscode-button-foreground); background: var(--vscode-button-background); font-size: 12px; white-space: nowrap; transition: transform .16s ease, background .16s ease, border-color .16s ease; }
     button:hover { background: var(--vscode-button-hoverBackground); }
     button:active { transform: translateY(1px) scale(.99); }
@@ -248,6 +267,9 @@ export function renderPetPanelHtml(
     .guide-section:last-child { padding-bottom: 0; border-bottom: 0; }
     .guide-section h3 { margin: 0; color: var(--lineage-accent); font-size: 12px; line-height: 1.25; letter-spacing: 0; }
     .guide-section p { margin: 0; color: var(--vscode-descriptionForeground); font-size: 12px; line-height: 1.55; }
+    .guide-care-list { margin: 2px 0 0; padding: 0; list-style: none; display: grid; gap: 5px; }
+    .guide-care-list li { position: relative; padding: 6px 8px 6px 19px; border: 1px solid color-mix(in srgb, var(--vscode-panel-border) 72%, var(--lineage-accent)); border-radius: 6px; background: color-mix(in srgb, var(--vscode-editorWidget-background) 88%, var(--lineage-accent)); color: var(--vscode-foreground); font-size: 11px; line-height: 1.35; }
+    .guide-care-list li::before { content: ""; position: absolute; left: 8px; top: 13px; width: 5px; height: 5px; border-radius: 50%; background: var(--lineage-accent); }
     @media (max-width: 680px) {
       .hud-shell { grid-template-columns: 1fr; }
       .stat-deck, .skill-matrix, .meta-strip, .action-dock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -267,6 +289,7 @@ export function renderPetPanelHtml(
       </div>
       <div class="guide-body">
         <section class="guide-section"><h3>${guideGrowthTitle}</h3><p>${guideGrowthBody}</p></section>
+        <section class="guide-section"><h3>${guideCareTitle}</h3><p>${guideCareIntro}</p>${guideCareList}</section>
         <section class="guide-section"><h3>${guideUsageTitle}</h3><p>${guideUsageBody}</p></section>
         <section class="guide-section"><h3>${guidePatTitle}</h3><p>${guidePatBody}</p></section>
       </div>
@@ -296,7 +319,7 @@ export function renderPetPanelHtml(
       <div class="expbar" aria-label="EXP"><span style="width:${expPercent}%"></span></div>
       <div class="stat-deck">
         <div class="stat-card ${meterClass(state.mood)}"><span class="label">${i18n.t("ui.mood")}</span><strong>${state.mood}%</strong><i style="width:${state.mood}%"></i></div>
-        <div class="stat-card ${meterClass(state.hunger, true)}"><span class="label">${i18n.t("ui.hunger")}</span><strong>${state.hunger}%</strong><i style="width:${state.hunger}%"></i></div>
+        <div class="stat-card ${meterClass(fullness)}"><span class="label">${i18n.t("ui.fullness")}</span><strong>${fullness}%</strong><i style="width:${fullness}%"></i></div>
         <div class="stat-card ${meterClass(state.energy)}"><span class="label">${i18n.t("ui.energy")}</span><strong>${state.energy}%</strong><i style="width:${state.energy}%"></i></div>
         <div class="stat-card ${meterClass(state.health)}"><span class="label">${i18n.t("ui.health")}</span><strong>${state.health}%</strong><i style="width:${state.health}%"></i></div>
       </div>
