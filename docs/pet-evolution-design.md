@@ -2,7 +2,7 @@
 
 ## 목표
 
-Gitagotchi의 펫은 개발 도구에서 태어난 생명체처럼 보이도록 설계한다. 최초 형태는 공통 알 1종이며, 초반 개발 활동 성향에 따라 4개 계열로 분기한다. 이후 성장기까지는 계열 정체성을 강화하고, 최종 진화에서는 5개 개발자 능력치 중 가장 강한 전문성이 외형을 결정한다. 모든 능력치를 기준치 이상 채우면 계열별 궁극 진화가 열린다.
+Gitagotchi의 펫은 인기 있는 동물 실루엣에 개발 도구 장비를 결합한 귀여운 생명체처럼 보이도록 설계한다. 최초 형태는 공통 알 1종이며, 초반 개발 활동 성향에 따라 4개 동물 계열로 분기한다. 이후 성장기까지는 동물 정체성과 계열 색을 강화하고, 최종 진화에서는 5개 개발자 능력치 중 가장 강한 전문성이 장비와 장식으로 외형에 반영된다. 모든 능력치를 기준치 이상 채우면 계열별 궁극 진화가 열린다.
 
 ## 전체 수량
 
@@ -53,65 +53,74 @@ Gitagotchi의 펫은 개발 도구에서 태어난 생명체처럼 보이도록 
 
 ## 4개 기본 계열
 
+동물 기반 리디자인에서는 기존 저장 상태와 스프라이트 ID를 유지하되, 계열의 외형 기준을 아래 동물군으로 바꾼다. 각 계열은 동물 실루엣이 먼저 읽히고, 개발 장비는 보조 장식으로 붙는다.
+
+| 계열 | 동물 기준 | 핵심 인상 | 개발 장비 방향 |
+| --- | --- | --- | --- |
+| Buildling Line | 강아지 | 활발함, 추진력, 튼튼함 | 공구 하네스, 빌드 헬멧, 배포 백팩, 추진기 |
+| Refact Line | 고양이 | 날렵함, 정돈됨, 균형감 | 리본, 정렬 라인, 커서 블레이드, 대칭 무늬 |
+| Debugon Line | 토끼 | 큰 귀, 탐지력, 민첩함 | 귀 센서, 렌즈, 경고등, 로그 패널 |
+| Archivox Line | 올빼미 | 지식, 기록, 관찰력 | 책갈피 날개, 문서 망토, 안경, 기록 룬 |
+
 ### Buildling Line
 
-빌드 시스템, 패키지 매니저, 배포 파이프라인에서 태어난 생명체. 몸체는 단단한 박스형이고, 성장할수록 부스터와 공구 실루엣이 붙는다.
+빌드 시스템, 패키지 매니저, 배포 파이프라인에서 태어난 강아지 계열 생명체. 몸체는 둥글고 튼튼하며, 성장할수록 공구 하네스, 빌드 헬멧, 배포 백팩, 작은 추진기가 붙는다. 귀와 꼬리, 발바닥 실루엣이 먼저 보여야 하며 주황/노랑 계열로 활발한 인상을 준다.
 
 | ID | 이름 | 단계 | 외형 키워드 |
 | --- | --- | --- | --- |
-| buildling.hatchling | Buildling | Hatchling | 작은 패키지 상자, 짧은 다리, 빌드 불꽃 |
-| buildling.toolkit | Forgepack | Toolkit | 백팩형 빌드 모듈, 작은 렌치 꼬리 |
-| buildling.builder | Shipwright Forgepack | Specialist | 배포 로켓, 컨테이너 갑옷, 빠른 추진기 |
-| buildling.cleaner | Refine Forgepack | Specialist | 정돈된 장갑판, 폴리싱 휠, 매끈한 실루엣 |
-| buildling.debugger | Probe Forgepack | Specialist | 센서 안테나, 경고등, 로그 스캐너 |
-| buildling.scholar | Manual Forgepack | Specialist | 접힌 설명서 날개, 색인 탭, 작은 책등 |
-| buildling.streak | Pipeline Forgepack | Specialist | 연속 컨베이어 벨트, 체크 배지, 체인 트랙 |
-| buildling.ultimate | Release Colossus | Ultimate | 배포 요새, 다중 파이프라인 코어, 안정적인 거대 실루엣 |
+| buildling.hatchling | Buildpup | Hatchling | 둥근 강아지 얼굴, 작은 귀, 짧은 꼬리, 발밑 빌드 불꽃 |
+| buildling.toolkit | Forgepup | Toolkit | 공구 하네스를 찬 강아지, 작은 렌치 꼬리, 빌드 헬멧 |
+| buildling.builder | Shipwright Forgepup | Specialist | 배포 로켓 백팩, 컨테이너 목줄, 추진기 발 |
+| buildling.cleaner | Refine Forgepup | Specialist | 빗질된 털, 정돈된 장갑 하네스, 폴리싱 휠 장난감 |
+| buildling.debugger | Probe Forgepup | Specialist | 코 위 센서 렌즈, 경고등 목걸이, 로그 스캐너 백팩 |
+| buildling.scholar | Manual Forgepup | Specialist | 접힌 설명서 귀 장식, 색인 탭 목도리, 작은 책가방 |
+| buildling.streak | Pipeline Forgepup | Specialist | 체크 배지 목줄, 컨베이어 꼬리 무늬, 연속 발자국 |
+| buildling.ultimate | Release Hound | Ultimate | 대형 배포 하운드, 다중 파이프라인 하네스, 안정적인 추진 코어 |
 
 ### Refact Line
 
-포매터와 정적 분석기에서 태어난 생명체. 날카롭고 정돈된 선이 특징이며, 성장할수록 코드 블록을 절단하고 재배열하는 느낌을 가진다.
+포매터와 정적 분석기에서 태어난 고양이 계열 생명체. 날렵한 귀, 긴 꼬리, 정돈된 자세가 핵심이며, 성장할수록 리본, 정렬 라인, 커서 블레이드가 붙는다. 청록/시안 계열로 차분하고 깔끔한 인상을 준다.
 
 | ID | 이름 | 단계 | 외형 키워드 |
 | --- | --- | --- | --- |
-| refact.hatchling | Refactail | Hatchling | 꼬리가 중괄호 모양인 작은 생명체 |
-| refact.toolkit | Lintfox | Toolkit | 여우형 실루엣, 줄맞춤 무늬, 포매터 귀 |
-| refact.builder | Scaffold Lintfox | Specialist | 생성기 발톱, 템플릿 망토, 구조물 꼬리 |
-| refact.cleaner | Prism Lintfox | Specialist | 각진 크리스털 갑옷, 대칭형 라인, 절단 날개 |
-| refact.debugger | Trace Lintfox | Specialist | 추적선 무늬, 오류 냄새를 맡는 코, 렌즈 눈 |
-| refact.scholar | Index Lintfox | Specialist | 인덱스 카드 갈기, 주석 리본, 문맥 지도 |
-| refact.streak | Commit Lintfox | Specialist | 반복 체크 무늬, 타임라인 꼬리, 작은 태그 |
-| refact.ultimate | Architecture Kitsune | Ultimate | 다중 꼬리 코드 구조체, 설계도 후광, 균형 잡힌 선 |
+| refact.hatchling | Refactkit | Hatchling | 작은 고양이 얼굴, 뾰족한 귀, 중괄호처럼 말린 꼬리 |
+| refact.toolkit | Lintcat | Toolkit | 줄맞춤 무늬를 가진 고양이, 포매터 리본, 정돈된 앞발 |
+| refact.builder | Scaffold Lintcat | Specialist | 생성기 발톱, 템플릿 망토, 구조물 꼬리 장식 |
+| refact.cleaner | Prism Lintcat | Specialist | 대칭 리본, 빗질된 털 라인, 커서 블레이드 장식 |
+| refact.debugger | Trace Lintcat | Specialist | 오류를 추적하는 렌즈 눈, 발자국 추적선, 얇은 센서 수염 |
+| refact.scholar | Index Lintcat | Specialist | 인덱스 카드 목도리, 주석 리본, 문맥 지도 꼬리 |
+| refact.streak | Commit Lintcat | Specialist | 반복 체크 무늬, 타임라인 꼬리, 작은 커밋 태그 |
+| refact.ultimate | Architecture Lynx | Ultimate | 다중 코드 꼬리, 설계도 후광, 균형 잡힌 고양이형 실루엣 |
 
 ### Debugon Line
 
-디버거, 로그 콘솔, 브레이크포인트에서 태어난 생명체. 눈과 센서가 크고, 성장할수록 탐지 장치와 신호 패턴이 강해진다.
+디버거, 로그 콘솔, 브레이크포인트에서 태어난 토끼 계열 생명체. 큰 귀가 센서처럼 작동하고, 둥근 몸과 빠른 발이 민첩한 탐지 이미지를 만든다. 성장할수록 렌즈, 경고등, 로그 패널, 안테나가 붙으며 빨강/마젠타 계열로 강한 신호감을 준다.
 
 | ID | 이름 | 단계 | 외형 키워드 |
 | --- | --- | --- | --- |
-| debugon.hatchling | Debugon | Hatchling | 작은 박쥐형 센서, 붉은 브레이크포인트 눈 |
-| debugon.toolkit | Breakbat | Toolkit | 날개형 로그 패널, 꼬리 센서, 경고점 무늬 |
-| debugon.builder | Patch Breakbat | Specialist | 빠른 패치 키트, 기능 탐색 레이더, 배포 고글 |
-| debugon.cleaner | Cleanroom Breakbat | Specialist | 오염 제거 필터, 정리된 로그 날개, 얇은 실루엣 |
-| debugon.debugger | Signal Breakbat | Specialist | 대형 레이더 귀, 다중 렌즈, 강한 경고색 |
-| debugon.scholar | Forensic Breakbat | Specialist | 로그 북, 증거 태그, 분석 안경 |
-| debugon.streak | Watchloop Breakbat | Specialist | 모니터링 링, 반복 신호, 연속 감시 꼬리 |
-| debugon.ultimate | Rootcause Wyvern | Ultimate | 원인 추적 날개, 다층 센서 왕관, 안정화 코어 |
+| debugon.hatchling | Debugbun | Hatchling | 큰 토끼 귀, 붉은 브레이크포인트 눈, 작은 점프 발 |
+| debugon.toolkit | Breakbunny | Toolkit | 귀 센서, 꼬리 경고등, 작은 로그 패널 백팩 |
+| debugon.builder | Patch Breakbunny | Specialist | 빠른 패치 키트, 기능 탐색 고글, 배포 스캐너 |
+| debugon.cleaner | Cleanroom Breakbunny | Specialist | 정리된 로그 리본, 오염 제거 필터, 얇은 귀 안테나 |
+| debugon.debugger | Signal Breakbunny | Specialist | 대형 레이더 귀, 다중 렌즈, 강한 경고색 코어 |
+| debugon.scholar | Forensic Breakbunny | Specialist | 로그 북 가방, 증거 태그, 분석 안경 |
+| debugon.streak | Watchloop Breakbunny | Specialist | 모니터링 링, 반복 신호 귀 무늬, 연속 감시 꼬리 |
+| debugon.ultimate | Rootcause Jackrabbit | Ultimate | 거대 레이더 귀, 다층 센서 왕관, 안정화 코어 |
 
 ### Archivox Line
 
-문서, 커밋 기록, 지식 저장소에서 태어난 생명체. 조용하고 지적인 실루엣이며, 성장할수록 기록 장치와 시간 축적의 상징이 붙는다.
+문서, 커밋 기록, 지식 저장소에서 태어난 올빼미 계열 생명체. 둥근 눈, 짧은 부리, 책갈피 날개가 핵심이며 조용하고 지적인 실루엣을 가진다. 성장할수록 문서 망토, 안경, 기록 룬, 커밋 스탬프가 붙으며 파랑/보라 계열로 지식 저장소의 인상을 준다.
 
 | ID | 이름 | 단계 | 외형 키워드 |
 | --- | --- | --- | --- |
-| archivox.hatchling | Archivox | Hatchling | 작은 문서 정령, 종이 귀, 커서 눈 |
-| archivox.toolkit | Docowl | Toolkit | 올빼미형 실루엣, 책갈피 날개, 커밋 스탬프 |
+| archivox.hatchling | Archive Owlet | Hatchling | 둥근 올빼미 눈, 작은 부리, 종이 귀 같은 솜털 |
+| archivox.toolkit | Docowl | Toolkit | 책갈피 날개, 커밋 스탬프 가슴 무늬, 문서 망토 |
 | archivox.builder | Blueprint Docowl | Specialist | 설계도 날개, 기능 명세 두루마리, 작은 컴퍼스 |
-| archivox.cleaner | Glossary Docowl | Specialist | 정리된 색인 깃털, 리팩터 노트, 얇은 책등 |
+| archivox.cleaner | Glossary Docowl | Specialist | 정리된 색인 깃털, 리팩터 노트, 얇은 책등 장식 |
 | archivox.debugger | Audit Docowl | Specialist | 감사 로그 눈, 분석 태그, 증거 리본 |
 | archivox.scholar | Codex Docowl | Specialist | 거대한 책 날개, 문맥 룬, 지식 왕관 |
 | archivox.streak | Chronicle Docowl | Specialist | 커밋 달력 망토, 연속 스탬프, 시간 고리 |
-| archivox.ultimate | Repository Seraph | Ultimate | 지식 저장소 날개, 커밋 별자리, 모든 기록의 수호자 |
+| archivox.ultimate | Repository Owlbear | Ultimate | 지식 저장소 날개, 커밋 별자리, 모든 기록의 수호자 |
 
 ## 최종 진화 판정
 
@@ -204,10 +213,10 @@ type PetState = {
 | 계열 | 기본 실루엣 | 구분 포인트 |
 | --- | --- | --- |
 | Kernel Egg | 둥근 알 | 검은 터미널 껍질, 녹색 커서 코어 |
-| Buildling | 박스형 | 네모난 몸체, 하단 추진 불꽃, 주황 계열 |
-| Refact | 날렵한 포매터형 | 중괄호 꼬리, 청록 라인, 대칭적인 귀 |
-| Debugon | 센서형 | 붉은 눈, 안테나, 로그 패널 날개 |
-| Archivox | 기록형 | 문서 귀, 책갈피 날개, 푸른 기록 코어 |
+| Buildling | 강아지형 | 둥근 얼굴, 짧은 귀, 꼬리, 발바닥, 주황 계열 공구 하네스 |
+| Refact | 고양이형 | 뾰족한 귀, 긴 꼬리, 정돈된 자세, 청록 라인과 대칭 리본 |
+| Debugon | 토끼형 | 큰 귀 센서, 둥근 몸, 빠른 발, 붉은 렌즈와 경고등 |
+| Archivox | 올빼미형 | 둥근 눈, 짧은 부리, 책갈피 날개, 푸른 기록 코어 |
 
 ## 픽셀 매트릭스 초안
 
@@ -243,7 +252,7 @@ kyyggyyk
 ............
 ```
 
-Buildling은 패키지 상자에서 막 나온 형태다. 몸은 정사각형에 가깝고, 발 아래에 작은 빌드 불꽃이 붙는다.
+Buildling은 강아지처럼 읽히는 첫 형태다. 둥근 얼굴, 짧은 귀, 작은 꼬리와 발바닥을 우선하고, 발 아래에 작은 빌드 불꽃을 붙인다.
 
 ### refact.hatchling - Refactail - 12x12
 
@@ -262,7 +271,7 @@ Buildling은 패키지 상자에서 막 나온 형태다. 몸은 정사각형에
 ............
 ```
 
-Refactail은 중괄호 꼬리와 정돈된 좌우 라인이 핵심이다. 다른 계열보다 선이 얇고 대칭적으로 보여야 한다.
+Refactail은 고양이처럼 읽히는 첫 형태다. 뾰족한 귀, 긴 꼬리, 정돈된 좌우 라인이 핵심이다. 다른 계열보다 선이 얇고 대칭적으로 보여야 한다.
 
 ### debugon.hatchling - Debugon - 12x12
 
@@ -281,7 +290,7 @@ Refactail은 중괄호 꼬리와 정돈된 좌우 라인이 핵심이다. 다른
 ............
 ```
 
-Debugon은 작은 디버그 센서 생명체다. 붉은 안테나와 브레이크포인트 눈이 가장 먼저 보여야 한다.
+Debugon은 토끼처럼 읽히는 첫 형태다. 큰 귀가 센서 역할을 하며, 붉은 브레이크포인트 눈과 작은 점프 발이 가장 먼저 보여야 한다.
 
 ### archivox.hatchling - Archivox - 12x12
 
@@ -300,7 +309,7 @@ Debugon은 작은 디버그 센서 생명체다. 붉은 안테나와 브레이�
 ............
 ```
 
-Archivox는 종이 귀와 책갈피 날개가 붙은 문서 정령 형태다. 흰 문서 면과 푸른 기록 코어가 구분되어야 한다.
+Archivox는 올빼미처럼 읽히는 첫 형태다. 둥근 눈, 짧은 부리, 책갈피 날개가 붙어야 하며, 흰 문서 면과 푸른 기록 코어가 구분되어야 한다.
 
 ### buildling.toolkit - Forgepack - 16x16
 
@@ -323,7 +332,7 @@ Archivox는 종이 귀와 책갈피 날개가 붙은 문서 정령 형태다. �
 ................
 ```
 
-Forgepack은 빌드 모듈 백팩이 붙은 형태다. 하단 추진기와 주황 금속 덩어리감이 핵심이다.
+Forgepack은 공구 하네스와 빌드 모듈 백팩을 찬 강아지 형태다. 하단 추진기와 주황 장비가 핵심이지만, 귀와 꼬리 실루엣은 유지해야 한다.
 
 ### refact.toolkit - Lintfox - 16x16
 
@@ -346,7 +355,7 @@ Forgepack은 빌드 모듈 백팩이 붙은 형태다. 하단 추진기와 주�
 ................
 ```
 
-Lintfox는 포매터 귀와 줄맞춤 무늬가 보이는 여우형 실루엣이다. 꼬리는 코드 블록을 감싸는 중괄호처럼 휘어진다.
+Lintfox는 포매터 리본과 줄맞춤 무늬가 보이는 고양이형 실루엣이다. 꼬리는 코드 블록을 감싸는 중괄호처럼 휘어진다.
 
 ### debugon.toolkit - Breakbat - 16x16
 
@@ -369,7 +378,7 @@ r...krrrrk...r..
 ................
 ```
 
-Breakbat은 로그 패널 날개를 펼친 형태다. 몸체는 작지만 안테나와 날개가 넓어 디버깅 탐지 생명체처럼 읽혀야 한다.
+Breakbat은 귀 센서와 로그 패널 백팩을 가진 토끼형 실루엣이다. 몸체는 둥글지만 큰 귀와 렌즈가 넓어 디버깅 탐지 생명체처럼 읽혀야 한다.
 
 ### archivox.toolkit - Docowl - 16x16
 
@@ -392,7 +401,7 @@ Breakbat은 로그 패널 날개를 펼친 형태다. 몸체는 작지만 안테
 ................
 ```
 
-Docowl은 책갈피 날개와 커밋 스탬프 몸통을 가진 기록형 생명체다. 흰 문서 면이 넓어 문서 기반 계열이라는 인상이 우선되어야 한다.
+Docowl은 책갈피 날개와 커밋 스탬프 몸통을 가진 올빼미형 생명체다. 둥근 눈과 흰 문서 면이 넓어 문서 기반 계열이라는 인상이 우선되어야 한다.
 
 ## 다음 픽셀 작업 범위
 
