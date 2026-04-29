@@ -3,7 +3,7 @@
   "displayName": "Gitagotchi",
   "description": "A VSCode pet that grows from Git diffs, commits, and debugging progress.",
   "version": "0.1.0",
-  "publisher": "gitagotchi",
+  "publisher": "stjoo0925",
   "license": "MIT",
   "icon": "resources/gitagotchi-icon.png",
   "repository": {
@@ -16,17 +16,17 @@
   "categories": [
     "Other"
   ],
-    "activationEvents": [
-      "onStartupFinished",
-      "onCommand:gitagotchi.openPet",
-      "onCommand:gitagotchi.renamePet",
-      "onCommand:gitagotchi.resetPet",
-      "onCommand:gitagotchi.feed",
-      "onCommand:gitagotchi.viewStats",
-      "onCommand:gitagotchi.openDex",
-      "onCommand:gitagotchi.checkCommit",
-      "onCommand:gitagotchi.leaderboard",
-      "onCommand:gitagotchi.createLeaderboard"
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:gitagotchi.openPet",
+    "onCommand:gitagotchi.renamePet",
+    "onCommand:gitagotchi.resetPet",
+    "onCommand:gitagotchi.feed",
+    "onCommand:gitagotchi.viewStats",
+    "onCommand:gitagotchi.openDex",
+    "onCommand:gitagotchi.checkCommit",
+    "onCommand:gitagotchi.leaderboard",
+    "onCommand:gitagotchi.createLeaderboard"
   ],
   "main": "./dist/extension.js",
   "contributes": {
