@@ -31,6 +31,9 @@ describe("pet panel chrome", () => {
     );
 
     expect(html).toContain('class="guide-btn"');
+    expect(html).toContain('class="top-action-btn" data-command="rename"');
+    expect(html).toContain('class="top-action-btn danger" data-command="reset"');
+    expect(html).toMatch(/<div class="top-actions">[\s\S]*data-command="rename"[\s\S]*data-command="reset"[\s\S]*data-guide-open/);
     expect(html).toContain('aria-label="도움말"');
     expect(html).toContain('title="도움말">?</button>');
     expect(html).toContain('id="guide-panel"');

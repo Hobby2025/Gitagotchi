@@ -2,6 +2,14 @@ import { ActivityEvent } from '../events';
 import { GrowthResult, GrowthRule } from '../growthEngine';
 import { PetState } from '../petState';
 
+function dampenDiffExp(rawExp: number): number {
+  if (rawExp <= 80) {
+    return rawExp;
+  }
+
+  return Math.min(180, Math.round(80 + Math.sqrt(rawExp - 80) * 6));
+}
+
 export const baseDiffRule: GrowthRule = {
   id: 'base-diff',
   appliesTo(event: ActivityEvent): boolean {
@@ -12,7 +20,8 @@ export const baseDiffRule: GrowthRule = {
       throw new Error('baseDiffRule only accepts diff events');
     }
 
-    const expDelta = Math.floor(event.stats.added / 5) + Math.floor(event.stats.deleted / 10) + event.stats.files * 2;
+    const rawExp = Math.floor(event.stats.added / 8) + Math.floor(event.stats.deleted / 12) + event.stats.files * 2;
+    const expDelta = dampenDiffExp(rawExp);
 
     return {
       expDelta,

@@ -123,8 +123,6 @@ export function renderPetPanelHtml(
     { command: "commit", rune: "GC", label: i18n.t("ui.commit") },
     { command: "stats", rune: "ST", label: i18n.t("ui.viewStats") },
     { command: "dex", rune: "DX", label: "Dex" },
-    { command: "rename", rune: "RN", label: "Rename" },
-    { command: "reset", rune: "RS", label: "Reset" },
   ];
   const actionButtons = actions
     .map(
@@ -165,9 +163,13 @@ export function renderPetPanelHtml(
     body { color: var(--vscode-foreground); font-family: var(--vscode-font-family); margin: 0; padding: 20px; background: var(--vscode-editor-background); }
     .page-shell { width: min(920px, 100%); display: grid; gap: 12px; }
     .lang-bar { display: flex; justify-content: flex-end; gap: 6px; align-items: center; }
+    .top-actions { display: flex; align-items: center; gap: 6px; }
     .lang-btn { min-width: 36px; min-height: 28px; padding: 4px 7px; font-family: var(--vscode-editor-font-family); font-size: 11px; font-weight: 800; line-height: 1; background: var(--vscode-editorWidget-background); color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-panel-border); border-radius: 4px; cursor: pointer; opacity: 0.74; transition: opacity .15s ease, color .15s ease, border-color .15s ease, background .15s ease; }
     .lang-btn:hover { opacity: 1; color: var(--vscode-foreground); border-color: var(--lineage-accent, var(--vscode-focusBorder)); }
     .lang-btn.active { opacity: 1; color: var(--vscode-foreground); border-color: var(--lineage-accent, var(--vscode-focusBorder)); background: color-mix(in srgb, var(--vscode-editorWidget-background) 74%, var(--lineage-accent, var(--vscode-focusBorder))); }
+    .top-action-btn { min-width: 58px; min-height: 28px; height: 28px; padding: 4px 8px; border-radius: 4px; font-family: var(--vscode-editor-font-family); font-size: 11px; font-weight: 800; line-height: 1; color: var(--vscode-foreground); background: color-mix(in srgb, var(--vscode-editorWidget-background) 84%, var(--lineage-accent)); border: 1px solid color-mix(in srgb, var(--lineage-accent) 48%, var(--vscode-panel-border)); cursor: pointer; opacity: .82; }
+    .top-action-btn:hover { opacity: 1; border-color: var(--lineage-accent); background: color-mix(in srgb, var(--vscode-editorWidget-background) 72%, var(--lineage-accent)); }
+    .top-action-btn.danger { color: var(--vscode-errorForeground, var(--vscode-foreground)); border-color: color-mix(in srgb, var(--vscode-errorForeground, #f87171) 48%, var(--vscode-panel-border)); background: color-mix(in srgb, var(--vscode-editorWidget-background) 86%, var(--vscode-errorForeground, #f87171)); }
     .guide-btn { width: 28px; min-width: 28px; height: 28px; min-height: 28px; padding: 0; display: grid; place-items: center; border-radius: 999px; font-family: var(--vscode-editor-font-family); font-size: 13px; font-weight: 900; line-height: 1; color: var(--vscode-foreground); background: color-mix(in srgb, var(--vscode-editorWidget-background) 76%, var(--lineage-accent)); border: 1px solid color-mix(in srgb, var(--lineage-accent) 60%, var(--vscode-panel-border)); cursor: pointer; opacity: .86; }
     .guide-btn:hover { opacity: 1; border-color: var(--lineage-accent); background: color-mix(in srgb, var(--vscode-editorWidget-background) 64%, var(--lineage-accent)); }
     .hud-shell { width: min(920px, 100%); display: grid; grid-template-columns: minmax(260px, 300px) minmax(360px, 1fr); gap: 16px; align-items: stretch; }
@@ -256,7 +258,7 @@ export function renderPetPanelHtml(
 </head>
 <body>
   <main class="page-shell" style="${lineageTheme}">
-  <div class="lang-bar">${langButtons}<button class="guide-btn" type="button" data-guide-open aria-label="${helpLabel}" title="${helpLabel}">?</button></div>
+  <div class="lang-bar">${langButtons}<div class="top-actions"><button class="top-action-btn" data-command="rename" type="button">Rename</button><button class="top-action-btn danger" data-command="reset" type="button">Reset</button><button class="guide-btn" type="button" data-guide-open aria-label="${helpLabel}" title="${helpLabel}">?</button></div></div>
   <section id="guide-panel" class="guide-overlay" hidden aria-label="${guideTitle}">
     <div class="guide-panel" role="dialog" aria-modal="true" aria-labelledby="guide-title">
       <div class="guide-header">

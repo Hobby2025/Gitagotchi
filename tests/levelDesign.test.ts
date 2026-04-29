@@ -5,14 +5,14 @@ import { resolveEvolution } from '../src/core/evolutionEngine';
 
 describe('level design and life cycle', () => {
   it('uses a steeper level curve after the first level', () => {
-    expect(getRequiredExp(1)).toBe(250);
-    expect(getRequiredExp(2)).toBe(400);
-    expect(getRequiredExp(5)).toBe(1100);
-    expect(getRequiredExp(10)).toBe(3500);
-    expect(getRequiredExp(20)).toBe(13000);
-    expect(getRequiredExp(30)).toBe(30000);
-    expect(getRequiredExp(50)).toBe(90000);
-    expect(getRequiredExp(90)).toBe(300000);
+    expect(getRequiredExp(1)).toBe(200);
+    expect(getRequiredExp(2)).toBe(325);
+    expect(getRequiredExp(5)).toBe(850);
+    expect(getRequiredExp(10)).toBe(2400);
+    expect(getRequiredExp(20)).toBe(8500);
+    expect(getRequiredExp(30)).toBe(19000);
+    expect(getRequiredExp(50)).toBe(62000);
+    expect(getRequiredExp(90)).toBe(220000);
   });
 
   it('requires care gates for advanced evolutions', () => {

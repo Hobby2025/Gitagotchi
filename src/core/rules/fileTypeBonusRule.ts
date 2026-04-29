@@ -29,21 +29,21 @@ export const fileTypeBonusRule: GrowthRule = {
     const breakdown = [];
 
     if (event.stats.touchedFiles.some(isTestFile)) {
-      expDelta += 20;
+      expDelta += 12;
       reasons.push('Test changes');
-      breakdown.push({ id: 'file.test', label: 'Test changes', expDelta: 20 });
+      breakdown.push({ id: 'file.test', label: 'Test changes', expDelta: 12 });
     }
 
     if (event.stats.touchedFiles.some(isReadme)) {
-      expDelta += 5;
+      expDelta += 4;
       reasons.push('README changes');
-      breakdown.push({ id: 'file.readme', label: 'README changes', expDelta: 5 });
+      breakdown.push({ id: 'file.readme', label: 'README changes', expDelta: 4 });
     }
 
     if (event.stats.touchedFiles.some(isConfig)) {
-      expDelta += 3;
+      expDelta += 2;
       reasons.push('Config changes');
-      breakdown.push({ id: 'file.config', label: 'Config changes', expDelta: 3 });
+      breakdown.push({ id: 'file.config', label: 'Config changes', expDelta: 2 });
     }
 
     return {

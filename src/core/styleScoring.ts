@@ -1,5 +1,8 @@
 import { ActivityEvent } from './events';
-import { StyleScores } from './petState';
+import { StyleScoreKey, StyleScores } from './petState';
+
+const styleKeys: StyleScoreKey[] = ['builder', 'cleaner', 'debugger', 'scholar', 'streak'];
+const BALANCE_GAP_THRESHOLD = 100;
 
 export function emptyStyleScores(): StyleScores {
   return {
@@ -66,6 +69,29 @@ export function calculateStyleDelta(event: ActivityEvent): StyleScores {
   }
 
   return delta;
+}
+
+export function balanceStyleDelta(base: StyleScores, delta: StyleScores): StyleScores {
+  const values = Object.values(base);
+  const minScore = Math.min(...values);
+  const maxScore = Math.max(...values);
+
+  if (maxScore - minScore < BALANCE_GAP_THRESHOLD || styleKeys.every((key) => delta[key] === 0)) {
+    return delta;
+  }
+
+  return styleKeys.reduce<StyleScores>((balanced, key) => {
+    const isDominant = base[key] === maxScore;
+    const isLagging = base[key] <= minScore + 20;
+    const dominantRate = key === 'streak' ? 0.8 : 0.65;
+    const catchUpBonus = key === 'streak' ? 1 : 2;
+    const softened = isDominant && delta[key] > 0
+      ? Math.max(1, Math.floor(delta[key] * dominantRate))
+      : delta[key];
+
+    balanced[key] = softened + (isLagging ? catchUpBonus : 0);
+    return balanced;
+  }, emptyStyleScores());
 }
 
 export function mergeStyleScores(base: StyleScores, delta: Partial<StyleScores>): StyleScores {

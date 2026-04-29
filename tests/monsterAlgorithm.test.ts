@@ -26,6 +26,33 @@ describe('monster-style growth algorithm', () => {
     });
   });
 
+  it('softens gains for a dominant trait and gives low traits a catch-up bonus', () => {
+    const state = {
+      ...createInitialPetState('2026-04-27T00:00:00.000Z'),
+      styleScores: { builder: 250, cleaner: 0, debugger: 0, scholar: 0, streak: 0 }
+    };
+    const event: ActivityEvent = {
+      type: 'diff',
+      stats: {
+        added: 100,
+        deleted: 0,
+        files: 1,
+        touchedFiles: ['src/feature.ts']
+      },
+      occurredAt: '2026-04-27T00:01:00.000Z'
+    };
+
+    const next = applyActivity(state, event, createDefaultGrowthEngine());
+
+    expect(next.styleScores).toEqual({
+      builder: 263,
+      cleaner: 2,
+      debugger: 2,
+      scholar: 2,
+      streak: 1
+    });
+  });
+
   it('derives species from dominant style score and level gates', () => {
     const base = createInitialPetState('2026-04-27T00:00:00.000Z');
 
@@ -85,8 +112,8 @@ describe('monster-style growth algorithm', () => {
 
     const next = applyActivity(state, event, createDefaultGrowthEngine());
 
-    expect(next.exp).toBe(42);
-    expect(next.styleScores.cleaner).toBe(160);
+    expect(next.exp).toBe(36);
+    expect(next.styleScores.cleaner).toBe(153);
     expect(next.skills).toContain('deepClean');
     expect(next.logs[0].breakdown?.map((entry) => entry.label)).toContain('Deep Clean skill');
     expect(next.logs[0].breakdown?.map((entry) => entry.label)).toContain('Focus Flow skill');

@@ -3,9 +3,9 @@ import { GrowthResult, GrowthRule } from '../growthEngine';
 import { PetState } from '../petState';
 
 const bonuses: Array<[RegExp, number, string]> = [
-  [/\bhotfix\b/i, 20, 'Hotfix commit'],
-  [/\brefactor\b/i, 15, 'Refactor commit'],
-  [/\bfeat\b/i, 10, 'Feature commit'],
+  [/\bhotfix\b/i, 18, 'Hotfix commit'],
+  [/\brefactor\b/i, 12, 'Refactor commit'],
+  [/\bfeat\b/i, 8, 'Feature commit'],
   [/\bfix\b/i, 5, 'Fix commit']
 ];
 
@@ -24,7 +24,7 @@ export const commitMessageRule: GrowthRule = {
     const reason = matched?.[2] ?? 'Commit completed';
 
     return {
-      expDelta: 20 + bonus,
+      expDelta: 18 + bonus,
       moodDelta: 5,
       hungerDelta: -3,
       energyDelta: -2,
@@ -36,7 +36,7 @@ export const commitMessageRule: GrowthRule = {
         debug: /\b(fix|hotfix)\b/i.test(event.message) ? 1 : 0
       },
       reasons: [reason],
-      breakdown: [{ id: 'commit-message', label: reason, expDelta: 20 + bonus, moodDelta: 5, healthDelta: 2 }]
+      breakdown: [{ id: 'commit-message', label: reason, expDelta: 18 + bonus, moodDelta: 5, healthDelta: 2 }]
     };
   }
 };

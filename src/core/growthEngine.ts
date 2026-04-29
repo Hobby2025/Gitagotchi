@@ -9,7 +9,7 @@ import { fileTypeBonusRule } from './rules/fileTypeBonusRule';
 import { idleDecayRule } from './rules/idleDecayRule';
 import { refactorRule } from './rules/refactorRule';
 import { applySkillBonuses } from './skillEngine';
-import { calculateStyleDelta, mergeStyleScores } from './styleScoring';
+import { balanceStyleDelta, calculateStyleDelta, mergeStyleScores } from './styleScoring';
 import { createActivityMessages } from '../messages/messageEngine';
 import { createI18n, I18n } from '../i18n';
 
@@ -88,7 +88,7 @@ export function createGrowthEngine(rules: GrowthRule[]): GrowthEngine {
         .map((rule) => rule.apply(event, state));
 
       const base = mergeGrowthResults(activeResults);
-      const styleScoresDelta = calculateStyleDelta(event);
+      const styleScoresDelta = balanceStyleDelta(state.styleScores, calculateStyleDelta(event));
       const skilledState = resolveMonsterIdentity({
         ...state,
         styleScores: mergeStyleScores(state.styleScores, styleScoresDelta)

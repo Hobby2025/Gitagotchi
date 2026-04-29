@@ -16,8 +16,8 @@ export const diagnosticsRule: GrowthRule = {
 
     if (delta > 0) {
       return {
-        expDelta: delta * 20,
-        moodDelta: delta * 4,
+        expDelta: delta * 16,
+        moodDelta: delta * 3,
         hungerDelta: -1,
         energyDelta: 0,
         healthDelta: delta * 2,
@@ -26,7 +26,7 @@ export const diagnosticsRule: GrowthRule = {
           debug: 1
         },
         reasons: ['Diagnostics resolved'],
-        breakdown: [{ id: 'diagnostics.resolved', label: 'Diagnostics resolved', expDelta: delta * 20, moodDelta: delta * 4, healthDelta: delta * 2 }]
+        breakdown: [{ id: 'diagnostics.resolved', label: 'Diagnostics resolved', expDelta: delta * 16, moodDelta: delta * 3, healthDelta: delta * 2 }]
       };
     }
 

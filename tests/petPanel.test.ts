@@ -35,6 +35,9 @@ describe('pet panel', () => {
     expect(html).toContain('data-command="dex"');
     expect(html).toContain('data-command="rename"');
     expect(html).toContain('data-command="reset"');
+    expect(html).toMatch(/<div class="top-actions">[\s\S]*data-command="rename"[\s\S]*data-command="reset"[\s\S]*data-guide-open/);
+    expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="rename"[\s\S]*<\/div>/);
+    expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="reset"[\s\S]*<\/div>/);
     expect(html).not.toContain('data-command="leaderboard"');
     expect(html).not.toContain('data-command="createLeaderboard"');
   });
@@ -56,6 +59,8 @@ describe('pet panel', () => {
     expect(html).toContain('class="action-rune">PT</span>');
     expect(html).toContain('class="action-rune">GC</span>');
     expect(html).toContain('class="action-rune">DX</span>');
+    expect(html).not.toContain('class="action-rune">RN</span>');
+    expect(html).not.toContain('class="action-rune">RS</span>');
     expect(html).toContain('<span class="action-label">만져주기</span>');
     expect(html).toContain('<span class="action-label">커밋 확인</span>');
   });

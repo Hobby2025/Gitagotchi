@@ -18,7 +18,7 @@ describe('growth engine', () => {
 
     const result = createDefaultGrowthEngine().evaluate(event, state);
 
-    expect(result.expDelta).toBe(45);
+    expect(result.expDelta).toBe(33);
     expect(result.moodDelta).toBe(5);
     expect(result.hungerDelta).toBe(-2);
     expect(result.reasons).toEqual([
@@ -38,7 +38,7 @@ describe('growth engine', () => {
       occurredAt: '2026-04-27T00:01:00.000Z'
     };
 
-    expect(createDefaultGrowthEngine().evaluate(event, state).expDelta).toBe(35);
+    expect(createDefaultGrowthEngine().evaluate(event, state).expDelta).toBe(30);
   });
 
   it('raises mood and exp when diagnostics are resolved', () => {
@@ -52,8 +52,8 @@ describe('growth engine', () => {
 
     const result = createDefaultGrowthEngine().evaluate(event, state);
 
-    expect(result.expDelta).toBe(60);
-    expect(result.moodDelta).toBe(12);
+    expect(result.expDelta).toBe(48);
+    expect(result.moodDelta).toBe(9);
     expect(result.reasons).toEqual(['Diagnostics resolved']);
   });
 
@@ -94,8 +94,27 @@ describe('growth engine', () => {
     const next = applyActivity(state, event, createDefaultGrowthEngine());
 
     expect(next.level).toBe(2);
-    expect(next.exp).toBe(2);
+    expect(next.exp).toBe(0);
     expect(next.hunger).toBe(0);
     expect(next.mood).toBe(100);
+  });
+
+  it('dampens very large diffs so one snapshot cannot dominate growth', () => {
+    const state = createInitialPetState('2026-04-27T00:00:00.000Z');
+    const event: ActivityEvent = {
+      type: 'diff',
+      stats: {
+        added: 2000,
+        deleted: 0,
+        files: 20,
+        touchedFiles: ['src/largeFeature.ts']
+      },
+      occurredAt: '2026-04-27T00:01:00.000Z'
+    };
+
+    const result = createDefaultGrowthEngine().evaluate(event, state);
+
+    expect(result.expDelta).toBe(167);
+    expect(result.breakdown).toContainEqual({ id: 'base-diff', label: 'Code changes', expDelta: 167, moodDelta: 2, healthDelta: 1 });
   });
 });

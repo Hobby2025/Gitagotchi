@@ -9,7 +9,7 @@ export const refactorRule: GrowthRule = {
   },
   apply(_event: ActivityEvent, _state: PetState): GrowthResult {
     return {
-      expDelta: 10,
+      expDelta: 8,
       moodDelta: 3,
       hungerDelta: 0,
       energyDelta: 0,
@@ -19,7 +19,7 @@ export const refactorRule: GrowthRule = {
         refactor: 1
       },
       reasons: ['Refactoring'],
-      breakdown: [{ id: 'refactor', label: 'Refactoring', expDelta: 10, moodDelta: 3, healthDelta: 1 }]
+      breakdown: [{ id: 'refactor', label: 'Refactoring', expDelta: 8, moodDelta: 3, healthDelta: 1 }]
     };
   }
 };
