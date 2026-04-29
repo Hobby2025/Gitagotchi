@@ -17,6 +17,7 @@ import { getNextSyncAt, shouldSyncLeaderboard } from './leaderboard/leaderboardS
 import { LeaderboardSyncStateStore } from './leaderboard/leaderboardSyncStateStore';
 import { LeaderboardStatus } from './leaderboard/leaderboardTypes';
 import { GitagotchiLeaderboardPanel } from './ui/leaderboardPanel';
+import { GitagotchiDexPanel } from './ui/dexPanel';
 import { GitagotchiLogPanel } from './ui/logPanel';
 import { GitagotchiPetPanel } from './ui/petPanel';
 import { GitagotchiStatusBar } from './ui/statusBar';
@@ -27,6 +28,7 @@ type Runtime = {
   petPanel: GitagotchiPetPanel;
   logs: GitagotchiLogPanel;
   leaderboard: GitagotchiLeaderboardPanel;
+  dex: GitagotchiDexPanel;
   leaderboardSyncState: LeaderboardSyncStateStore;
   diagnosticsCount: number;
   i18n: I18n;
@@ -247,12 +249,14 @@ export function activate(context: vscode.ExtensionContext): void {
   const petPanel = new GitagotchiPetPanel(i18n, context.extensionUri);
   const logs = new GitagotchiLogPanel(i18n);
   const leaderboard = new GitagotchiLeaderboardPanel(i18n);
+  const dex = new GitagotchiDexPanel();
   const runtime: Runtime = {
     store,
     statusBar,
     petPanel,
     logs,
     leaderboard,
+    dex,
     leaderboardSyncState: new LeaderboardSyncStateStore(context.globalState),
     diagnosticsCount: countWorkspaceDiagnostics(),
     i18n
@@ -264,6 +268,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.resetPet', () => resetPet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.feed', () => feed(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewStats', () => logs.show(store.load())));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openDex', () => dex.show()));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.checkCommit', () => checkCommit(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.leaderboard', () => showLeaderboard(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.createLeaderboard', () => createLeaderboard(runtime)));

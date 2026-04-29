@@ -35,6 +35,9 @@ export class GitagotchiPetPanel {
         if (message.command === 'stats') {
           void vscode.commands.executeCommand('gitagotchi.viewStats');
         }
+        if (message.command === 'dex') {
+          void vscode.commands.executeCommand('gitagotchi.openDex');
+        }
         if (message.command === 'leaderboard') {
           void vscode.commands.executeCommand('gitagotchi.leaderboard');
         }

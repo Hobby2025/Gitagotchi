@@ -32,6 +32,7 @@ describe('pet panel', () => {
     expect(html).toContain('data-command="feed"');
     expect(html).toContain('data-command="commit"');
     expect(html).toContain('data-command="stats"');
+    expect(html).toContain('data-command="dex"');
     expect(html).toContain('data-command="leaderboard"');
     expect(html).toContain('data-command="createLeaderboard"');
     expect(html).toContain('data-command="rename"');
@@ -54,6 +55,7 @@ describe('pet panel', () => {
     expect(html).toContain('class="action-btn" data-command="commit"');
     expect(html).toContain('class="action-rune">FD</span>');
     expect(html).toContain('class="action-rune">GC</span>');
+    expect(html).toContain('class="action-rune">DX</span>');
     expect(html).toContain('<span class="action-label">먹이 주기</span>');
     expect(html).toContain('<span class="action-label">커밋 확인</span>');
   });
