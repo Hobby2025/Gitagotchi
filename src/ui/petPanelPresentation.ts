@@ -1,40 +1,13 @@
 import { getPetSpritePack } from '../character/evolutionSprites';
-import { PixelFrame } from '../character/spriteTypes';
 import { getMoodName, getRequiredExp, PetLineage, PetState } from '../core/petState';
 import { I18n } from '../i18n';
+import { renderSpriteHtml } from './spriteHtml';
 import { renderHtmlTemplate } from './webviewSecurity';
 
 export type PetPanelRenderOptions = {
   cspSource: string;
   nonce: string;
 };
-
-function getPixelSize(frame: PixelFrame): number {
-  if (frame.width >= 32 || frame.height >= 32) {
-    return 5;
-  }
-  if (frame.width >= 24 || frame.height >= 24) {
-    return 6;
-  }
-  if (frame.width >= 16 || frame.height >= 16) {
-    return 9;
-  }
-  if (frame.width >= 12 || frame.height >= 12) {
-    return 12;
-  }
-  return 15;
-}
-
-function renderSprite(frame: PixelFrame): string {
-  const pixels = frame.pixels.flatMap((row, y) => Array.from({ length: frame.width }, (_, x) => {
-    const token = row[x] ?? '.';
-    const color = frame.palette[token] ?? 'transparent';
-    const style = color === 'transparent' ? '' : ` style="background:${renderHtmlTemplate.escape(color)}"`;
-    return `<span class="sprite-pixel"${style}></span>`;
-  }));
-
-  return `<div class="monster-sprite" aria-label="Gitagotchi monster sprite" style="--cols:${frame.width};--rows:${frame.height};--px:${getPixelSize(frame)}px">${pixels.join('')}</div>`;
-}
 
 function meterClass(value: number, inverted = false): string {
   const score = inverted ? 100 - value : value;
@@ -69,7 +42,7 @@ export function renderPetPanelHtml(state: PetState, i18n: I18n, options: PetPane
   }
 
   const petName = renderHtmlTemplate.escape(state.name?.trim() || 'Gitagotchi');
-  const pet = renderSprite(firstFrame);
+  const pet = renderSpriteHtml(firstFrame, 'monster-sprite', 'Gitagotchi monster sprite');
   const stage = renderHtmlTemplate.escape(state.stage);
   const lineage = renderHtmlTemplate.escape(state.lineage ?? 'unbranched');
   const affinity = renderHtmlTemplate.escape(state.affinity ?? 'unfocused');
