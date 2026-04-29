@@ -118,6 +118,19 @@ describe('sprite packs', () => {
     }
   });
 
+  it('uses expanded animal sprite canvases for more detailed silhouettes', () => {
+    const byId = new Map(developerToolSpritePacks.map((sprite) => [sprite.id, sprite]));
+
+    expect(byId.get('buildling-hatchling-normal')?.frames[0].width).toBe(16);
+    expect(byId.get('refact-toolkit-normal')?.frames[0].width).toBe(20);
+    expect(byId.get('debugon-specialist-debugger-normal')?.frames[0].width).toBe(24);
+    expect(byId.get('archivox-ultimate-normal')?.frames[0].width).toBe(32);
+
+    expect(byId.get('buildling-hatchling-normal')?.frames[0].palette.e).toBe('#f5c38b');
+    expect(byId.get('refact-hatchling-normal')?.frames[0].palette.x).toBe('#cbd5e1');
+    expect(byId.get('archivox-toolkit-normal')?.frames[0].pixels.join('')).toContain('y');
+  });
+
   it('gives each lineage a distinct visual signature across growth stages', () => {
     const base = createInitialPetState('2026-04-28T00:00:00.000Z');
     const stages: Array<{ evolution: PetEvolution; stage: typeof base.stage }> = [
