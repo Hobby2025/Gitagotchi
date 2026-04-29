@@ -105,12 +105,6 @@ export function renderPetPanelHtml(
     { command: "commit", rune: "GC", label: i18n.t("ui.commit") },
     { command: "stats", rune: "ST", label: i18n.t("ui.viewStats") },
     { command: "dex", rune: "DX", label: "Dex" },
-    { command: "leaderboard", rune: "LB", label: i18n.t("ui.leaderboard") },
-    {
-      command: "createLeaderboard",
-      rune: "RM",
-      label: i18n.t("ui.createLeaderboard"),
-    },
     { command: "rename", rune: "RN", label: "Rename" },
     { command: "reset", rune: "RS", label: "Reset" },
   ];

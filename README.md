@@ -12,7 +12,6 @@ Git diffs, commits, diagnostics improvements, and idle time.
 - Diagnostics-based feedback when problems are resolved or introduced.
 - Pet state, levels, evolution stages, style scores, and skill unlocks.
 - Local activity log panel.
-- Optional GitHub Gist leaderboard sync.
 - English, Korean, Japanese, and Chinese UI strings.
 
 ## Development Setup
@@ -39,21 +38,8 @@ npm run check
    - `Gitagotchi: Feed`
    - `Gitagotchi: View Stats`
    - `Gitagotchi: Check Commit`
-   - `Gitagotchi: Leaderboard`
-   - `Gitagotchi: Create Leaderboard`
    - `Gitagotchi: Rename Pet`
    - `Gitagotchi: Reset Pet`
-
-## Leaderboard Setup
-
-Leaderboard sync is disabled by default. To use it:
-
-1. Run `Gitagotchi: Create Leaderboard`, or create a Gist containing `leaderboard.json`.
-2. Set `gitagotchi.leaderboard.enabled` to `true`.
-3. Set `gitagotchi.leaderboard.gistId` if you are joining an existing room.
-4. Optionally set `gitagotchi.leaderboard.displayName`.
-
-GitHub authentication uses VS Code Authentication with `gist` and `read:user` scopes.
 
 ## Build Output
 

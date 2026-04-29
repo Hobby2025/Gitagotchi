@@ -38,12 +38,6 @@ export class GitagotchiPetPanel {
         if (message.command === 'dex') {
           void vscode.commands.executeCommand('gitagotchi.openDex');
         }
-        if (message.command === 'leaderboard') {
-          void vscode.commands.executeCommand('gitagotchi.leaderboard');
-        }
-        if (message.command === 'createLeaderboard') {
-          void vscode.commands.executeCommand('gitagotchi.createLeaderboard');
-        }
         if (message.command === 'rename') {
           void vscode.commands.executeCommand('gitagotchi.renamePet');
         }

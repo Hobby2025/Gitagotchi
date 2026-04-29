@@ -17,7 +17,6 @@ type TranslationKey =
   | 'ui.feed'
   | 'ui.commit'
   | 'ui.viewStats'
-  | 'ui.createLeaderboard'
   | 'ui.logsTitle'
   | 'ui.noActivity'
   | 'status.tooltip'
@@ -48,20 +47,7 @@ type TranslationKey =
   | 'breakdown.skill.focusFlow'
   | 'breakdown.skill.commitRoar'
   | 'log.fed'
-  | 'log.noGrowthDead'
-  | 'ui.leaderboard'
-  | 'leaderboard.title'
-  | 'leaderboard.player'
-  | 'leaderboard.level'
-  | 'leaderboard.exp'
-  | 'leaderboard.score'
-  | 'leaderboard.avatar'
-  | 'leaderboard.lastSync'
-  | 'leaderboard.nextSync'
-  | 'leaderboard.disabled'
-  | 'leaderboard.missingConfig'
-  | 'leaderboard.signedOut'
-  | 'leaderboard.error';
+  | 'log.noGrowthDead';
 
 type Dictionary = Record<TranslationKey, string>;
 
@@ -83,7 +69,6 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': 'Feed',
     'ui.commit': 'Commit',
     'ui.viewStats': 'View Stats',
-    'ui.createLeaderboard': 'Create Leaderboard',
     'ui.logsTitle': 'Gitagotchi Logs',
     'ui.noActivity': 'No activity yet.',
     'status.tooltip': 'Open Gitagotchi stats',
@@ -114,20 +99,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.focusFlow': 'Focus Flow skill',
     'breakdown.skill.commitRoar': 'Commit Roar skill',
     'log.fed': 'Fed Gitagotchi',
-    'log.noGrowthDead': 'No growth while dead',
-    'ui.leaderboard': 'Leaderboard',
-    'leaderboard.title': 'Gitagotchi Leaderboard',
-    'leaderboard.player': 'Player',
-    'leaderboard.level': 'Level',
-    'leaderboard.exp': 'EXP',
-    'leaderboard.score': 'Score',
-    'leaderboard.avatar': 'Avatar',
-    'leaderboard.lastSync': 'Last sync',
-    'leaderboard.nextSync': 'Next sync',
-    'leaderboard.disabled': 'Leaderboard is disabled.',
-    'leaderboard.missingConfig': 'Set a GitHub Gist ID to join a leaderboard.',
-    'leaderboard.signedOut': 'Connect GitHub to sync leaderboard data.',
-    'leaderboard.error': 'Leaderboard sync failed.'
+    'log.noGrowthDead': 'No growth while dead'
   },
   ko: {
     'ui.exp': 'EXP',
@@ -146,7 +118,6 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': '먹이 주기',
     'ui.commit': '커밋 확인',
     'ui.viewStats': '통계 보기',
-    'ui.createLeaderboard': '랭킹 방 만들기',
     'ui.logsTitle': 'Gitagotchi 기록',
     'ui.noActivity': '아직 활동이 없습니다.',
     'status.tooltip': 'Gitagotchi 통계 열기',
@@ -177,20 +148,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.focusFlow': 'Focus Flow 스킬',
     'breakdown.skill.commitRoar': 'Commit Roar 스킬',
     'log.fed': 'Gitagotchi에게 먹이를 줬습니다',
-    'log.noGrowthDead': '죽은 상태에서는 성장하지 않습니다',
-    'ui.leaderboard': '랭킹',
-    'leaderboard.title': 'Gitagotchi 랭킹',
-    'leaderboard.player': '플레이어',
-    'leaderboard.level': '레벨',
-    'leaderboard.exp': 'EXP',
-    'leaderboard.score': '점수',
-    'leaderboard.avatar': '외형',
-    'leaderboard.lastSync': '최근 동기화',
-    'leaderboard.nextSync': '다음 동기화',
-    'leaderboard.disabled': '랭킹이 비활성화되어 있습니다.',
-    'leaderboard.missingConfig': '랭킹에 참여하려면 GitHub Gist ID를 설정하세요.',
-    'leaderboard.signedOut': '랭킹 동기화를 위해 GitHub를 연결하세요.',
-    'leaderboard.error': '랭킹 동기화에 실패했습니다.'
+    'log.noGrowthDead': '죽은 상태에서는 성장하지 않습니다'
   },
   ja: {
     'ui.exp': 'EXP',
@@ -209,7 +167,6 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': 'エサをあげる',
     'ui.commit': 'コミット確認',
     'ui.viewStats': '統計を見る',
-    'ui.createLeaderboard': 'ランキングを作成',
     'ui.logsTitle': 'Gitagotchi ログ',
     'ui.noActivity': 'まだ活動がありません。',
     'status.tooltip': 'Gitagotchi の統計を開く',
@@ -240,20 +197,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.focusFlow': 'Focus Flow スキル',
     'breakdown.skill.commitRoar': 'Commit Roar スキル',
     'log.fed': 'Gitagotchi にエサをあげました',
-    'log.noGrowthDead': '倒れている間は成長しません',
-    'ui.leaderboard': 'ランキング',
-    'leaderboard.title': 'Gitagotchi ランキング',
-    'leaderboard.player': 'プレイヤー',
-    'leaderboard.level': 'レベル',
-    'leaderboard.exp': 'EXP',
-    'leaderboard.score': 'スコア',
-    'leaderboard.avatar': 'アバター',
-    'leaderboard.lastSync': '最終同期',
-    'leaderboard.nextSync': '次の同期',
-    'leaderboard.disabled': 'ランキングは無効です。',
-    'leaderboard.missingConfig': 'ランキングに参加するには GitHub Gist ID を設定してください。',
-    'leaderboard.signedOut': 'ランキング同期には GitHub 接続が必要です。',
-    'leaderboard.error': 'ランキング同期に失敗しました。'
+    'log.noGrowthDead': '倒れている間は成長しません'
   },
   zh: {
     'ui.exp': 'EXP',
@@ -272,7 +216,6 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'ui.feed': '喂食',
     'ui.commit': '检查提交',
     'ui.viewStats': '查看统计',
-    'ui.createLeaderboard': '创建排行榜',
     'ui.logsTitle': 'Gitagotchi 日志',
     'ui.noActivity': '还没有活动。',
     'status.tooltip': '打开 Gitagotchi 统计',
@@ -303,20 +246,7 @@ const dictionaries: Record<SupportedLocale, Dictionary> = {
     'breakdown.skill.focusFlow': 'Focus Flow 技能',
     'breakdown.skill.commitRoar': 'Commit Roar 技能',
     'log.fed': '已喂食 Gitagotchi',
-    'log.noGrowthDead': '死亡状态无法成长',
-    'ui.leaderboard': '排行榜',
-    'leaderboard.title': 'Gitagotchi 排行榜',
-    'leaderboard.player': '玩家',
-    'leaderboard.level': '等级',
-    'leaderboard.exp': 'EXP',
-    'leaderboard.score': '分数',
-    'leaderboard.avatar': '外观',
-    'leaderboard.lastSync': '上次同步',
-    'leaderboard.nextSync': '下次同步',
-    'leaderboard.disabled': '排行榜已禁用。',
-    'leaderboard.missingConfig': '设置 GitHub Gist ID 后即可加入排行榜。',
-    'leaderboard.signedOut': '连接 GitHub 后即可同步排行榜。',
-    'leaderboard.error': '排行榜同步失败。'
+    'log.noGrowthDead': '死亡状态无法成长'
   }
 };
 

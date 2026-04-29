@@ -66,6 +66,30 @@ describe('extension packaging', () => {
     expect(extensionSource).toContain('petPanel.show(state)');
   });
 
+  it('does not expose leaderboard commands or settings', () => {
+    const root = path.resolve(__dirname, '..');
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
+      activationEvents: string[];
+      contributes: {
+        commands: Array<{ command: string }>;
+        configuration?: {
+          properties?: Record<string, unknown>;
+        };
+      };
+    };
+    const extensionSource = fs.readFileSync(path.join(root, 'src', 'extension.ts'), 'utf8');
+    const commandIds = manifest.contributes.commands.map((command) => command.command);
+    const settingIds = Object.keys(manifest.contributes.configuration?.properties ?? {});
+
+    expect(manifest.activationEvents).not.toContain('onCommand:gitagotchi.leaderboard');
+    expect(manifest.activationEvents).not.toContain('onCommand:gitagotchi.createLeaderboard');
+    expect(commandIds).not.toContain('gitagotchi.leaderboard');
+    expect(commandIds).not.toContain('gitagotchi.createLeaderboard');
+    expect(settingIds.some((setting) => setting.startsWith('gitagotchi.leaderboard.'))).toBe(false);
+    expect(extensionSource).not.toContain('leaderboard');
+    expect(extensionSource).not.toContain('Gist');
+  });
+
   it('keeps local workspace artifacts out of the VSIX package', () => {
     const root = path.resolve(__dirname, '..');
     const ignore = fs.readFileSync(path.join(root, '.vscodeignore'), 'utf8');

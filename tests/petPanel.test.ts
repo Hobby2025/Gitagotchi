@@ -33,10 +33,10 @@ describe('pet panel', () => {
     expect(html).toContain('data-command="commit"');
     expect(html).toContain('data-command="stats"');
     expect(html).toContain('data-command="dex"');
-    expect(html).toContain('data-command="leaderboard"');
-    expect(html).toContain('data-command="createLeaderboard"');
     expect(html).toContain('data-command="rename"');
     expect(html).toContain('data-command="reset"');
+    expect(html).not.toContain('data-command="leaderboard"');
+    expect(html).not.toContain('data-command="createLeaderboard"');
   });
 
   it('renders action controls as themed game commands', () => {

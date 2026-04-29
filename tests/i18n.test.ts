@@ -15,10 +15,6 @@ describe('i18n', () => {
     expect(createI18n('en').t('ui.mood')).toBe('Mood');
     expect(createI18n('ja').t('ui.mood')).toBe('気分');
     expect(createI18n('zh').t('ui.mood')).toBe('心情');
-    expect(createI18n('ko').t('ui.createLeaderboard')).toBe('랭킹 방 만들기');
-    expect(createI18n('en').t('ui.createLeaderboard')).toBe('Create Leaderboard');
-    expect(createI18n('ja').t('ui.createLeaderboard')).toBe('ランキングを作成');
-    expect(createI18n('zh').t('ui.createLeaderboard')).toBe('创建排行榜');
     expect(createI18n('en').t('style.builder')).toBe('Feature Throughput');
     expect(createI18n('ko').t('style.cleaner')).toBe('리팩터링 숙련도');
     expect(createI18n('ja').t('style.debugger')).toBe('バグレーダー');

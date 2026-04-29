@@ -2,7 +2,7 @@
   "name": "gitagotchi",
   "displayName": "Gitagotchi",
   "description": "A VSCode pet that grows from Git diffs, commits, and debugging progress.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "stjoo0925",
   "license": "MIT",
   "icon": "resources/gitagotchi-icon.png",
@@ -24,9 +24,7 @@
     "onCommand:gitagotchi.feed",
     "onCommand:gitagotchi.viewStats",
     "onCommand:gitagotchi.openDex",
-    "onCommand:gitagotchi.checkCommit",
-    "onCommand:gitagotchi.leaderboard",
-    "onCommand:gitagotchi.createLeaderboard"
+    "onCommand:gitagotchi.checkCommit"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -58,36 +56,8 @@
       {
         "command": "gitagotchi.checkCommit",
         "title": "Gitagotchi: Check Commit"
-      },
-      {
-        "command": "gitagotchi.leaderboard",
-        "title": "Gitagotchi: Leaderboard"
-      },
-      {
-        "command": "gitagotchi.createLeaderboard",
-        "title": "Gitagotchi: Create Leaderboard"
       }
-    ],
-    "configuration": {
-      "title": "Gitagotchi",
-      "properties": {
-        "gitagotchi.leaderboard.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable hourly GitHub Gist leaderboard sync."
-        },
-        "gitagotchi.leaderboard.gistId": {
-          "type": "string",
-          "default": "",
-          "description": "GitHub Gist ID containing leaderboard.json."
-        },
-        "gitagotchi.leaderboard.displayName": {
-          "type": "string",
-          "default": "",
-          "description": "Display name used on the leaderboard. Falls back to the GitHub login."
-        }
-      }
-    }
+    ]
   },
   "scripts": {
     "clean": "node ./scripts/clean-dist.cjs",

@@ -8,16 +8,7 @@ import { ActivityEvent } from './core/events';
 import { applyActivity } from './core/growthEngine';
 import { clampStat, PetState } from './core/petState';
 import { createI18n, I18n } from './i18n';
-import { getGithubIdentity } from './leaderboard/githubAuth';
 import { discoverCurrentPetSprite } from './character/petDex';
-import { GithubGistLeaderboardAdapter } from './leaderboard/githubGistAdapter';
-import { createEmptyLeaderboardDocument } from './leaderboard/leaderboardModel';
-import { getLeaderboardConfig, updateLeaderboardRoomConfig } from './leaderboard/leaderboardConfig';
-import { getPetLeaderboardScore, publishLeaderboard } from './leaderboard/leaderboardService';
-import { getNextSyncAt, shouldSyncLeaderboard } from './leaderboard/leaderboardScheduler';
-import { LeaderboardSyncStateStore } from './leaderboard/leaderboardSyncStateStore';
-import { LeaderboardStatus } from './leaderboard/leaderboardTypes';
-import { GitagotchiLeaderboardPanel } from './ui/leaderboardPanel';
 import { GitagotchiDexPanel } from './ui/dexPanel';
 import { GitagotchiLogPanel } from './ui/logPanel';
 import { GitagotchiPetPanel } from './ui/petPanel';
@@ -28,9 +19,7 @@ type Runtime = {
   statusBar: GitagotchiStatusBar;
   petPanel: GitagotchiPetPanel;
   logs: GitagotchiLogPanel;
-  leaderboard: GitagotchiLeaderboardPanel;
   dex: GitagotchiDexPanel;
-  leaderboardSyncState: LeaderboardSyncStateStore;
   diagnosticsCount: number;
   i18n: I18n;
 };
@@ -46,7 +35,6 @@ async function persistAndRender(runtime: Runtime, state: PetState): Promise<void
 async function applyEvent(runtime: Runtime, event: ActivityEvent): Promise<void> {
   const next = applyActivity(runtime.store.load(), event, undefined, runtime.i18n);
   await persistAndRender(runtime, next);
-  await syncLeaderboardIfDue(runtime, false);
 }
 
 async function checkDiff(runtime: Runtime): Promise<void> {
@@ -160,107 +148,19 @@ async function resetPet(runtime: Runtime): Promise<void> {
   await renamePet(runtime, 'Name your new Gitagotchi');
 }
 
-async function syncLeaderboardIfDue(runtime: Runtime, createSession: boolean): Promise<LeaderboardStatus> {
-  const config = getLeaderboardConfig();
-  if (!config.enabled) {
-    return { kind: 'disabled' };
-  }
-  if (!config.gistId) {
-    return { kind: 'missingConfig' };
-  }
-
-  const now = new Date().toISOString();
-  const state = runtime.store.load();
-  const syncSnapshot = runtime.leaderboardSyncState.load();
-  const score = getPetLeaderboardScore(state);
-
-  if (!createSession && !shouldSyncLeaderboard(syncSnapshot, score, now)) {
-    return { kind: 'disabled' };
-  }
-
-  const identity = await getGithubIdentity(createSession);
-  if (!identity) {
-    return { kind: 'signedOut' };
-  }
-
-  const adapter = new GithubGistLeaderboardAdapter({
-    gistId: config.gistId,
-    token: identity.token
-  });
-
-  try {
-    const document = await publishLeaderboard({
-      adapter,
-      state,
-      githubLogin: identity.login,
-      displayName: config.displayName || identity.login,
-      now
-    });
-    await runtime.leaderboardSyncState.save({
-      lastSyncedAt: now,
-      lastScore: score
-    });
-
-    return {
-      kind: 'ready',
-      document,
-      lastSyncedAt: now,
-      nextSyncAt: getNextSyncAt({ lastSyncedAt: now, lastScore: score })
-    };
-  } catch (error) {
-    return {
-      kind: 'error',
-      message: error instanceof Error ? error.message : runtime.i18n.t('leaderboard.error')
-    };
-  }
-}
-
-async function showLeaderboard(runtime: Runtime): Promise<void> {
-  const status = await syncLeaderboardIfDue(runtime, true);
-  runtime.leaderboard.show(status);
-}
-
-async function createLeaderboard(runtime: Runtime): Promise<void> {
-  const identity = await getGithubIdentity(true);
-  if (!identity) {
-    runtime.leaderboard.show({ kind: 'signedOut' });
-    return;
-  }
-
-  try {
-    const now = new Date().toISOString();
-    const adapter = new GithubGistLeaderboardAdapter({
-      gistId: '',
-      token: identity.token
-    });
-    const gistId = await adapter.create(createEmptyLeaderboardDocument(now));
-
-    await updateLeaderboardRoomConfig(gistId);
-    runtime.leaderboard.show(await syncLeaderboardIfDue(runtime, true));
-  } catch (error) {
-    runtime.leaderboard.show({
-      kind: 'error',
-      message: error instanceof Error ? error.message : runtime.i18n.t('leaderboard.error')
-    });
-  }
-}
-
 export function activate(context: vscode.ExtensionContext): void {
   const i18n = createI18n(vscode.env.language);
   const store = new PetStateStore(context.globalState);
   const statusBar = new GitagotchiStatusBar(i18n);
   const petPanel = new GitagotchiPetPanel(i18n, context.extensionUri);
   const logs = new GitagotchiLogPanel(i18n);
-  const leaderboard = new GitagotchiLeaderboardPanel(i18n);
   const dex = new GitagotchiDexPanel();
   const runtime: Runtime = {
     store,
     statusBar,
     petPanel,
     logs,
-    leaderboard,
     dex,
-    leaderboardSyncState: new LeaderboardSyncStateStore(context.globalState),
     diagnosticsCount: countWorkspaceDiagnostics(),
     i18n
   };
@@ -281,8 +181,6 @@ export function activate(context: vscode.ExtensionContext): void {
     dex.show(state);
   }));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.checkCommit', () => checkCommit(runtime)));
-  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.leaderboard', () => showLeaderboard(runtime)));
-  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.createLeaderboard', () => createLeaderboard(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.changeLanguage', (locale?: string) => {
     if (!locale) {
       return;
@@ -293,7 +191,6 @@ export function activate(context: vscode.ExtensionContext): void {
     statusBar.update(store.load());
     petPanel.setI18n(newI18n);
     logs.setI18n(newI18n);
-    leaderboard.setI18n(newI18n);
   }));
   context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => {
     void checkDiagnostics(runtime);
@@ -303,9 +200,6 @@ export function activate(context: vscode.ExtensionContext): void {
   registerInterval(context, () => checkDiff(runtime), 30000);
   registerInterval(context, () => checkCommit(runtime), 30000);
   registerInterval(context, () => applyIdle(runtime), 60 * 60 * 1000);
-  registerInterval(context, async () => {
-    await syncLeaderboardIfDue(runtime, false);
-  }, 60 * 60 * 1000);
 
   const initial = store.load();
   statusBar.update(initial);
