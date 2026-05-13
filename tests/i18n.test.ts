@@ -13,6 +13,7 @@ describe('i18n', () => {
   it('translates UI labels for Korean, English, Japanese, and Chinese', () => {
     expect(createI18n('ko').t('ui.mood')).toBe('기분');
     expect(createI18n('ko').t('ui.pat')).toBe('만져주기');
+    expect(createI18n('ko').t('ui.revive')).toBe('부활');
     expect(createI18n('ko').t('ui.help')).toBe('도움말');
     expect(createI18n('en').t('guide.title')).toBe('Gitagotchi Guide');
     expect(createI18n('en').t('ui.mood')).toBe('Mood');
@@ -20,6 +21,7 @@ describe('i18n', () => {
     expect(createI18n('zh').t('ui.mood')).toBe('心情');
     expect(createI18n('en').t('style.builder')).toBe('Feature Throughput');
     expect(createI18n('ko').t('style.cleaner')).toBe('리팩터링 숙련도');
+    expect(createI18n('ko').t('skill.deepClean')).toBe('대청소');
     expect(createI18n('ja').t('style.debugger')).toBe('バグレーダー');
     expect(createI18n('zh').t('style.streak')).toBe('提交连续性');
   });
@@ -39,7 +41,7 @@ describe('i18n', () => {
     expect(ko).toEqual([
       { kind: 'reward', text: '+42 EXP, 보너스 2개' },
       { kind: 'style', text: '리팩터링 숙련도 +20' },
-      { kind: 'unlock', text: 'Deep Clean 습득' }
+      { kind: 'unlock', text: '대청소 습득' }
     ]);
   });
 });

@@ -121,6 +121,27 @@ describe('growth engine', () => {
     expect(result.reasons).toEqual(['Idle decay']);
   });
 
+  it('keeps idle decay from dropping health to zero', () => {
+    const state = createInitialPetState('2026-04-20T00:00:00.000Z');
+    const event: ActivityEvent = {
+      type: 'idleTick',
+      now: '2026-04-28T00:00:00.000Z',
+      occurredAt: '2026-04-28T00:00:00.000Z'
+    };
+
+    const result = createDefaultGrowthEngine().evaluate(event, state);
+
+    expect(result.healthDelta).toBe(-99);
+    expect(result.breakdown).toContainEqual({
+      id: 'idle-decay',
+      label: 'Idle decay',
+      moodDelta: -48,
+      hungerDelta: 120,
+      energyDelta: -64,
+      healthDelta: -99
+    });
+  });
+
   it('applies bounded state changes and level ups', () => {
     const state = {
       ...createInitialPetState('2026-04-27T00:00:00.000Z'),

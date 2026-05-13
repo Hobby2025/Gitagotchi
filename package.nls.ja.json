@@ -1,0 +1,11 @@
+{
+  "command.openPet": "Gitagotchi: ペットを開く",
+  "command.renamePet": "Gitagotchi: 名前変更",
+  "command.resetPet": "Gitagotchi: リセット",
+  "command.patPet": "Gitagotchi: なでる",
+  "command.revivePet": "Gitagotchi: ペットを復活",
+  "command.viewStats": "Gitagotchi: 統計を見る",
+  "command.viewSkills": "Gitagotchi: スキルを見る",
+  "command.openDex": "Gitagotchi: 図鑑を開く",
+  "command.checkCommit": "Gitagotchi: コミット確認"
+}

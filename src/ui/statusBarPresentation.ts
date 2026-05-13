@@ -28,9 +28,9 @@ export function renderStatusBarTooltip(state: PetState, i18n: I18n): string {
   return [
     `**${name} Lv.${state.level}**`,
     "",
-    `${i18n.t("ui.stage")}: ${state.stage}`,
-    `${i18n.t("ui.lineage")}: ${state.lineage ?? "unbranched"}`,
-    `${i18n.t("ui.affinity")}: ${state.affinity ?? "unfocused"}`,
+    `${i18n.t("ui.stage")}: ${i18n.t(`ui.stage.${state.stage}`)}`,
+    `${i18n.t("ui.lineage")}: ${state.lineage ? i18n.t(`ui.lineage.${state.lineage}`) : i18n.t("ui.lineage.unbranched")}`,
+    `${i18n.t("ui.affinity")}: ${state.affinity ? i18n.t(`ui.affinity.${state.affinity}`) : i18n.t("ui.affinity.unfocused")}`,
     "",
     `${i18n.t("ui.exp")}: ${state.exp}/${getRequiredExp(state.level)}`,
     `${i18n.t("ui.mood")}: ${state.mood}%`,
@@ -38,6 +38,6 @@ export function renderStatusBarTooltip(state: PetState, i18n: I18n): string {
     `${i18n.t("ui.energy")}: ${state.energy}%`,
     `${i18n.t("ui.health")}: ${state.health}%`,
     "",
-    "Click to open Gitagotchi.",
+    i18n.t("status.open"),
   ].join("\n");
 }

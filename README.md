@@ -32,6 +32,7 @@ Gitagotchi grows from local development signals.
 - Tests, docs, and refactoring: focused maintenance work adds care bonuses.
 - Return from idle: coding again after time away restores some energy.
 - Idle time: long periods without activity can lower some pet stats.
+- Revive: if your pet is dead, spend 1000 earned EXP to revive it.
 
 Style scores influence how your pet evolves. Feature work, refactoring, debugging, documentation changes, and commit rhythm can all affect its lineage and affinity.
 
@@ -45,6 +46,7 @@ The pet panel includes these actions:
 - `Commit`: check the latest commit and apply a growth event.
 - `View Stats`: open the activity log and growth history.
 - `Dex`: open the discovered-form collection.
+- `Revive`: spend 1000 earned EXP to revive a dead pet.
 - `Rename`: change your pet's name.
 - `Reset`: reset the current pet's name, level, stats, skills, and logs.
 
@@ -68,6 +70,7 @@ Use these commands from the Command Palette:
 - `Gitagotchi: Rename Pet`
 - `Gitagotchi: Reset Pet`
 - `Gitagotchi: Pat Pet`
+- `Gitagotchi: Revive Pet`
 - `Gitagotchi: View Stats`
 - `Gitagotchi: Open Dex`
 - `Gitagotchi: Check Commit`
@@ -88,6 +91,15 @@ Reset clears:
 Reset keeps:
 
 - Gitagotchi forms already discovered in the Dex
+
+## Release Notes
+
+### 0.1.8
+
+- Added a revive action for dead pets that spends 1000 earned EXP and restores stable health, energy, mood, and fullness.
+- Added the Revive button, command, and guide text to the pet panel.
+- Prevented idle decay from killing pets directly and migrated pets that were previously killed by idle decay back to critical health.
+- Improved Korean, Japanese, and Chinese localization across commands, buttons, status text, logs, skills, Dex, and tooltips.
 
 ## Developer Notes
 

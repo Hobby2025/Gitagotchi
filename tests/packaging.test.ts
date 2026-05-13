@@ -59,16 +59,31 @@ describe('extension packaging', () => {
 
     expect(manifest.activationEvents).toContain('onCommand:gitagotchi.openPet');
     expect(manifest.activationEvents).toContain('onCommand:gitagotchi.patPet');
+    expect(manifest.activationEvents).toContain('onCommand:gitagotchi.revivePet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.openPet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.renamePet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.resetPet');
     expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.patPet');
+    expect(manifest.contributes.commands.map((command) => command.command)).toContain('gitagotchi.revivePet');
     expect(manifest.contributes.commands.map((command) => command.command)).not.toContain('gitagotchi.feedPet');
     expect(manifest.contributes.commands.map((command) => command.command)).not.toContain('gitagotchi.restPet');
     expect(manifest.contributes.commands.map((command) => command.command)).not.toContain('gitagotchi.useMedicine');
     expect(statusBarSource).toContain("this.item.command = 'gitagotchi.openPet'");
     expect(extensionSource).toContain('discoverCurrentPetSprite(store.load())');
     expect(extensionSource).toContain('petPanel.show(state)');
+  });
+
+  it('declares localized command titles', () => {
+    const root = path.resolve(__dirname, '..');
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')) as {
+      contributes: {
+        commands: Array<{ command: string; title: string }>;
+      };
+    };
+    const koNls = JSON.parse(fs.readFileSync(path.join(root, 'package.nls.ko.json'), 'utf8')) as Record<string, string>;
+
+    expect(manifest.contributes.commands.find((command) => command.command === 'gitagotchi.revivePet')?.title).toBe('%command.revivePet%');
+    expect(koNls['command.revivePet']).toBe('Gitagotchi: 펫 부활');
   });
 
   it('does not expose leaderboard commands or settings', () => {

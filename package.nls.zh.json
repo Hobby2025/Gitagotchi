@@ -1,0 +1,11 @@
+{
+  "command.openPet": "Gitagotchi: 打开宠物",
+  "command.renamePet": "Gitagotchi: 重命名",
+  "command.resetPet": "Gitagotchi: 重置",
+  "command.patPet": "Gitagotchi: 抚摸",
+  "command.revivePet": "Gitagotchi: 复活宠物",
+  "command.viewStats": "Gitagotchi: 查看统计",
+  "command.viewSkills": "Gitagotchi: 查看技能",
+  "command.openDex": "Gitagotchi: 打开图鉴",
+  "command.checkCommit": "Gitagotchi: 检查提交"
+}

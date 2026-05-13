@@ -2,7 +2,7 @@
   "name": "gitagotchi",
   "displayName": "Gitagotchi",
   "description": "A VSCode pet that grows from Git diffs, commits, and debugging progress.",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "publisher": "stjoo0925",
   "license": "MIT",
   "icon": "resources/gitagotchi-icon.png",
@@ -22,6 +22,7 @@
     "onCommand:gitagotchi.renamePet",
     "onCommand:gitagotchi.resetPet",
     "onCommand:gitagotchi.patPet",
+    "onCommand:gitagotchi.revivePet",
     "onCommand:gitagotchi.viewStats",
     "onCommand:gitagotchi.viewSkills",
     "onCommand:gitagotchi.openDex",
@@ -32,35 +33,39 @@
     "commands": [
       {
         "command": "gitagotchi.openPet",
-        "title": "Gitagotchi: Open Pet"
+        "title": "%command.openPet%"
       },
       {
         "command": "gitagotchi.renamePet",
-        "title": "Gitagotchi: Rename Pet"
+        "title": "%command.renamePet%"
       },
       {
         "command": "gitagotchi.resetPet",
-        "title": "Gitagotchi: Reset Pet"
+        "title": "%command.resetPet%"
       },
       {
         "command": "gitagotchi.patPet",
-        "title": "Gitagotchi: Pat Pet"
+        "title": "%command.patPet%"
+      },
+      {
+        "command": "gitagotchi.revivePet",
+        "title": "%command.revivePet%"
       },
       {
         "command": "gitagotchi.viewStats",
-        "title": "Gitagotchi: View Stats"
+        "title": "%command.viewStats%"
       },
       {
         "command": "gitagotchi.viewSkills",
-        "title": "Gitagotchi: View Skills"
+        "title": "%command.viewSkills%"
       },
       {
         "command": "gitagotchi.openDex",
-        "title": "Gitagotchi: Open Dex"
+        "title": "%command.openDex%"
       },
       {
         "command": "gitagotchi.checkCommit",
-        "title": "Gitagotchi: Check Commit"
+        "title": "%command.checkCommit%"
       }
     ]
   },

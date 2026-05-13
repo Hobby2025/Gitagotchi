@@ -39,6 +39,7 @@ describe('pet panel', () => {
     expect(html).toContain('data-command="stats"');
     expect(html).toContain('data-command="skills"');
     expect(html).toContain('data-command="dex"');
+    expect(html).toContain('data-command="revive" disabled');
     expect(html).not.toContain('data-command="feed"');
     expect(html).not.toContain('data-command="rest"');
     expect(html).not.toContain('data-command="medicine"');
@@ -50,6 +51,7 @@ describe('pet panel', () => {
     expect(html).toContain('Commits: Fullness +5, Energy +4, Health +3');
     expect(html).toContain('Diagnostics resolved: Fullness +2, Energy +1, Health +4 per issue');
     expect(html).toContain('Returning from idle: Energy +8 per day away, up to +20');
+    expect(html).toContain('If Gitagotchi is dead, spend 1000 earned EXP');
     expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="rename"[\s\S]*<\/div>/);
     expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="reset"[\s\S]*<\/div>/);
     expect(html).not.toContain('data-command="leaderboard"');
@@ -74,12 +76,18 @@ describe('pet panel', () => {
     expect(html).toContain('class="action-rune">GC</span>');
     expect(html).toContain('class="action-rune">SK</span>');
     expect(html).toContain('class="action-rune">DX</span>');
+    expect(html).toContain('class="action-rune">RV</span>');
     expect(html).not.toContain('class="action-rune">RN</span>');
     expect(html).not.toContain('class="action-rune">FD</span>');
     expect(html).not.toContain('class="action-rune">RS</span>');
     expect(html).not.toContain('class="action-rune">MD</span>');
     expect(html).toContain('<span class="action-label">만져주기</span>');
     expect(html).toContain('<span class="action-label">커밋 확인</span>');
+    expect(html).toContain('<span class="action-label">도감</span>');
+    expect(html).toContain('<span class="action-label">부활</span>');
+    expect(html).toContain('>이름 변경</button>');
+    expect(html).toContain('>초기화</button>');
+    expect(html).toContain('Gitagotchi가 죽은 상태라면 누적 경험치 1000');
   });
 
   it('keeps care pulse, boost hints, and equipped skill details out of the card', () => {
@@ -137,8 +145,8 @@ describe('pet panel', () => {
     expect(html).toContain('Stage');
     expect(html).toContain('Lineage');
     expect(html).toContain('Affinity');
-    expect(html).toContain('ultimate');
-    expect(html).toContain('buildling');
+    expect(html).toContain('Ultimate');
+    expect(html).toContain('Buildling');
   });
 
   it('renders trading-card lineage styling and affinity chips', () => {
@@ -162,9 +170,26 @@ describe('pet panel', () => {
     expect(html).toContain('class="monster-card"');
     expect(html).toContain('--lineage-accent:#f87171');
     expect(html).toContain('--lineage-glow:rgba(248,113,113,.28)');
-    expect(html).toContain('class="card-lineage">debugon</span>');
-    expect(html).toContain('class="affinity-chip">debugger</span>');
-    expect(html).toContain('class="card-rarity">specialist</span>');
+    expect(html).toContain('class="card-lineage">Debugon</span>');
+    expect(html).toContain('class="affinity-chip">Debugger</span>');
+    expect(html).toContain('class="card-rarity">Specialist</span>');
+  });
+
+  it('enables the revive action for dead pets', () => {
+    const state = {
+      ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+      health: 0,
+      lifeStatus: 'dead' as const
+    };
+
+    const html = renderPetPanelHtml(state, createI18n('ko'), {
+      cspSource: 'vscode-resource:',
+      nonce: 'abc'
+    });
+
+    expect(html).toContain('class="action-btn action-primary" data-command="revive"');
+    expect(html).not.toContain('data-command="revive" disabled');
+    expect(html).toContain('<strong>사망</strong>');
   });
 
   it('shows a dotted heart next to the character on the day the pet was patted', () => {

@@ -5,18 +5,26 @@ import { renderHtmlTemplate } from './webviewSecurity';
 
 export class GitagotchiLogPanel {
   private panel: vscode.WebviewPanel | undefined;
+  private state: PetState | undefined;
 
   constructor(private i18n: I18n = createI18n('en')) {}
 
   setI18n(i18n: I18n): void {
     this.i18n = i18n;
+    if (this.panel) {
+      this.panel.title = this.i18n.t('ui.logsTitle');
+    }
+    if (this.panel && this.state) {
+      this.panel.webview.html = this.render(this.state);
+    }
   }
 
   show(state: PetState): void {
+    this.state = state;
     if (!this.panel) {
       this.panel = vscode.window.createWebviewPanel(
         'gitagotchi.logs',
-        'Gitagotchi Logs',
+        this.i18n.t('ui.logsTitle'),
         vscode.ViewColumn.Beside,
         { enableScripts: false }
       );
@@ -33,19 +41,22 @@ export class GitagotchiLogPanel {
   private render(state: PetState): string {
     const logs = state.logs.length > 0
       ? state.logs.map((log) => {
-        const messages = log.messages?.length
+        const messages = !log.breakdown?.length && log.messages?.length
           ? `<div class="messages">${log.messages.map((message) => `<span class="message ${message.kind}">${renderHtmlTemplate.escape(message.text)}</span>`).join('')}</div>`
           : '';
         const breakdown = log.breakdown?.length
           ? `<ul class="breakdown">${log.breakdown.map((entry) => `<li><span>${this.i18n.t(`breakdown.${entry.id}`)}</span><strong>${entry.expDelta ? `${entry.expDelta > 0 ? '+' : ''}${entry.expDelta} EXP` : ''}</strong></li>`).join('')}</ul>`
           : '';
+        const message = log.breakdown?.length
+          ? log.breakdown.map((entry) => this.i18n.t(`breakdown.${entry.id}`)).join(', ')
+          : this.translateLogMessage(log.message);
 
-        return `<li class="log-entry"><strong>${log.expDelta >= 0 ? '+' : ''}${log.expDelta} EXP</strong> ${renderHtmlTemplate.escape(log.message)}${messages}${breakdown}</li>`;
+        return `<li class="log-entry"><strong>${log.expDelta >= 0 ? '+' : ''}${log.expDelta} EXP</strong> ${renderHtmlTemplate.escape(message)}${messages}${breakdown}</li>`;
       }).join('')
       : `<li>${this.i18n.t('ui.noActivity')}</li>`;
 
     return `<!doctype html>
-<html lang="en">
+<html lang="${this.i18n.locale}">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' ${this.panel?.webview.cspSource};">
@@ -68,5 +79,30 @@ export class GitagotchiLogPanel {
   <ul>${logs}</ul>
 </body>
 </html>`;
+  }
+
+  private translateLogMessage(message: string): string {
+    const knownMessages: Record<string, string> = {
+      'Patted Gitagotchi': 'log.patted',
+      'Gitagotchi를 만져줬습니다': 'log.patted',
+      'No growth while dead': 'log.noGrowthDead',
+      '죽은 상태에서는 성장하지 않습니다': 'log.noGrowthDead',
+      'Revived Gitagotchi': 'log.revived',
+      'Gitagotchi가 부활했습니다': 'log.revived',
+      'Idle decay': 'breakdown.idle-decay',
+      'Return from idle': 'breakdown.return-from-idle',
+      'Code changes': 'breakdown.base-diff',
+      'Refactoring': 'breakdown.refactor',
+      'Diagnostics resolved': 'breakdown.diagnostics.resolved',
+      'Diagnostics increased': 'breakdown.diagnostics.increased',
+      'Deep Clean skill': 'breakdown.skill.deepClean',
+      'Quick Fix skill': 'breakdown.skill.quickFix',
+      'Field Guide skill': 'breakdown.skill.fieldGuide',
+      'Focus Flow skill': 'breakdown.skill.focusFlow',
+      'Commit Roar skill': 'breakdown.skill.commitRoar'
+    };
+    const key = knownMessages[message];
+
+    return key ? this.i18n.t(key) : message;
   }
 }

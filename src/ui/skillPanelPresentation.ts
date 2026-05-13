@@ -2,27 +2,12 @@ import { PetSkill, PetState } from '../core/petState';
 import { I18n } from '../i18n';
 import { renderHtmlTemplate } from './webviewSecurity';
 
-const skillMeta: Record<PetSkill, { effect: string; trigger: string }> = {
-  deepClean: {
-    effect: 'Refactor-heavy diffs add EXP and mood.',
-    trigger: 'Cleaner style mastery'
-  },
-  quickFix: {
-    effect: 'Resolved diagnostics add extra EXP and mood.',
-    trigger: 'Debugging style mastery'
-  },
-  fieldGuide: {
-    effect: 'Docs changes restore health and add EXP.',
-    trigger: 'Scholar style mastery'
-  },
-  focusFlow: {
-    effect: 'High mood and health turn coding into energy.',
-    trigger: 'Strong care condition'
-  },
-  commitRoar: {
-    effect: 'Commit events add bonus EXP.',
-    trigger: 'Commit streak mastery'
-  }
+const skillMeta: Record<PetSkill, { effectKey: string; triggerKey: string }> = {
+  deepClean: { effectKey: 'skill.deepClean.effect', triggerKey: 'skill.deepClean.trigger' },
+  quickFix: { effectKey: 'skill.quickFix.effect', triggerKey: 'skill.quickFix.trigger' },
+  fieldGuide: { effectKey: 'skill.fieldGuide.effect', triggerKey: 'skill.fieldGuide.trigger' },
+  focusFlow: { effectKey: 'skill.focusFlow.effect', triggerKey: 'skill.focusFlow.trigger' },
+  commitRoar: { effectKey: 'skill.commitRoar.effect', triggerKey: 'skill.commitRoar.trigger' }
 };
 
 function renderSkillCards(state: PetState, i18n: I18n): string {
@@ -34,7 +19,7 @@ function renderSkillCards(state: PetState, i18n: I18n): string {
     .map((skill) => {
       const meta = skillMeta[skill];
 
-      return `<article class="skill-card"><strong>${renderHtmlTemplate.escape(i18n.t(`skill.${skill}`))}</strong><span>${renderHtmlTemplate.escape(meta.effect)}</span><em>${renderHtmlTemplate.escape(meta.trigger)}</em></article>`;
+      return `<article class="skill-card"><strong>${renderHtmlTemplate.escape(i18n.t(`skill.${skill}`))}</strong><span>${renderHtmlTemplate.escape(i18n.t(meta.effectKey))}</span><em>${renderHtmlTemplate.escape(i18n.t(meta.triggerKey))}</em></article>`;
     })
     .join('');
 }
@@ -43,7 +28,7 @@ export function renderSkillPanelHtml(state: PetState, i18n: I18n, cspSource = ''
   const skills = renderSkillCards(state, i18n);
 
   return `<!doctype html>
-<html lang="en">
+<html lang="${i18n.locale}">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' ${cspSource};">

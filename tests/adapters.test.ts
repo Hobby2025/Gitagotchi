@@ -51,6 +51,69 @@ describe('adapters', () => {
     expect(loaded.discoveredSpriteIds).toEqual(['egg-common-normal']);
   });
 
+  it('revives pets that were killed by previous idle decay storage', async () => {
+    const memento = new MemoryMemento();
+    await memento.update('gitagotchi.petState', {
+      _schemaVersion: 3,
+      health: 0,
+      lifeStatus: 'dead',
+      logs: [{
+        message: 'Idle decay',
+        expDelta: 0,
+        occurredAt: '2026-04-28T00:00:00.000Z',
+        breakdown: [{ id: 'idle-decay', label: 'Idle decay', healthDelta: -120 }]
+      }]
+    });
+
+    const store = new PetStateStore(memento, '2026-04-27T00:00:00.000Z');
+    const loaded = store.load();
+
+    expect(loaded.health).toBe(1);
+    expect(loaded.lifeStatus).toBe('critical');
+  });
+
+  it('revives idle decay deaths even when the saved schema is current', async () => {
+    const memento = new MemoryMemento();
+    await memento.update('gitagotchi.petState', {
+      _schemaVersion: 4,
+      health: 0,
+      lifeStatus: 'dead',
+      logs: [{
+        message: 'Idle decay',
+        expDelta: 0,
+        occurredAt: '2026-04-28T00:00:00.000Z',
+        breakdown: [{ id: 'idle-decay', label: 'Idle decay', healthDelta: -120 }]
+      }]
+    });
+
+    const store = new PetStateStore(memento, '2026-04-27T00:00:00.000Z');
+    const loaded = store.load();
+
+    expect(loaded.health).toBe(1);
+    expect(loaded.lifeStatus).toBe('critical');
+  });
+
+  it('keeps non-idle dead pets dead', async () => {
+    const memento = new MemoryMemento();
+    await memento.update('gitagotchi.petState', {
+      _schemaVersion: 4,
+      health: 0,
+      lifeStatus: 'dead',
+      logs: [{
+        message: 'Manual test death',
+        expDelta: 0,
+        occurredAt: '2026-04-28T00:00:00.000Z',
+        breakdown: [{ id: 'other', label: 'Other', healthDelta: -120 }]
+      }]
+    });
+
+    const store = new PetStateStore(memento, '2026-04-27T00:00:00.000Z');
+    const loaded = store.load();
+
+    expect(loaded.health).toBe(0);
+    expect(loaded.lifeStatus).toBe('dead');
+  });
+
   it('saves state with schema version tag', async () => {
     const memento = new MemoryMemento();
     const store = new PetStateStore(memento, '2026-04-27T00:00:00.000Z');
@@ -58,7 +121,7 @@ describe('adapters', () => {
     await store.save({ ...initial, level: 3 });
 
     const raw = memento.get<Record<string, unknown>>('gitagotchi.petState');
-    expect(raw?._schemaVersion).toBe(3);
+    expect(raw?._schemaVersion).toBe(4);
     expect(raw?.level).toBe(3);
   });
 

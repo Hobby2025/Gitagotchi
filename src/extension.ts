@@ -8,6 +8,7 @@ import { ActivityEvent } from './core/events';
 import { applyDailyPat } from './core/dailyPat';
 import { applyActivity } from './core/growthEngine';
 import { PetState } from './core/petState';
+import { applyRevivePet } from './core/revive';
 import { createI18n, I18n } from './i18n';
 import { discoverCurrentPetSprite } from './character/petDex';
 import { GitagotchiDexPanel } from './ui/dexPanel';
@@ -98,7 +99,22 @@ async function patPet(runtime: Runtime): Promise<void> {
   await persistAndRender(runtime, next);
 }
 
-async function renamePet(runtime: Runtime, prompt = 'Name your Gitagotchi'): Promise<void> {
+async function reviveGitagotchi(runtime: Runtime): Promise<void> {
+  const result = applyRevivePet(runtime.store.load(), new Date(), runtime.i18n);
+
+  if (!result.revived) {
+    const message = result.reason === 'notDead'
+      ? runtime.i18n.t('notice.reviveNotDead')
+      : runtime.i18n.t('notice.reviveNotEnough', { exp: result.availableExp });
+    await vscode.window.showInformationMessage(message);
+    return;
+  }
+
+  await persistAndRender(runtime, result.state);
+  await vscode.window.showInformationMessage(runtime.i18n.t('notice.revived'));
+}
+
+async function renamePet(runtime: Runtime, prompt = runtime.i18n.t('prompt.rename')): Promise<void> {
   const state = runtime.store.load();
   const value = await vscode.window.showInputBox({
     prompt,
@@ -106,7 +122,7 @@ async function renamePet(runtime: Runtime, prompt = 'Name your Gitagotchi'): Pro
     value: state.name ?? '',
     ignoreFocusOut: true,
     validateInput(input) {
-      return input.trim() ? undefined : 'Name is required.';
+      return input.trim() ? undefined : runtime.i18n.t('prompt.nameRequired');
     }
   });
 
@@ -122,18 +138,18 @@ async function renamePet(runtime: Runtime, prompt = 'Name your Gitagotchi'): Pro
 
 async function ensurePetName(runtime: Runtime): Promise<void> {
   if (!runtime.store.load().name?.trim()) {
-    await renamePet(runtime, 'Name your Gitagotchi to begin');
+    await renamePet(runtime, runtime.i18n.t('prompt.renameBegin'));
   }
 }
 
 async function resetPet(runtime: Runtime): Promise<void> {
   const choice = await vscode.window.showWarningMessage(
-    'Reset Gitagotchi? This clears the current pet name, level, stats, skills, and logs.',
+    runtime.i18n.t('prompt.resetConfirm'),
     { modal: true },
-    'Reset'
+    runtime.i18n.t('prompt.resetAction')
   );
 
-  if (choice !== 'Reset') {
+  if (choice !== runtime.i18n.t('prompt.resetAction')) {
     return;
   }
 
@@ -150,7 +166,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const petPanel = new GitagotchiPetPanel(i18n, context.extensionUri);
   const logs = new GitagotchiLogPanel(i18n);
   const skills = new GitagotchiSkillPanel(i18n);
-  const dex = new GitagotchiDexPanel();
+  const dex = new GitagotchiDexPanel(i18n);
   const runtime: Runtime = {
     store,
     statusBar,
@@ -171,6 +187,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.renamePet', () => renamePet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.resetPet', () => resetPet(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.patPet', () => patPet(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.revivePet', () => reviveGitagotchi(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewStats', () => logs.show(store.load())));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.viewSkills', () => skills.show(store.load())));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.openDex', async () => {
@@ -190,6 +207,7 @@ export function activate(context: vscode.ExtensionContext): void {
     petPanel.setI18n(newI18n);
     logs.setI18n(newI18n);
     skills.setI18n(newI18n);
+    dex.setI18n(newI18n);
   }));
   context.subscriptions.push(vscode.languages.onDidChangeDiagnostics(() => {
     void checkDiagnostics(runtime);

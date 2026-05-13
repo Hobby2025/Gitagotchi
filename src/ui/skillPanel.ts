@@ -11,6 +11,9 @@ export class GitagotchiSkillPanel {
 
   setI18n(i18n: I18n): void {
     this.i18n = i18n;
+    if (this.panel) {
+      this.panel.title = this.i18n.t('ui.skills');
+    }
     if (this.panel && this.state) {
       this.render();
     }
@@ -21,7 +24,7 @@ export class GitagotchiSkillPanel {
     if (!this.panel) {
       this.panel = vscode.window.createWebviewPanel(
         'gitagotchi.skills',
-        'Gitagotchi Skills',
+        this.i18n.t('ui.skills'),
         vscode.ViewColumn.Beside,
         { enableScripts: false }
       );

@@ -26,4 +26,19 @@ describe('skill panel', () => {
     expect(html).toContain('No skills yet');
     expect(html).toContain('Build, refactor, debug, document, and commit');
   });
+
+  it('localizes owned skill details', () => {
+    const state = {
+      ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+      skills: ['deepClean', 'focusFlow'] as const
+    };
+
+    const html = renderSkillPanelHtml(state, createI18n('ko'), 'vscode-resource:');
+
+    expect(html).toContain('<h1>스킬</h1>');
+    expect(html).toContain('대청소');
+    expect(html).toContain('집중 흐름');
+    expect(html).toContain('리팩터링 비중이 큰 변경');
+    expect(html).not.toContain('Refactor-heavy diffs');
+  });
 });

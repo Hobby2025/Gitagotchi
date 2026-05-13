@@ -1,11 +1,13 @@
 import { PetDexEntry, createPetDexEntries, groupPetDexEntries } from '../character/petDex';
 import { PetLineage } from '../core/petState';
+import { createI18n, I18n } from '../i18n';
 import { renderSpriteHtml } from './spriteHtml';
 import { renderHtmlTemplate } from './webviewSecurity';
 
 export type DexPanelRenderOptions = {
   cspSource: string;
   nonce: string;
+  i18n?: I18n;
   entries?: PetDexEntry[];
 };
 
@@ -22,16 +24,36 @@ function getLineageTheme(lineage?: PetLineage): string {
   return `--lineage-accent:${theme.accent};--lineage-glow:${theme.glow};--lineage-soft:${theme.soft}`;
 }
 
-function renderEntry(entry: PetDexEntry, index: number): string {
-  const title = entry.unlocked ? entry.id.replace(/-normal$/, '') : 'Unknown pet';
-  const lineage = entry.unlocked ? (entry.lineage ?? 'common') : '?';
-  const affinity = entry.unlocked ? (entry.affinity ?? 'base') : '?';
+function renderLineageTag(entry: PetDexEntry, i18n: I18n): string {
+  if (!entry.unlocked) {
+    return '?';
+  }
+
+  return entry.lineage ? i18n.t(`ui.lineage.${entry.lineage}`) : i18n.t('dex.common');
+}
+
+function renderAffinityTag(entry: PetDexEntry, i18n: I18n): string {
+  if (!entry.unlocked) {
+    return '?';
+  }
+
+  return entry.affinity ? i18n.t(`ui.affinity.${entry.affinity}`) : i18n.t('dex.base');
+}
+
+function renderStageName(entry: PetDexEntry, i18n: I18n): string {
+  return i18n.t(`ui.stage.${entry.stage}`);
+}
+
+function renderEntry(entry: PetDexEntry, index: number, i18n: I18n): string {
+  const title = entry.unlocked ? entry.id.replace(/-normal$/, '') : i18n.t('dex.unknown');
+  const lineage = renderLineageTag(entry, i18n);
+  const affinity = renderAffinityTag(entry, i18n);
   const sprite = entry.unlocked
     ? renderSpriteHtml(entry.sprite.frames[0], 'dex-sprite', `${entry.id} sprite`, { maxPixelSize: 4 })
-    : '<div class="dex-unknown" aria-label="Locked Gitagotchi sprite">?</div>';
+    : `<div class="dex-unknown" aria-label="${renderHtmlTemplate.escape(i18n.t('dex.lockedSprite'))}">?</div>`;
 
   return `<article class="dex-card${entry.unlocked ? '' : ' locked'}" style="${getLineageTheme(entry.lineage)}" data-dex-id="${renderHtmlTemplate.escape(entry.id)}" data-unlocked="${entry.unlocked}">
-    <div class="dex-card-top"><span>No.${String(index + 1).padStart(2, '0')}</span><strong>${renderHtmlTemplate.escape(entry.stage)}</strong></div>
+    <div class="dex-card-top"><span>No.${String(index + 1).padStart(2, '0')}</span><strong>${renderHtmlTemplate.escape(renderStageName(entry, i18n))}</strong></div>
     <div class="dex-sprite-stage">${sprite}</div>
     <h3>${renderHtmlTemplate.escape(title)}</h3>
     <div class="dex-tags"><span>${renderHtmlTemplate.escape(lineage)}</span><span>${renderHtmlTemplate.escape(affinity)}</span></div>
@@ -39,17 +61,18 @@ function renderEntry(entry: PetDexEntry, index: number): string {
 }
 
 export function renderDexPanelHtml(options: DexPanelRenderOptions): string {
+  const i18n = options.i18n ?? createI18n('en');
   const entries = options.entries ?? createPetDexEntries();
   const unlockedCount = entries.filter((entry) => entry.unlocked).length;
   const groups = groupPetDexEntries(entries);
   let renderedIndex = 0;
   const sections = groups.map(([stage, stageEntries]) => {
-    const cards = stageEntries.map((entry) => renderEntry(entry, renderedIndex++)).join('');
-    return `<section class="dex-section"><div class="section-heading"><h2>${renderHtmlTemplate.escape(stage)}</h2><span>${stageEntries.length}</span></div><div class="dex-grid">${cards}</div></section>`;
+    const cards = stageEntries.map((entry) => renderEntry(entry, renderedIndex++, i18n)).join('');
+    return `<section class="dex-section"><div class="section-heading"><h2>${renderHtmlTemplate.escape(i18n.t(`ui.stage.${stage}`))}</h2><span>${stageEntries.length}</span></div><div class="dex-grid">${cards}</div></section>`;
   }).join('');
 
   return `<!doctype html>
-<html lang="en">
+<html lang="${i18n.locale}">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${options.cspSource}; style-src 'unsafe-inline' ${options.cspSource}; script-src 'nonce-${options.nonce}' ${options.cspSource};">
@@ -94,8 +117,8 @@ export function renderDexPanelHtml(options: DexPanelRenderOptions): string {
 <body>
   <main class="dex-shell">
     <header class="dex-header">
-      <div><h1>Gitagotchi Dex</h1><p>All current pet designs are listed here. Locked rendering is ready for future discovery rules.</p></div>
-      <div class="dex-progress"><strong>${unlockedCount}/${entries.length} unlocked</strong><span><i style="width:${entries.length === 0 ? 0 : Math.round((unlockedCount / entries.length) * 100)}%"></i></span></div>
+      <div><h1>${renderHtmlTemplate.escape(i18n.t('dex.title'))}</h1><p>${renderHtmlTemplate.escape(i18n.t('dex.body'))}</p></div>
+      <div class="dex-progress"><strong>${renderHtmlTemplate.escape(i18n.t('dex.unlocked', { unlocked: unlockedCount, total: entries.length }))}</strong><span><i style="width:${entries.length === 0 ? 0 : Math.round((unlockedCount / entries.length) * 100)}%"></i></span></div>
     </header>
     ${sections}
   </main>

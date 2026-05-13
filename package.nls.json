@@ -1,0 +1,11 @@
+{
+  "command.openPet": "Gitagotchi: Open Pet",
+  "command.renamePet": "Gitagotchi: Rename Pet",
+  "command.resetPet": "Gitagotchi: Reset Pet",
+  "command.patPet": "Gitagotchi: Pat Pet",
+  "command.revivePet": "Gitagotchi: Revive Pet",
+  "command.viewStats": "Gitagotchi: View Stats",
+  "command.viewSkills": "Gitagotchi: View Skills",
+  "command.openDex": "Gitagotchi: Open Dex",
+  "command.checkCommit": "Gitagotchi: Check Commit"
+}

@@ -2,7 +2,10 @@
 import {
   getMoodName,
   getRequiredExp,
+  PetAffinity,
+  PetLifeStatus,
   PetLineage,
+  PetStage,
   PetState,
 } from "../core/petState";
 import { I18n } from "../i18n";
@@ -75,6 +78,22 @@ function wasPattedToday(state: PetState, now: Date): boolean {
     : false;
 }
 
+function renderStatusName(status: PetLifeStatus, i18n: I18n): string {
+  return i18n.t(`ui.status.${status}`);
+}
+
+function renderStageName(stage: PetStage, i18n: I18n): string {
+  return i18n.t(`ui.stage.${stage}`);
+}
+
+function renderLineageName(lineage: PetLineage | undefined, i18n: I18n): string {
+  return lineage ? i18n.t(`ui.lineage.${lineage}`) : i18n.t("ui.lineage.unbranched");
+}
+
+function renderAffinityName(affinity: PetAffinity | undefined, i18n: I18n): string {
+  return affinity ? i18n.t(`ui.affinity.${affinity}`) : i18n.t("ui.affinity.unfocused");
+}
+
 function renderGuideCareList(i18n: I18n): string {
   const keys = [
     "guide.care.code",
@@ -109,9 +128,10 @@ export function renderPetPanelHtml(
     "monster-sprite",
     "Gitagotchi monster sprite",
   );
-  const stage = renderHtmlTemplate.escape(state.stage);
-  const lineage = renderHtmlTemplate.escape(state.lineage ?? "unbranched");
-  const affinity = renderHtmlTemplate.escape(state.affinity ?? "unfocused");
+  const status = renderHtmlTemplate.escape(renderStatusName(state.lifeStatus, i18n));
+  const stage = renderHtmlTemplate.escape(renderStageName(state.stage, i18n));
+  const lineage = renderHtmlTemplate.escape(renderLineageName(state.lineage, i18n));
+  const affinity = renderHtmlTemplate.escape(renderAffinityName(state.affinity, i18n));
   const lineageTheme = getLineageTheme(state.lineage);
   const pattedTodayLabel = renderHtmlTemplate.escape(i18n.t("ui.pattedToday"));
   const patHeart = wasPattedToday(state, options.now ?? new Date())
@@ -134,16 +154,17 @@ export function renderPetPanelHtml(
     })
     .join("");
   const actions = [
-    { command: "pat", rune: "PT", label: i18n.t("ui.pat"), primary: true },
-    { command: "commit", rune: "GC", label: i18n.t("ui.commit") },
+    { command: "pat", rune: "PT", label: i18n.t("ui.pat"), primary: state.lifeStatus !== "dead", disabled: state.lifeStatus === "dead" },
+    { command: "commit", rune: "GC", label: i18n.t("ui.commit"), disabled: state.lifeStatus === "dead" },
     { command: "stats", rune: "ST", label: i18n.t("ui.viewStats") },
     { command: "skills", rune: "SK", label: i18n.t("ui.skills") },
-    { command: "dex", rune: "DX", label: "Dex" },
+    { command: "dex", rune: "DX", label: i18n.t("ui.dex") },
+    { command: "revive", rune: "RV", label: i18n.t("ui.revive"), primary: state.lifeStatus === "dead", disabled: state.lifeStatus !== "dead" },
   ];
   const actionButtons = actions
     .map(
       (action) =>
-        `<button class="action-btn${action.primary ? " action-primary" : ""}" data-command="${action.command}"><span class="action-rune">${action.rune}</span><span class="action-label">${action.label}</span></button>`,
+        `<button class="action-btn${action.primary ? " action-primary" : ""}" data-command="${action.command}"${action.disabled ? " disabled" : ""}><span class="action-rune">${action.rune}</span><span class="action-label">${renderHtmlTemplate.escape(action.label)}</span></button>`,
     )
     .join("");
 
@@ -170,10 +191,12 @@ export function renderPetPanelHtml(
   const guideUsageBody = renderHtmlTemplate.escape(i18n.t("guide.usageBody"));
   const guidePatTitle = renderHtmlTemplate.escape(i18n.t("guide.patTitle"));
   const guidePatBody = renderHtmlTemplate.escape(i18n.t("guide.patBody"));
+  const guideReviveTitle = renderHtmlTemplate.escape(i18n.t("guide.reviveTitle"));
+  const guideReviveBody = renderHtmlTemplate.escape(i18n.t("guide.reviveBody"));
   const guideClose = renderHtmlTemplate.escape(i18n.t("guide.close"));
 
   return `<!doctype html>
-<html lang="en">
+<html lang="${i18n.locale}">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${options.cspSource}; style-src 'unsafe-inline' ${options.cspSource}; script-src 'nonce-${options.nonce}' ${options.cspSource};">
@@ -246,10 +269,12 @@ export function renderPetPanelHtml(
     .skill-matrix { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
     .skill-node { min-height: 58px; padding: 8px; }
     .skill-node i { background: var(--lineage-soft); }
-    .action-dock { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; padding-top: 2px; }
+    .action-dock { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; padding-top: 2px; }
     button { min-height: 32px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--vscode-button-border, transparent); color: var(--vscode-button-foreground); background: var(--vscode-button-background); font-size: 12px; white-space: nowrap; transition: transform .16s ease, background .16s ease, border-color .16s ease; }
     button:hover { background: var(--vscode-button-hoverBackground); }
     button:active { transform: translateY(1px) scale(.99); }
+    button:disabled { cursor: not-allowed; opacity: .45; }
+    button:disabled:hover { background: var(--vscode-button-background); }
     .action-btn { min-height: 44px; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 7px; align-items: center; padding: 7px 8px; border-color: color-mix(in srgb, var(--lineage-accent) 48%, var(--vscode-panel-border)); background: linear-gradient(180deg, color-mix(in srgb, var(--vscode-editorWidget-background) 84%, var(--lineage-accent)), color-mix(in srgb, var(--vscode-sideBar-background) 88%, var(--lineage-accent))); color: var(--vscode-foreground); box-shadow: inset 0 1px 0 rgba(255,255,255,.07); }
     .action-btn:hover { border-color: var(--lineage-accent); background: color-mix(in srgb, var(--vscode-editorWidget-background) 74%, var(--lineage-accent)); }
     .action-btn.action-primary { border-color: var(--lineage-accent); background: linear-gradient(180deg, color-mix(in srgb, var(--lineage-accent) 38%, var(--vscode-editorWidget-background)), color-mix(in srgb, var(--vscode-sideBar-background) 72%, var(--lineage-accent))); }
@@ -280,7 +305,7 @@ export function renderPetPanelHtml(
 </head>
 <body>
   <main class="page-shell" style="${lineageTheme}">
-  <div class="lang-bar">${langButtons}<div class="top-actions"><button class="top-action-btn" data-command="rename" type="button">Rename</button><button class="top-action-btn danger" data-command="reset" type="button">Reset</button><button class="guide-btn" type="button" data-guide-open aria-label="${helpLabel}" title="${helpLabel}">?</button></div></div>
+  <div class="lang-bar">${langButtons}<div class="top-actions"><button class="top-action-btn" data-command="rename" type="button">${renderHtmlTemplate.escape(i18n.t("ui.rename"))}</button><button class="top-action-btn danger" data-command="reset" type="button">${renderHtmlTemplate.escape(i18n.t("ui.reset"))}</button><button class="guide-btn" type="button" data-guide-open aria-label="${helpLabel}" title="${helpLabel}">?</button></div></div>
   <section id="guide-panel" class="guide-overlay" hidden aria-label="${guideTitle}">
     <div class="guide-panel" role="dialog" aria-modal="true" aria-labelledby="guide-title">
       <div class="guide-header">
@@ -292,6 +317,7 @@ export function renderPetPanelHtml(
         <section class="guide-section"><h3>${guideCareTitle}</h3><p>${guideCareIntro}</p>${guideCareList}</section>
         <section class="guide-section"><h3>${guideUsageTitle}</h3><p>${guideUsageBody}</p></section>
         <section class="guide-section"><h3>${guidePatTitle}</h3><p>${guidePatBody}</p></section>
+        <section class="guide-section"><h3>${guideReviveTitle}</h3><p>${guideReviveBody}</p></section>
       </div>
     </div>
   </section>
@@ -315,7 +341,7 @@ export function renderPetPanelHtml(
       </div>
     </section>
     <section class="systems-card">
-      <div class="topline"><strong class="level-badge">Lv.${state.level}</strong><div class="title-stack"><span>Runtime Profile</span><strong>${petName}</strong></div><span class="exp-readout">${state.exp}/${getRequiredExp(state.level)} ${i18n.t("ui.exp")}</span></div>
+      <div class="topline"><strong class="level-badge">Lv.${state.level}</strong><div class="title-stack"><span>${renderHtmlTemplate.escape(i18n.t("ui.profile"))}</span><strong>${petName}</strong></div><span class="exp-readout">${state.exp}/${getRequiredExp(state.level)} ${i18n.t("ui.exp")}</span></div>
       <div class="expbar" aria-label="EXP"><span style="width:${expPercent}%"></span></div>
       <div class="stat-deck">
         <div class="stat-card ${meterClass(state.mood)}"><span class="label">${i18n.t("ui.mood")}</span><strong>${state.mood}%</strong><i style="width:${state.mood}%"></i></div>
@@ -324,7 +350,7 @@ export function renderPetPanelHtml(
         <div class="stat-card ${meterClass(state.health)}"><span class="label">${i18n.t("ui.health")}</span><strong>${state.health}%</strong><i style="width:${state.health}%"></i></div>
       </div>
       <div class="meta-strip">
-        <div><span>${i18n.t("ui.status")}</span><strong>${renderHtmlTemplate.escape(state.lifeStatus)}</strong></div>
+        <div><span>${i18n.t("ui.status")}</span><strong>${status}</strong></div>
         <div><span>${i18n.t("ui.stage")}</span><strong>${stage}</strong></div>
         <div><span>${i18n.t("ui.lineage")}</span><strong>${lineage}</strong></div>
         <div><span>${i18n.t("ui.affinity")}</span><strong>${affinity}</strong></div>

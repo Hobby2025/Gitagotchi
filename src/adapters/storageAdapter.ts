@@ -18,9 +18,15 @@ export class MemoryMemento implements MementoLike {
   }
 }
 
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 4;
 
 type VersionedState = { _schemaVersion?: number } & Partial<PetState>;
+
+function wasKilledByIdleDecay(saved: VersionedState): boolean {
+  return saved.lifeStatus === 'dead'
+    && (saved.health ?? 0) <= 0
+    && (saved.logs?.[0]?.breakdown?.some((entry) => entry.id === 'idle-decay') ?? false);
+}
 
 function migrate(saved: VersionedState): VersionedState {
   const version = saved._schemaVersion ?? 0;
@@ -40,14 +46,25 @@ function migrate(saved: VersionedState): VersionedState {
   }
 
   if (version < 3) {
-    return {
+    saved = {
       ...saved,
       discoveredSpriteIds: saved.discoveredSpriteIds ?? ['egg-common-normal'],
-      _schemaVersion: SCHEMA_VERSION
+      _schemaVersion: 3
     };
   }
 
-  return saved;
+  if (wasKilledByIdleDecay(saved)) {
+    saved = {
+      ...saved,
+      health: 1,
+      lifeStatus: 'critical'
+    };
+  }
+
+  return {
+    ...saved,
+    _schemaVersion: SCHEMA_VERSION
+  };
 }
 
 export class PetStateStore {

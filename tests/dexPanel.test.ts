@@ -1,5 +1,6 @@
 import { createPetDexEntries } from '../src/character/petDex';
 import { createInitialPetState } from '../src/core/petState';
+import { createI18n } from '../src/i18n';
 import { renderDexPanelHtml } from '../src/ui/dexPanelPresentation';
 
 describe('dex panel', () => {
@@ -53,5 +54,21 @@ describe('dex panel', () => {
     expect(html).toContain('1/33 unlocked');
     expect(html).toContain('data-dex-id="egg-common-normal" data-unlocked="true"');
     expect(html).toContain('data-dex-id="buildling-hatchling-normal" data-unlocked="false"');
+  });
+
+  it('localizes dex chrome and locked labels', () => {
+    const entries = createPetDexEntries({ unlockedIds: new Set(['egg-common-normal']) });
+    const html = renderDexPanelHtml({
+      cspSource: 'vscode-resource:',
+      nonce: 'abc',
+      i18n: createI18n('ko'),
+      entries
+    });
+
+    expect(html).toContain('Gitagotchi 도감');
+    expect(html).toContain('1/33 발견');
+    expect(html).toContain('aria-label="잠긴 Gitagotchi 스프라이트"');
+    expect(html).toContain('<h3>알 수 없는 펫</h3>');
+    expect(html).toContain('<h2>알</h2>');
   });
 });

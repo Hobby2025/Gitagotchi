@@ -32,7 +32,7 @@ describe('level design and life cycle', () => {
     }).evolution).toBe('architect');
   });
 
-  it('decays into sleeping, critical, and dead states through neglect', () => {
+  it('decays into sleeping and critical states through neglect without killing the pet', () => {
     const state = createInitialPetState('2026-04-20T00:00:00.000Z');
 
     const sleeping = applyActivity(state, idle('2026-04-23T00:00:00.000Z'), createDefaultGrowthEngine());
@@ -41,9 +41,9 @@ describe('level design and life cycle', () => {
     const critical = applyActivity(state, idle('2026-04-25T00:00:00.000Z'), createDefaultGrowthEngine());
     expect(critical.lifeStatus).toBe('critical');
 
-    const dead = applyActivity(state, idle('2026-04-28T00:00:00.000Z'), createDefaultGrowthEngine());
-    expect(dead.lifeStatus).toBe('dead');
-    expect(dead.health).toBe(0);
+    const neglected = applyActivity(state, idle('2026-04-28T00:00:00.000Z'), createDefaultGrowthEngine());
+    expect(neglected.lifeStatus).toBe('critical');
+    expect(neglected.health).toBe(1);
   });
 
   it('blocks growth events while dead', () => {

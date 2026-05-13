@@ -47,6 +47,9 @@ export class GitagotchiPetPanel {
         if (message.command === 'reset') {
           void vscode.commands.executeCommand('gitagotchi.resetPet');
         }
+        if (message.command === 'revive') {
+          void vscode.commands.executeCommand('gitagotchi.revivePet');
+        }
         if (message.command === 'changeLanguage' && message.locale) {
           void vscode.commands.executeCommand('gitagotchi.changeLanguage', message.locale);
         }
