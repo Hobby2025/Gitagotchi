@@ -2,6 +2,8 @@ import { ActivityEvent } from '../events';
 import { GrowthResult, GrowthRule } from '../growthEngine';
 import { PetState } from '../petState';
 
+const DIAGNOSTICS_HEALTH_FLOOR = 1;
+
 export const diagnosticsRule: GrowthRule = {
   id: 'diagnostics',
   appliesTo(event: ActivityEvent): boolean {
@@ -31,16 +33,19 @@ export const diagnosticsRule: GrowthRule = {
     }
 
     if (delta < 0) {
+      const diagnosticsDamage = -delta;
+      const healthDelta = -Math.min(diagnosticsDamage, Math.max(0, _state.health - DIAGNOSTICS_HEALTH_FLOOR));
+
       return {
         expDelta: 0,
         moodDelta: delta * 3,
         hungerDelta: 0,
         energyDelta: -1,
-        healthDelta: delta,
+        healthDelta,
         styleScoresDelta: {},
         countersDelta: {},
         reasons: ['Diagnostics increased'],
-        breakdown: [{ id: 'diagnostics.increased', label: 'Diagnostics increased', moodDelta: delta * 3, energyDelta: -1, healthDelta: delta }]
+        breakdown: [{ id: 'diagnostics.increased', label: 'Diagnostics increased', moodDelta: delta * 3, energyDelta: -1, healthDelta }]
       };
     }
 

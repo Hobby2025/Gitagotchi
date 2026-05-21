@@ -76,6 +76,31 @@ describe('growth engine', () => {
     expect(result.reasons).toEqual(['Diagnostics resolved']);
   });
 
+  it('keeps diagnostics spikes from dropping health to zero', () => {
+    const state = {
+      ...createInitialPetState('2026-04-27T00:00:00.000Z'),
+      health: 40
+    };
+    const event: ActivityEvent = {
+      type: 'diagnostics',
+      previous: 2,
+      current: 80,
+      occurredAt: '2026-04-27T00:01:00.000Z'
+    };
+
+    const next = applyActivity(state, event, createDefaultGrowthEngine());
+
+    expect(next.health).toBe(1);
+    expect(next.lifeStatus).toBe('critical');
+    expect(next.logs[0].breakdown).toContainEqual({
+      id: 'diagnostics.increased',
+      label: 'Diagnostics increased',
+      moodDelta: -234,
+      energyDelta: -1,
+      healthDelta: -39
+    });
+  });
+
   it('restores energy when coding resumes after idle time', () => {
     const state = {
       ...createInitialPetState('2026-04-20T00:00:00.000Z'),
