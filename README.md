@@ -94,6 +94,10 @@ Reset keeps:
 
 ## Release Notes
 
+### 0.1.9
+
+- Prevented diagnostics spikes from killing Gitagotchi directly. Large temporary error bursts now leave the pet in critical health instead of dead.
+
 ### 0.1.8
 
 - Added a revive action for dead pets that spends 1000 earned EXP and restores stable health, energy, mood, and fullness.
