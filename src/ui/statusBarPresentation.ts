@@ -16,11 +16,20 @@ const lifeLabels: Record<PetState["lifeStatus"], string> = {
   dead: "RIP",
 };
 
+function getExpPercent(state: PetState): number {
+  return Math.min(
+    100,
+    Math.round((state.exp / getRequiredExp(state.level)) * 100),
+  );
+}
+
 export function renderStatusBarText(state: PetState): string {
   const suffix = lifeLabels[state.lifeStatus]
     ? ` ${lifeLabels[state.lifeStatus]}`
     : "";
-  return `${icons[state.evolution]} Lv.${state.level} ${state.exp}/${getRequiredExp(state.level)}${suffix}`;
+  const expPercent = getExpPercent(state);
+
+  return `${icons[state.evolution]} Lv.${state.level} EXP ${expPercent}%${suffix}`;
 }
 
 export function renderStatusBarTooltip(state: PetState, i18n: I18n): string {

@@ -6,7 +6,7 @@ describe('status bar presentation', () => {
   it('renders the footer summary as the primary Gitagotchi entrypoint', () => {
     const state = { ...createInitialPetState('2026-04-28T00:00:00.000Z'), level: 3, exp: 42 };
 
-    expect(renderStatusBarText(state)).toBe(`$(circle-filled) Lv.3 42/${getRequiredExp(3)}`);
+    expect(renderStatusBarText(state)).toBe('$(circle-filled) Lv.3 EXP 26%');
   });
 
   it('renders a rich markdown tooltip with core pet stats', () => {

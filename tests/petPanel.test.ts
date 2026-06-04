@@ -51,7 +51,7 @@ describe('pet panel', () => {
     expect(html).toContain('Commits: Fullness +5, Energy +4, Health +3');
     expect(html).toContain('Diagnostics resolved: Fullness +2, Energy +1, Health +4 per issue');
     expect(html).toContain('Returning from idle: Energy +8 per day away, up to +20');
-    expect(html).toContain('If Gitagotchi is dead, spend 1000 earned EXP');
+    expect(html).toContain('If Gitagotchi is dead, spend 500 earned EXP');
     expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="rename"[\s\S]*<\/div>/);
     expect(html).not.toMatch(/<div class="action-dock">[\s\S]*data-command="reset"[\s\S]*<\/div>/);
     expect(html).not.toContain('data-command="leaderboard"');
@@ -87,7 +87,7 @@ describe('pet panel', () => {
     expect(html).toContain('<span class="action-label">부활</span>');
     expect(html).toContain('>이름 변경</button>');
     expect(html).toContain('>초기화</button>');
-    expect(html).toContain('Gitagotchi가 죽은 상태라면 누적 경험치 1000');
+    expect(html).toContain('Gitagotchi가 죽은 상태라면 누적 경험치 500');
   });
 
   it('keeps care pulse, boost hints, and equipped skill details out of the card', () => {

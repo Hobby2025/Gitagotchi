@@ -22,7 +22,7 @@ describe('pet dex model', () => {
     expect(entries.find((entry) => entry.id === 'buildling-hatchling-normal')?.unlocked).toBe(false);
   });
 
-  it('discovers the current pet sprite without unlocking unrelated dex entries', () => {
+  it('discovers prior lineage sprites when the current pet skips directly to toolkit', () => {
     const state = discoverCurrentPetSprite({
       ...createInitialPetState('2026-04-28T00:00:00.000Z'),
       level: 8,
@@ -33,10 +33,36 @@ describe('pet dex model', () => {
     });
     const entries = createPetDexEntries({ state });
 
-    expect(state.discoveredSpriteIds).toEqual(['egg-common-normal', 'refact-toolkit-normal']);
+    expect(state.discoveredSpriteIds).toEqual([
+      'egg-common-normal',
+      'refact-hatchling-normal',
+      'refact-toolkit-normal'
+    ]);
     expect(entries.filter((entry) => entry.unlocked).map((entry) => entry.id)).toEqual([
       'egg-common-normal',
+      'refact-hatchling-normal',
       'refact-toolkit-normal'
+    ]);
+    expect(entries.find((entry) => entry.id === 'buildling-hatchling-normal')?.unlocked).toBe(false);
+  });
+
+  it('discovers every skipped evolution form for the same lineage on a direct ultimate jump', () => {
+    const state = discoverCurrentPetSprite({
+      ...createInitialPetState('2026-04-28T00:00:00.000Z'),
+      level: 30,
+      evolution: 'architect',
+      stage: 'ultimate',
+      lineage: 'debugon',
+      affinity: 'debugger',
+      discoveredSpriteIds: ['egg-common-normal']
+    });
+
+    expect(state.discoveredSpriteIds).toEqual([
+      'egg-common-normal',
+      'debugon-hatchling-normal',
+      'debugon-toolkit-normal',
+      'debugon-specialist-debugger-normal',
+      'debugon-ultimate-normal'
     ]);
   });
 

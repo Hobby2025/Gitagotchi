@@ -46,8 +46,8 @@ describe('adapters', () => {
     expect(loaded.level).toBe(5);
     expect(loaded.counters.refactor).toBe(2);
     expect(loaded.counters.feature).toBe(0);
-    expect(loaded.stage).toBe('egg');
-    expect(loaded.lineage).toBeUndefined();
+    expect(loaded.stage).toBe('toolkit');
+    expect(loaded.lineage).toBe('buildling');
     expect(loaded.discoveredSpriteIds).toEqual(['egg-common-normal']);
   });
 

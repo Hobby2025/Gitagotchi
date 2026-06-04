@@ -3,7 +3,7 @@ import { createInitialPetState, getRequiredExp } from '../src/core/petState';
 import { createI18n } from '../src/i18n';
 
 describe('revive', () => {
-  it('spends 1000 earned EXP and revives a dead pet', () => {
+  it('spends earned EXP and revives a dead pet', () => {
     const state = {
       ...createInitialPetState('2026-04-28T00:00:00.000Z'),
       level: 5,
@@ -30,8 +30,8 @@ describe('revive', () => {
     expect(result.state.mood).toBe(55);
     expect(result.state.logs[0]).toMatchObject({
       message: 'Gitagotchi가 부활했습니다',
-      expDelta: -1000,
-      breakdown: [{ id: 'revive', expDelta: -1000 }]
+      expDelta: -REVIVE_EXP_COST,
+      breakdown: [{ id: 'revive', expDelta: -REVIVE_EXP_COST }]
     });
   });
 
@@ -51,14 +51,14 @@ describe('revive', () => {
     if (!result.revived) {
       throw new Error('expected revive to succeed');
     }
-    expect(result.state.level).toBe(4);
-    expect(result.state.exp).toBe(expectedTotal - getRequiredExp(1) - getRequiredExp(2) - getRequiredExp(3));
+    expect(result.state.level).toBe(3);
+    expect(result.state.exp).toBe(expectedTotal - getRequiredExp(1) - getRequiredExp(2));
   });
 
   it('does not revive without enough earned EXP', () => {
     const state = {
       ...createInitialPetState('2026-04-28T00:00:00.000Z'),
-      exp: 999,
+      exp: REVIVE_EXP_COST - 1,
       health: 0,
       lifeStatus: 'dead' as const
     };

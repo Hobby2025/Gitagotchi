@@ -67,7 +67,7 @@ export type PetState = {
   logs: PetLogEntry[];
 };
 
-export const DEFAULT_LEVEL_EXP = 200;
+export const DEFAULT_LEVEL_EXP = 80;
 
 export function createInitialPetState(now: string = new Date().toISOString()): PetState {
   return {
@@ -107,22 +107,23 @@ export function clampStat(value: number): number {
 
 export function getRequiredExp(level: number): number {
   const exactCurve: Record<number, number> = {
-    1: 200,
-    2: 325,
-    5: 850,
-    10: 2400,
-    20: 8500,
-    30: 19000,
-    50: 62000,
-    90: 220000
+    1: 80,
+    2: 100,
+    5: 220,
+    10: 420,
+    15: 700,
+    20: 1050,
+    30: 2000,
+    50: 5000,
+    90: 15000
   };
 
   if (exactCurve[level]) {
     return exactCurve[level];
   }
 
-  const scaled = DEFAULT_LEVEL_EXP + Math.pow(Math.max(0, level - 1), 2.22) * 76 + Math.max(0, level - 1) * 58;
-  return Math.round(scaled / 25) * 25;
+  const scaled = DEFAULT_LEVEL_EXP + Math.pow(Math.max(0, level - 1), 1.45) * 12 + Math.max(0, level - 1) * 22;
+  return Math.round(scaled / 10) * 10;
 }
 
 export function getMoodName(state: PetState): PetMood {

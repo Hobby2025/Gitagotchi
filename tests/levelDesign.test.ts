@@ -4,31 +4,32 @@ import { ActivityEvent } from '../src/core/events';
 import { resolveEvolution } from '../src/core/evolutionEngine';
 
 describe('level design and life cycle', () => {
-  it('uses a steeper level curve after the first level', () => {
-    expect(getRequiredExp(1)).toBe(200);
-    expect(getRequiredExp(2)).toBe(325);
-    expect(getRequiredExp(5)).toBe(850);
-    expect(getRequiredExp(10)).toBe(2400);
-    expect(getRequiredExp(20)).toBe(8500);
-    expect(getRequiredExp(30)).toBe(19000);
-    expect(getRequiredExp(50)).toBe(62000);
-    expect(getRequiredExp(90)).toBe(220000);
+  it('uses an approachable curve that still grows into long-term goals', () => {
+    expect(getRequiredExp(1)).toBe(80);
+    expect(getRequiredExp(2)).toBe(100);
+    expect(getRequiredExp(5)).toBe(220);
+    expect(getRequiredExp(10)).toBe(420);
+    expect(getRequiredExp(15)).toBe(700);
+    expect(getRequiredExp(20)).toBe(1050);
+    expect(getRequiredExp(30)).toBe(2000);
+    expect(getRequiredExp(50)).toBe(5000);
+    expect(getRequiredExp(90)).toBe(15000);
   });
 
   it('requires care gates for advanced evolutions', () => {
     const base = createInitialPetState('2026-04-27T00:00:00.000Z');
 
-    expect(resolveEvolution({ ...base, level: 30, mood: 20, energy: 80, health: 80 }).evolution).toBe('junior');
-    expect(resolveEvolution({ ...base, level: 30, mood: 55, energy: 35, health: 80 }).evolution).toBe('mid');
-    expect(resolveEvolution({ ...base, level: 60, mood: 80, energy: 80, health: 45 }).evolution).toBe('mid');
+    expect(resolveEvolution({ ...base, level: 5, mood: 20, energy: 80, health: 80 }).evolution).toBe('junior');
+    expect(resolveEvolution({ ...base, level: 5, mood: 55, energy: 35, health: 80 }).evolution).toBe('mid');
+    expect(resolveEvolution({ ...base, level: 15, mood: 80, energy: 80, health: 45 }).evolution).toBe('mid');
     expect(resolveEvolution({
       ...base,
-      level: 90,
+      level: 30,
       mood: 80,
       energy: 80,
       health: 80,
-      counters: { refactor: 35, feature: 35, debug: 20 },
-      styleScores: { builder: 300, cleaner: 300, debugger: 300, scholar: 300, streak: 300 }
+      counters: { refactor: 10, feature: 10, debug: 10 },
+      styleScores: { builder: 120, cleaner: 120, debugger: 120, scholar: 120, streak: 120 }
     }).evolution).toBe('architect');
   });
 

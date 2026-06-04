@@ -1,7 +1,7 @@
 import { developerToolSpritePacks } from './developerToolSprites';
 import { getDeveloperToolSpritePack } from './developerToolSprites';
 import { SpritePack } from './spriteTypes';
-import { getMoodName, PetAffinity, PetLineage, PetStage, PetState } from '../core/petState';
+import { getMoodName, PetAffinity, PetEvolution, PetLineage, PetStage, PetState } from '../core/petState';
 
 export type PetDexEntry = {
   id: string;
@@ -23,6 +23,15 @@ const STAGE_ORDER: Record<PetStage, number> = {
   toolkit: 2,
   specialist: 3,
   ultimate: 4
+};
+
+const EVOLUTION_UNLOCK_ORDER: PetEvolution[] = ['egg', 'junior', 'mid', 'senior', 'architect'];
+const EVOLUTION_STAGE: Record<PetEvolution, PetStage> = {
+  egg: 'egg',
+  junior: 'hatchling',
+  mid: 'toolkit',
+  senior: 'specialist',
+  architect: 'ultimate'
 };
 
 function parseSpriteId(id: string): Omit<PetDexEntry, 'id' | 'sprite' | 'unlocked'> {
@@ -62,14 +71,26 @@ export function createPetDexEntries(options: PetDexOptions = {}): PetDexEntry[] 
 }
 
 export function discoverCurrentPetSprite(state: PetState): PetState {
-  const sprite = getDeveloperToolSpritePack(state, getMoodName(state));
-  if (state.discoveredSpriteIds.includes(sprite.id)) {
+  const currentEvolutionIndex = EVOLUTION_UNLOCK_ORDER.indexOf(state.evolution);
+  const unlockedIds = new Set(state.discoveredSpriteIds);
+
+  for (const evolution of EVOLUTION_UNLOCK_ORDER.slice(0, currentEvolutionIndex + 1)) {
+    const sprite = getDeveloperToolSpritePack({
+      ...state,
+      evolution,
+      stage: EVOLUTION_STAGE[evolution],
+      affinity: evolution === 'senior' || evolution === 'architect' ? state.affinity : undefined
+    }, getMoodName(state));
+    unlockedIds.add(sprite.id);
+  }
+
+  if (unlockedIds.size === state.discoveredSpriteIds.length) {
     return state;
   }
 
   return {
     ...state,
-    discoveredSpriteIds: [...state.discoveredSpriteIds, sprite.id]
+    discoveredSpriteIds: Array.from(unlockedIds)
   };
 }
 
