@@ -5,11 +5,9 @@ import { PetStateStore } from './adapters/storageAdapter';
 import { registerDebouncedSaveHandler, registerInterval } from './adapters/vscodeEventAdapter';
 import { analyzeDiff } from './core/diffAnalyzer';
 import { ActivityEvent } from './core/events';
-import { applyDailyPat } from './core/dailyPat';
-import { applyActivity } from './core/growthEngine';
-import { PetState } from './core/petState';
-import { applyRevivePet } from './core/revive';
+import { DailyQuestId, DecorationId, PetClassId, PetState, RaidBossId, StarTreeNodeId } from './core/petState';
 import { createI18n, I18n } from './i18n';
+import { createPetLifecycleService, PetLifecycleService } from './application/petLifecycleService';
 import { discoverCurrentPetSprite } from './character/petDex';
 import { GitagotchiDexPanel } from './ui/dexPanel';
 import { GitagotchiLogPanel } from './ui/logPanel';
@@ -26,6 +24,7 @@ type Runtime = {
   dex: GitagotchiDexPanel;
   diagnosticsCount: number;
   i18n: I18n;
+  lifecycle: PetLifecycleService;
 };
 
 async function persistAndRender(runtime: Runtime, state: PetState): Promise<void> {
@@ -38,8 +37,25 @@ async function persistAndRender(runtime: Runtime, state: PetState): Promise<void
 }
 
 async function applyEvent(runtime: Runtime, event: ActivityEvent): Promise<void> {
-  const next = applyActivity(runtime.store.load(), event, undefined, runtime.i18n);
+  const project = getWorkspaceProjectContext();
+  const next = runtime.lifecycle.applyActivityEvent(runtime.store.load(), {
+    ...event,
+    projectKey: project.key,
+    projectLabel: project.label
+  }, runtime.i18n);
   await persistAndRender(runtime, next);
+}
+
+function getWorkspaceProjectContext(): { key: string; label: string } {
+  const folder = vscode.workspace.workspaceFolders?.[0];
+  if (!folder) {
+    return { key: 'workspace', label: 'Workspace' };
+  }
+
+  return {
+    key: folder.uri.fsPath || folder.name,
+    label: folder.name
+  };
 }
 
 async function checkDiff(runtime: Runtime): Promise<void> {
@@ -95,12 +111,12 @@ async function applyIdle(runtime: Runtime): Promise<void> {
 }
 
 async function patPet(runtime: Runtime): Promise<void> {
-  const next = applyDailyPat(runtime.store.load(), new Date(), runtime.i18n);
+  const next = runtime.lifecycle.pat(runtime.store.load(), new Date(), runtime.i18n);
   await persistAndRender(runtime, next);
 }
 
 async function reviveGitagotchi(runtime: Runtime): Promise<void> {
-  const result = applyRevivePet(runtime.store.load(), new Date(), runtime.i18n);
+  const result = runtime.lifecycle.revive(runtime.store.load(), new Date(), runtime.i18n);
 
   if (!result.revived) {
     const message = result.reason === 'notDead'
@@ -112,6 +128,79 @@ async function reviveGitagotchi(runtime: Runtime): Promise<void> {
 
   await persistAndRender(runtime, result.state);
   await vscode.window.showInformationMessage(runtime.i18n.t('notice.revived'));
+}
+
+async function chooseDailyQuest(runtime: Runtime, questId: DailyQuestId): Promise<void> {
+  const next = runtime.lifecycle.selectQuest(runtime.store.load(), questId, new Date());
+  await persistAndRender(runtime, next);
+}
+
+async function choosePetClass(runtime: Runtime, classId: PetClassId): Promise<void> {
+  const next = runtime.lifecycle.selectClass(runtime.store.load(), classId);
+  await persistAndRender(runtime, next);
+}
+
+async function chooseRaidBoss(runtime: Runtime, bossId: RaidBossId): Promise<void> {
+  const next = runtime.lifecycle.startRaid(runtime.store.load(), bossId, new Date());
+  await persistAndRender(runtime, next);
+}
+
+async function craftLabStarShard(runtime: Runtime): Promise<void> {
+  const before = runtime.store.load();
+  const next = runtime.lifecycle.craftStarShard(before);
+  await persistAndRender(runtime, next);
+}
+
+async function investStar(runtime: Runtime, nodeId: StarTreeNodeId): Promise<void> {
+  const next = runtime.lifecycle.investStar(runtime.store.load(), nodeId);
+  await persistAndRender(runtime, next);
+}
+
+async function toggleDecoration(runtime: Runtime, decoration: DecorationId): Promise<void> {
+  const next = runtime.lifecycle.toggleDecoration(runtime.store.load(), decoration);
+  await persistAndRender(runtime, next);
+}
+
+async function copyWeeklyReview(runtime: Runtime): Promise<void> {
+  const state = runtime.store.load();
+  const review = state.endgame.weeklyReview;
+  if (!review) {
+    await vscode.window.showInformationMessage(runtime.i18n.t('notice.weeklyReviewEmpty'));
+    return;
+  }
+
+  const card = [
+    `${state.name?.trim() || 'Gitagotchi'} · ${runtime.i18n.t('ui.weeklyReview')}`,
+    `${runtime.i18n.t(review.title)}`,
+    `${runtime.i18n.t(review.summary)}`,
+    `${runtime.i18n.t('ui.mastery')}: ${runtime.i18n.t('ui.masteryValue', { rank: state.endgame.masteryRank, stars: state.endgame.stars })}`,
+    `${runtime.i18n.t('ui.season')}: ${state.endgame.season.progress}/500`
+  ].join('\n');
+
+  await vscode.env.clipboard.writeText(card);
+  await vscode.window.showInformationMessage(runtime.i18n.t('notice.weeklyReviewCopied'));
+}
+
+async function reincarnateGitagotchi(runtime: Runtime): Promise<void> {
+  const state = runtime.store.load();
+  const choice = await vscode.window.showWarningMessage(
+    runtime.i18n.t('prompt.reincarnateConfirm'),
+    { modal: true },
+    runtime.i18n.t('prompt.reincarnateAction')
+  );
+
+  if (choice !== runtime.i18n.t('prompt.reincarnateAction')) {
+    return;
+  }
+
+  const result = runtime.lifecycle.reincarnate(state, new Date());
+  if (!result.reincarnated) {
+    await vscode.window.showInformationMessage(runtime.i18n.t(`notice.reincarnate.${result.reason}`));
+    return;
+  }
+
+  await persistAndRender(runtime, result.state);
+  await vscode.window.showInformationMessage(runtime.i18n.t('notice.reincarnated', { stars: result.starsGained }));
 }
 
 async function renamePet(runtime: Runtime, prompt = runtime.i18n.t('prompt.rename')): Promise<void> {
@@ -156,7 +245,7 @@ async function resetPet(runtime: Runtime): Promise<void> {
   const reset = await runtime.store.reset();
   runtime.statusBar.update(reset);
   runtime.petPanel.update(reset);
-  await renamePet(runtime, 'Name your new Gitagotchi');
+  await renamePet(runtime, runtime.i18n.t('prompt.renameBegin'));
 }
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -167,6 +256,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const logs = new GitagotchiLogPanel(i18n);
   const skills = new GitagotchiSkillPanel(i18n);
   const dex = new GitagotchiDexPanel(i18n);
+  const lifecycle = createPetLifecycleService();
   const runtime: Runtime = {
     store,
     statusBar,
@@ -175,7 +265,8 @@ export function activate(context: vscode.ExtensionContext): void {
     skills,
     dex,
     diagnosticsCount: countWorkspaceDiagnostics(),
-    i18n
+    i18n,
+    lifecycle
   };
 
   context.subscriptions.push(statusBar);
@@ -196,6 +287,39 @@ export function activate(context: vscode.ExtensionContext): void {
     dex.show(state);
   }));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.checkCommit', () => checkCommit(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.selectQuest', (questId?: DailyQuestId) => {
+    if (!questId) {
+      return;
+    }
+    void chooseDailyQuest(runtime, questId);
+  }));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.selectClass', (classId?: PetClassId) => {
+    if (!classId) {
+      return;
+    }
+    void choosePetClass(runtime, classId);
+  }));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.startRaid', (bossId?: RaidBossId) => {
+    if (!bossId) {
+      return;
+    }
+    void chooseRaidBoss(runtime, bossId);
+  }));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.craftStarShard', () => craftLabStarShard(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.investStar', (nodeId?: StarTreeNodeId) => {
+    if (!nodeId) {
+      return;
+    }
+    void investStar(runtime, nodeId);
+  }));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.toggleDecoration', (decoration?: DecorationId) => {
+    if (!decoration) {
+      return;
+    }
+    void toggleDecoration(runtime, decoration);
+  }));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.copyWeeklyReview', () => copyWeeklyReview(runtime)));
+  context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.reincarnatePet', () => reincarnateGitagotchi(runtime)));
   context.subscriptions.push(vscode.commands.registerCommand('gitagotchi.changeLanguage', (locale?: string) => {
     if (!locale) {
       return;

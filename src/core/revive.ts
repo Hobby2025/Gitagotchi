@@ -1,7 +1,6 @@
-import { resolveEvolution } from './evolutionEngine';
-import { resolveMonsterIdentity } from './monsterIdentity';
 import { getRequiredExp, PetState } from './petState';
 import { I18n } from '../i18n';
+import { resolveEvolution, resolveMonsterIdentity } from '../domain/pet/petSystem';
 
 export const REVIVE_EXP_COST = 500;
 

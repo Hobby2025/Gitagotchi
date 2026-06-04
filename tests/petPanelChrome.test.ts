@@ -38,8 +38,12 @@ describe("pet panel chrome", () => {
     expect(html).toContain('title="도움말">?</button>');
     expect(html).toContain('id="guide-panel"');
     expect(html).toContain('Gitagotchi 가이드');
+    expect(html).toContain('네 개의 탭');
+    expect(html).toContain('엔드게임 루프');
+    expect(html).toContain('작업 전에 오늘의 퀘스트를 하나 고르세요.');
+    expect(html).toContain('장식, 레이드 클리어 기록, 프로젝트 프로필, 주간 회고');
     expect(html).toContain('성장 방향');
-    expect(html).toContain('커밋, 코드 변경, 문제 해결로 경험치와 스타일 점수를 얻습니다.');
+    expect(html).toContain('코드 변경, 커밋, 문제 해결, 리팩터링, 테스트, 문서, 퀘스트, 레이드 활동으로 경험치와 스타일 점수를 얻습니다.');
     expect(html).toContain('data-guide-open');
     expect(html).toContain('data-guide-close');
   });

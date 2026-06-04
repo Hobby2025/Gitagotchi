@@ -1,5 +1,5 @@
-import { createInitialPetState, getLifeStatus, PetState } from '../core/petState';
-import { resolveEvolution } from '../core/evolutionEngine';
+import { createInitialPetState, PetState } from '../core/petState';
+import { getLifeStatus, resolveEvolution } from '../domain/pet/petSystem';
 
 export type MementoLike = {
   get<T>(key: string): T | undefined;
@@ -18,17 +18,18 @@ export class MemoryMemento implements MementoLike {
   }
 }
 
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 9;
+const PET_STATE_STORAGE_KEY = 'gitagotchi.petState';
 
-type VersionedState = { _schemaVersion?: number } & Partial<PetState>;
+type SavedPetState = { _schemaVersion?: number } & Partial<PetState>;
 
-function wasKilledByIdleDecay(saved: VersionedState): boolean {
+function wasKilledByIdleDecay(saved: SavedPetState): boolean {
   return saved.lifeStatus === 'dead'
     && (saved.health ?? 0) <= 0
     && (saved.logs?.[0]?.breakdown?.some((entry) => entry.id === 'idle-decay') ?? false);
 }
 
-function migrate(saved: VersionedState): VersionedState {
+function migrateSavedPetState(saved: SavedPetState): SavedPetState {
   const version = saved._schemaVersion ?? 0;
 
   if (version < 1) {
@@ -67,37 +68,84 @@ function migrate(saved: VersionedState): VersionedState {
   };
 }
 
+function mergeSavedPetState(base: PetState, saved: SavedPetState): PetState {
+  return {
+    ...base,
+    ...saved,
+    counters: {
+      ...base.counters,
+      ...saved.counters
+    },
+    styleScores: {
+      ...base.styleScores,
+      ...saved.styleScores
+    },
+    skills: saved.skills ?? base.skills,
+    discoveredSpriteIds: saved.discoveredSpriteIds ?? base.discoveredSpriteIds,
+    decorations: saved.decorations ?? base.decorations,
+    equippedDecorations: saved.equippedDecorations ?? base.equippedDecorations,
+    dailyQuest: {
+      ...base.dailyQuest,
+      ...saved.dailyQuest
+    },
+    endgame: {
+      ...base.endgame,
+      ...saved.endgame,
+      classLevels: {
+        ...base.endgame.classLevels,
+        ...saved.endgame?.classLevels
+      },
+      season: {
+        ...base.endgame.season,
+        ...saved.endgame?.season
+      },
+      starTree: {
+        ...base.endgame.starTree,
+        ...saved.endgame?.starTree,
+        nodes: {
+          ...base.endgame.starTree.nodes,
+          ...saved.endgame?.starTree?.nodes
+        }
+      },
+      classQuest: {
+        ...base.endgame.classQuest,
+        ...saved.endgame?.classQuest
+      },
+      projectProfiles: {
+        ...base.endgame.projectProfiles,
+        ...saved.endgame?.projectProfiles
+      },
+      teamRaid: {
+        ...base.endgame.teamRaid,
+        ...saved.endgame?.teamRaid
+      },
+      defeatedRaidIds: saved.endgame?.defeatedRaidIds ?? base.endgame.defeatedRaidIds,
+      raidHistory: saved.endgame?.raidHistory ?? base.endgame.raidHistory,
+      recentActivityFingerprints: saved.endgame?.recentActivityFingerprints ?? base.endgame.recentActivityFingerprints,
+      comboHistory: saved.endgame?.comboHistory ?? base.endgame.comboHistory,
+      unlockedComboIds: saved.endgame?.unlockedComboIds ?? base.endgame.unlockedComboIds
+    },
+    species: saved.species ?? base.species,
+    logs: saved.logs ?? base.logs
+  };
+}
+
 export class PetStateStore {
   constructor(
     private readonly memento: MementoLike,
     private readonly initialNow = new Date().toISOString(),
-    private readonly key = 'gitagotchi.petState'
+    private readonly key = PET_STATE_STORAGE_KEY
   ) {}
 
   load(): PetState {
-    const raw = this.memento.get<VersionedState>(this.key);
+    const raw = this.memento.get<SavedPetState>(this.key);
     if (!raw) {
       return createInitialPetState(this.initialNow);
     }
 
-    const saved = migrate(raw);
+    const saved = migrateSavedPetState(raw);
     const base = createInitialPetState(this.initialNow);
-    const merged = {
-      ...base,
-      ...saved,
-      counters: {
-        ...base.counters,
-        ...saved.counters
-      },
-      styleScores: {
-        ...base.styleScores,
-        ...saved.styleScores
-      },
-      skills: saved.skills ?? base.skills,
-      discoveredSpriteIds: saved.discoveredSpriteIds ?? base.discoveredSpriteIds,
-      species: saved.species ?? base.species,
-      logs: saved.logs ?? base.logs
-    };
+    const merged = mergeSavedPetState(base, saved);
 
     const withLife = {
       ...merged,

@@ -1,7 +1,8 @@
 import { developerToolSpritePacks } from './developerToolSprites';
 import { getDeveloperToolSpritePack } from './developerToolSprites';
 import { SpritePack } from './spriteTypes';
-import { getMoodName, PetAffinity, PetEvolution, PetLineage, PetStage, PetState } from '../core/petState';
+import { PetAffinity, PetEvolution, PetLineage, PetStage, PetState } from '../core/petState';
+import { getMoodName } from '../domain/pet/petSystem';
 
 export type PetDexEntry = {
   id: string;

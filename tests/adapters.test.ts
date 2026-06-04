@@ -121,7 +121,7 @@ describe('adapters', () => {
     await store.save({ ...initial, level: 3 });
 
     const raw = memento.get<Record<string, unknown>>('gitagotchi.petState');
-    expect(raw?._schemaVersion).toBe(4);
+    expect(raw?._schemaVersion).toBe(9);
     expect(raw?.level).toBe(3);
   });
 

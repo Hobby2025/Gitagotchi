@@ -1,7 +1,7 @@
 import { applyActivity, createDefaultGrowthEngine } from '../src/core/growthEngine';
 import { createInitialPetState, getRequiredExp } from '../src/core/petState';
 import { ActivityEvent } from '../src/core/events';
-import { resolveEvolution } from '../src/core/evolutionEngine';
+import { resolveEvolution } from '../src/domain/pet/petSystem';
 
 describe('level design and life cycle', () => {
   it('uses an approachable curve that still grows into long-term goals', () => {

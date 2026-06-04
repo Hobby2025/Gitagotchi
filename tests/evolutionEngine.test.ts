@@ -1,4 +1,4 @@
-import { resolveEvolution } from '../src/core/evolutionEngine';
+import { getEvolutionPreview, resolveEvolution } from '../src/domain/pet/petSystem';
 import { createInitialPetState } from '../src/core/petState';
 
 describe('resolveEvolution', () => {
@@ -98,5 +98,32 @@ describe('resolveEvolution', () => {
     expect(state.stage).toBe('specialist');
     expect(state.lineage).toBe('debugon');
     expect(state.affinity).toBe('debugger');
+  });
+
+  it('explains missing requirements for the next evolution', () => {
+    const base = createInitialPetState('2026-04-27T00:00:00.000Z');
+    const preview = getEvolutionPreview({
+      ...base,
+      level: 30,
+      stage: 'specialist',
+      evolution: 'senior',
+      mood: 80,
+      energy: 70,
+      health: 80,
+      counters: { refactor: 10, feature: 10, debug: 8 },
+      styleScores: { builder: 120, cleaner: 120, debugger: 90, scholar: 120, streak: 120 }
+    });
+
+    expect(preview.nextStage).toBe('ultimate');
+    expect(preview.requirements.find((requirement) => requirement.id === 'counterTotal')).toMatchObject({
+      current: 28,
+      target: 30,
+      met: false
+    });
+    expect(preview.requirements.find((requirement) => requirement.id === 'styleBalance')).toMatchObject({
+      current: 90,
+      target: 120,
+      met: false
+    });
   });
 });

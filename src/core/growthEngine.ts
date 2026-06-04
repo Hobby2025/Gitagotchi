@@ -1,7 +1,5 @@
 import { ActivityEvent } from './events';
-import { resolveEvolution } from './evolutionEngine';
-import { resolveMonsterIdentity } from './monsterIdentity';
-import { clampStat, getLifeStatus, getRequiredExp, PetCounters, PetState, StyleScores } from './petState';
+import { clampStat, getRequiredExp, PetCounters, PetState, StyleScores } from './petState';
 import { baseDiffRule } from './rules/baseDiffRule';
 import { commitMessageRule } from './rules/commitMessageRule';
 import { diagnosticsRule } from './rules/diagnosticsRule';
@@ -13,6 +11,8 @@ import { applySkillBonuses } from './skillEngine';
 import { balanceStyleDelta, calculateStyleDelta, mergeStyleScores } from './styleScoring';
 import { createActivityMessages } from '../messages/messageEngine';
 import { createI18n, I18n } from '../i18n';
+import { applyDailyQuestProgress, applyEndgameProgress, resolveDailyQuest } from '../domain/game/gameSystem';
+import { getLifeStatus, resolveEvolution, resolveMonsterIdentity } from '../domain/pet/petSystem';
 
 export type GrowthResult = {
   expDelta: number;
@@ -110,6 +110,61 @@ export function createDefaultGrowthEngine(): GrowthEngine {
   return createGrowthEngine(defaultGrowthRules);
 }
 
+function getActivityFingerprint(event: ActivityEvent): string | undefined {
+  if (event.type === 'diff') {
+    const files = event.stats.touchedFiles
+      .map((file) => file.toLowerCase())
+      .sort()
+      .join('|');
+    return files ? `diff:${files}` : undefined;
+  }
+
+  if (event.type === 'commit') {
+    return `commit:${event.message.trim().toLowerCase()}`;
+  }
+
+  if (event.type === 'diagnostics') {
+    return `diagnostics:${event.previous > event.current ? 'down' : 'up'}:${Math.abs(event.previous - event.current)}`;
+  }
+
+  return undefined;
+}
+
+function updateRecentActivityFingerprints(state: PetState, event: ActivityEvent): string[] {
+  const fingerprint = getActivityFingerprint(event);
+  if (!fingerprint) {
+    return state.endgame.recentActivityFingerprints;
+  }
+
+  return [
+    fingerprint,
+    ...state.endgame.recentActivityFingerprints.filter((item) => item !== fingerprint)
+  ].slice(0, 8);
+}
+
+function applyRepeatRewardDampening(state: PetState, event: ActivityEvent, result: GrowthResult): GrowthResult {
+  const fingerprint = getActivityFingerprint(event);
+  if (!fingerprint || result.expDelta <= 0 || !state.endgame.recentActivityFingerprints.includes(fingerprint)) {
+    return result;
+  }
+
+  const dampenedExp = Math.max(0, Math.floor(result.expDelta * 0.5));
+
+  return {
+    ...result,
+    expDelta: dampenedExp,
+    reasons: [...result.reasons, 'Repeated activity dampened'],
+    breakdown: [
+      ...result.breakdown,
+      {
+        id: 'antiAbuse.repeat',
+        label: 'Repeated activity dampened',
+        expDelta: dampenedExp - result.expDelta
+      }
+    ]
+  };
+}
+
 export function applyActivity(
   state: PetState,
   event: ActivityEvent,
@@ -127,10 +182,26 @@ export function applyActivity(
     };
   }
 
-  const result = engine.evaluate(event, state);
+  const baseResult = applyRepeatRewardDampening(state, event, engine.evaluate(event, state));
+  const questResult = applyDailyQuestProgress(state, event, baseResult);
+  const resultBeforeEndgame = mergeGrowthResults([baseResult, questResult.reward]);
+  const stateBeforeEndgame = {
+    ...state,
+    dailyQuest: questResult.quest,
+    decorations: questResult.unlockedDecoration && !state.decorations.includes(questResult.unlockedDecoration)
+      ? [...state.decorations, questResult.unlockedDecoration]
+      : state.decorations,
+    endgame: {
+      ...state.endgame,
+      recentActivityFingerprints: updateRecentActivityFingerprints(state, event)
+    }
+  };
+  const endgameResult = applyEndgameProgress(stateBeforeEndgame, event, resultBeforeEndgame);
+  const result = mergeGrowthResults([resultBeforeEndgame, endgameResult.bonus]);
+  const sourceState = endgameResult.state;
   const previousSkills = state.skills;
   let level = state.level;
-  let exp = state.exp + result.expDelta;
+  let exp = sourceState.exp + result.expDelta;
 
   while (exp >= getRequiredExp(level)) {
     exp -= getRequiredExp(level);
@@ -138,28 +209,28 @@ export function applyActivity(
   }
 
   const next = resolveEvolution({
-    ...state,
+    ...sourceState,
     level,
     exp,
-    hunger: clampStat(state.hunger + result.hungerDelta),
-    mood: clampStat(state.mood + result.moodDelta),
-    energy: clampStat(state.energy + result.energyDelta),
-    health: clampStat(state.health + result.healthDelta),
+    hunger: clampStat(sourceState.hunger + result.hungerDelta),
+    mood: clampStat(sourceState.mood + result.moodDelta),
+    energy: clampStat(sourceState.energy + result.energyDelta),
+    health: clampStat(sourceState.health + result.healthDelta),
     lastActiveAt: event.occurredAt,
-    lastCommitHash: event.type === 'commit' ? event.hash : state.lastCommitHash,
+    lastCommitHash: event.type === 'commit' ? event.hash : sourceState.lastCommitHash,
     counters: {
-      refactor: state.counters.refactor + (result.countersDelta.refactor ?? 0),
-      feature: state.counters.feature + (result.countersDelta.feature ?? 0),
-      debug: state.counters.debug + (result.countersDelta.debug ?? 0)
+      refactor: sourceState.counters.refactor + (result.countersDelta.refactor ?? 0),
+      feature: sourceState.counters.feature + (result.countersDelta.feature ?? 0),
+      debug: sourceState.counters.debug + (result.countersDelta.debug ?? 0)
     },
-    styleScores: mergeStyleScores(state.styleScores, result.styleScoresDelta),
+    styleScores: mergeStyleScores(sourceState.styleScores, result.styleScoresDelta),
     logs: [
       ...result.reasons.map((reason) => ({
         message: reason,
         expDelta: result.expDelta,
         occurredAt: event.occurredAt
       })),
-      ...state.logs
+      ...sourceState.logs
     ].slice(0, 20)
   });
 
@@ -180,6 +251,7 @@ export function applyActivity(
 
   return {
     ...resolved,
+    dailyQuest: resolveDailyQuest(resolved, new Date(event.occurredAt)),
     logs: [
       {
         message: messages[0]?.text ?? `${result.expDelta >= 0 ? '+' : ''}${result.expDelta} EXP`,
@@ -188,7 +260,7 @@ export function applyActivity(
         breakdown: result.breakdown,
         messages
       },
-      ...state.logs
+      ...sourceState.logs
     ].slice(0, 20)
   };
 }

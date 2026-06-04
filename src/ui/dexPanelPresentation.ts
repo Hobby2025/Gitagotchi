@@ -44,10 +44,33 @@ function renderStageName(entry: PetDexEntry, i18n: I18n): string {
   return i18n.t(`ui.stage.${entry.stage}`);
 }
 
+function renderDiscoveryHint(entry: PetDexEntry, i18n: I18n): string {
+  if (entry.stage === 'egg') {
+    return i18n.t('dex.discovery.egg');
+  }
+  if (entry.stage === 'specialist' && entry.affinity) {
+    return i18n.t('dex.discovery.affinity', {
+      lineage: entry.lineage ? i18n.t(`ui.lineage.${entry.lineage}`) : i18n.t('dex.common'),
+      affinity: i18n.t(`ui.affinity.${entry.affinity}`)
+    });
+  }
+  if (entry.stage === 'ultimate') {
+    return i18n.t('dex.discovery.ultimate', {
+      lineage: entry.lineage ? i18n.t(`ui.lineage.${entry.lineage}`) : i18n.t('dex.common')
+    });
+  }
+
+  return i18n.t('dex.discovery.lineage', {
+    lineage: entry.lineage ? i18n.t(`ui.lineage.${entry.lineage}`) : i18n.t('dex.common'),
+    stage: renderStageName(entry, i18n)
+  });
+}
+
 function renderEntry(entry: PetDexEntry, index: number, i18n: I18n): string {
   const title = entry.unlocked ? entry.id.replace(/-normal$/, '') : i18n.t('dex.unknown');
   const lineage = renderLineageTag(entry, i18n);
   const affinity = renderAffinityTag(entry, i18n);
+  const discoveryHint = renderDiscoveryHint(entry, i18n);
   const sprite = entry.unlocked
     ? renderSpriteHtml(entry.sprite.frames[0], 'dex-sprite', `${entry.id} sprite`, { maxPixelSize: 4 })
     : `<div class="dex-unknown" aria-label="${renderHtmlTemplate.escape(i18n.t('dex.lockedSprite'))}">?</div>`;
@@ -56,6 +79,7 @@ function renderEntry(entry: PetDexEntry, index: number, i18n: I18n): string {
     <div class="dex-card-top"><span>No.${String(index + 1).padStart(2, '0')}</span><strong>${renderHtmlTemplate.escape(renderStageName(entry, i18n))}</strong></div>
     <div class="dex-sprite-stage">${sprite}</div>
     <h3>${renderHtmlTemplate.escape(title)}</h3>
+    <p class="dex-hint">${renderHtmlTemplate.escape(discoveryHint)}</p>
     <div class="dex-tags"><span>${renderHtmlTemplate.escape(lineage)}</span><span>${renderHtmlTemplate.escape(affinity)}</span></div>
   </article>`;
 }
@@ -102,6 +126,7 @@ export function renderDexPanelHtml(options: DexPanelRenderOptions): string {
     .sprite-pixel { width: var(--px); height: var(--px); }
     .dex-unknown { display: grid; place-items: center; width: 82px; height: 82px; border: 1px dashed color-mix(in srgb, var(--vscode-descriptionForeground) 64%, transparent); border-radius: 8px; color: var(--vscode-descriptionForeground); background: var(--vscode-editor-background); font-family: var(--vscode-editor-font-family); font-size: 46px; font-weight: 800; }
     .dex-card h3 { min-height: 34px; margin: 0; overflow-wrap: anywhere; font-size: 13px; line-height: 1.25; letter-spacing: 0; }
+    .dex-hint { position: relative; z-index: 1; min-height: 30px; margin: 0; color: var(--vscode-descriptionForeground); font-size: 11px; line-height: 1.35; }
     .dex-tags { display: flex; flex-wrap: wrap; gap: 6px; }
     .dex-tags span { border: 1px solid color-mix(in srgb, var(--lineage-accent) 58%, var(--vscode-panel-border)); border-radius: 999px; padding: 4px 7px; background: color-mix(in srgb, var(--vscode-editorWidget-background) 82%, var(--lineage-accent)); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
     .dex-card.locked { filter: saturate(.72); }

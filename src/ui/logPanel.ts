@@ -84,11 +84,9 @@ export class GitagotchiLogPanel {
   private translateLogMessage(message: string): string {
     const knownMessages: Record<string, string> = {
       'Patted Gitagotchi': 'log.patted',
-      'Gitagotchi를 만져줬습니다': 'log.patted',
       'No growth while dead': 'log.noGrowthDead',
-      '죽은 상태에서는 성장하지 않습니다': 'log.noGrowthDead',
       'Revived Gitagotchi': 'log.revived',
-      'Gitagotchi가 부활했습니다': 'log.revived',
+      'Reincarnated Gitagotchi': 'breakdown.reincarnation',
       'Idle decay': 'breakdown.idle-decay',
       'Return from idle': 'breakdown.return-from-idle',
       'Code changes': 'breakdown.base-diff',

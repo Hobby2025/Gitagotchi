@@ -25,7 +25,7 @@ export class GitagotchiPetPanel {
         }
       );
 
-      this.panel.webview.onDidReceiveMessage((message: { command?: string; locale?: string }) => {
+      this.panel.webview.onDidReceiveMessage((message: { command?: string; locale?: string; questId?: string; classId?: string; bossId?: string; starNodeId?: string; decorationId?: string }) => {
         if (message.command === 'pat') {
           void vscode.commands.executeCommand('gitagotchi.patPet');
         }
@@ -49,6 +49,30 @@ export class GitagotchiPetPanel {
         }
         if (message.command === 'revive') {
           void vscode.commands.executeCommand('gitagotchi.revivePet');
+        }
+        if (message.command === 'selectQuest' && message.questId) {
+          void vscode.commands.executeCommand('gitagotchi.selectQuest', message.questId);
+        }
+        if (message.command === 'selectClass' && message.classId) {
+          void vscode.commands.executeCommand('gitagotchi.selectClass', message.classId);
+        }
+        if (message.command === 'startRaid' && message.bossId) {
+          void vscode.commands.executeCommand('gitagotchi.startRaid', message.bossId);
+        }
+        if (message.command === 'craftStarShard') {
+          void vscode.commands.executeCommand('gitagotchi.craftStarShard');
+        }
+        if (message.command === 'investStar' && message.starNodeId) {
+          void vscode.commands.executeCommand('gitagotchi.investStar', message.starNodeId);
+        }
+        if (message.command === 'toggleDecoration' && message.decorationId) {
+          void vscode.commands.executeCommand('gitagotchi.toggleDecoration', message.decorationId);
+        }
+        if (message.command === 'copyReview') {
+          void vscode.commands.executeCommand('gitagotchi.copyWeeklyReview');
+        }
+        if (message.command === 'reincarnate') {
+          void vscode.commands.executeCommand('gitagotchi.reincarnatePet');
         }
         if (message.command === 'changeLanguage' && message.locale) {
           void vscode.commands.executeCommand('gitagotchi.changeLanguage', message.locale);

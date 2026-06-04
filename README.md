@@ -1,66 +1,186 @@
-﻿# Gitagotchi
+# Gitagotchi
 
-Gitagotchi is a small developer pet for VS Code. It grows from your local development activity, including code changes, commits, and resolved diagnostics. As it gains experience, it unlocks new forms, traits, species, and skills.
+Gitagotchi is a VS Code developer pet that grows from your local development activity. Code changes, commits, diagnostics, documentation, tests, refactoring, quests, raids, seasons, and reincarnation all feed into one long-running pet progression loop.
 
-## Features
+The extension is designed to stay close to your normal workflow. You do not need to play a separate game. Keep working in VS Code, then open Gitagotchi to see what your activity changed.
 
-- Check your Gitagotchi status directly from the VS Code Status Bar.
-- Open a pet panel with name, level, EXP, mood, fullness, energy, health, care pulses, and skills.
-- Grow and recover from Git diffs, new commits, diagnostic improvements, refactoring, tests, docs, and returning from idle time.
-- Pat your pet once per day for bonus EXP and mood.
-- Unlock different lineages, affinities, species, and skills based on your work style.
-- Open the Dex to review every Gitagotchi form you have discovered.
-- View an activity log with recent growth events and reward reasons.
-- Use the interface in English, Korean, Japanese, or Chinese.
+Korean user guide: [docs/user-guide-ko.md](https://github.com/Hobby2025/Gitagotchi/blob/main/docs/user-guide-ko.md)
 
-## Getting Started
+## Quick Start
 
 1. Open a Git repository workspace in VS Code.
 2. When Gitagotchi starts for the first time, enter a pet name.
-3. Click the Gitagotchi item in the Status Bar to open the pet panel.
-4. Keep coding and committing as usual. Gitagotchi will react to your local activity.
+3. Click the Gitagotchi item in the Status Bar, or run `Gitagotchi: Open Pet`.
+4. Choose a daily quest from the Goals tab.
+5. Keep coding, fixing diagnostics, writing docs, adding tests, and committing as usual.
+6. Open the panel again to review growth, quest progress, raid damage, rewards, and collection progress.
 
-You can open the pet panel outside a Git repository, but Git-based growth works best in a Git workspace.
+Gitagotchi can open outside a Git repository, but Git-based growth works best in a Git workspace.
 
-## How Growth Works
+## Main Panel
+
+The pet panel is split into a pet card and a system card.
+
+The pet card shows:
+
+- Pet sprite, name, level, stage, lineage, and affinity.
+- Equipped decorations.
+- Reincarnation stars, if earned.
+- Card EXP progress.
+
+The system card is organized into four tabs:
+
+- `Status`: core stats, EXP, evolution preview, lineage skills, and style scores.
+- `Goals`: daily quest, class quest, and workspace team raid progress.
+- `Endgame`: mastery, season, class build, raid boss, season track, star tree, crafting, and reincarnation.
+- `Collection`: decoration book, raid clear history, project profiles, and weekly review.
+
+Only the active tab scrolls on desktop. Nested scroll areas are avoided so the panel stays predictable in the VS Code webview.
+
+## Panel Actions
+
+The top action dock includes:
+
+- `Pat`: pat your pet once per day for bonus EXP and mood.
+- `Commit`: check the latest commit and apply commit growth.
+- `View Stats`: open the activity log and reward history.
+- `Skills`: open the skill panel.
+- `Dex`: open the discovered-form collection.
+- `Revive`: spend earned EXP to revive a dead pet.
+
+The header actions include:
+
+- `Rename`: change your pet's name.
+- `Reset`: reset the current pet while keeping discovered Dex forms.
+- `?`: open the in-panel guide.
+- Language buttons: switch between English, Korean, Japanese, and Chinese.
+
+## Growth
 
 Gitagotchi grows from local development signals.
 
-- Code changes: unstaged Git diffs are analyzed for EXP, style score rewards, fullness, and health recovery.
-- Commits: new commits trigger larger growth and care recovery rewards.
-- Diagnostics: reducing VS Code diagnostic problems rewards debugging progress and restores health.
-- Tests, docs, and refactoring: focused maintenance work adds care bonuses.
-- Return from idle: coding again after time away restores some energy.
-- Idle time: long periods without activity can lower some pet stats.
-- Revive: if your pet is dead, spend 500 earned EXP to revive it.
+- Code changes grant EXP based on changed lines and touched files.
+- Commits grant larger growth, with extra rewards for messages such as `feat`, `fix`, `hotfix`, and `refactor`.
+- Diagnostics rewards are based on reducing VS Code diagnostic problems.
+- Refactoring rewards cleanup-heavy diffs.
+- Test files, README changes, and config changes add focused bonuses.
+- Returning after idle time restores energy.
+- Long idle periods can reduce pet stats.
 
-Style scores influence how your pet evolves. Feature work, refactoring, debugging, documentation changes, and commit rhythm can all affect its lineage and affinity.
+Repeated identical activity can be dampened, and each project has a daily reward cap. This keeps the system focused on real development rather than repetitive farming.
 
-## Pet Panel
+## Stats And Evolution
 
-Click the Gitagotchi Status Bar item, or run `Gitagotchi: Open Pet` from the Command Palette.
+Gitagotchi tracks these care stats:
 
-The pet panel includes these actions:
+- `Mood`
+- `Fullness`
+- `Energy`
+- `Health`
 
-- `Pat`: pat your pet once per day for a bonus.
-- `Commit`: check the latest commit and apply a growth event.
-- `View Stats`: open the activity log and growth history.
-- `Dex`: open the discovered-form collection.
-- `Revive`: spend 500 earned EXP to revive a dead pet.
-- `Rename`: change your pet's name.
-- `Reset`: reset the current pet's name, level, stats, skills, and logs.
+It also tracks five style scores:
 
-The pet panel also shows:
+- `Feature Throughput`
+- `Refactor Craft`
+- `Bug Radar`
+- `Docs Literacy`
+- `Commit Streak`
 
-- `Care Pulse`: recent coding activity that restored fullness, energy, or health.
-- `Next Boost`: the kind of work most likely to help the lowest current stat.
-- `Skills`: unlocked work-style skills and their trigger hints.
+Style scores influence lineage, affinity, skills, and final identity.
 
-## Dex and Reset Behavior
+Evolution stages:
 
-The Dex tracks every Gitagotchi form you have discovered. When your pet reaches a new stage, lineage, or affinity, that form can be unlocked in the Dex.
+- `Egg`: starting form.
+- `Hatchling`: begins at level 2.
+- `Toolkit`: requires level 5 and stable care stats.
+- `Specialist`: requires level 15, stronger care stats, and alive status.
+- `Ultimate`: requires level 30, balanced style mastery, enough total activity, and strong care stats.
 
-Resetting your pet does not clear Dex discoveries. Reset starts the current pet over, but forms you have already discovered remain unlocked.
+The Status tab shows the next evolution requirements so you can see what is blocking the next form.
+
+## Daily Quests
+
+Each day offers three quest options. Pick one before starting your work. A selected quest progresses from normal development activity.
+
+Daily quest types include:
+
+- `Bug Hunt`: reduce diagnostics.
+- `Deep Clean`: make a cleanup-heavy diff.
+- `Field Guide`: edit docs or text files.
+- `Ship It`: complete a commit.
+- `Balance Training`: work on the currently weakest style area.
+
+Completing a daily quest grants EXP, mood, and a decoration.
+
+## Classes
+
+Classes let high-level users choose a development focus.
+
+Available classes:
+
+- `Release Master`: builder and release-focused work.
+- `Code Gardener`: cleanup and refactoring.
+- `Bug Tracker`: diagnostics and bug fixing.
+- `Archivist`: docs and knowledge capture.
+- `Balance Architect`: balanced style growth.
+
+Selecting a class starts class-specific progress and unlocks class quest rewards. Changing class costs EXP.
+
+## Raids
+
+Raids are long-running endgame goals. Choose a boss from the Endgame tab, then keep working. Relevant activity deals damage to the active boss.
+
+Raid bosses:
+
+- `Legacy Dragon`: weak to refactoring and cleanup.
+- `Bug Lord`: weak to resolved diagnostics.
+- `Release Golem`: weak to commits and test work.
+- `Dependency Wraith`: weak to config and dependency work.
+- `Breakpoint Hydra`: season-limited, weak to docs, tests, and season progress.
+
+Defeating a boss records the clear and unlocks a boss decoration.
+
+## Seasons, Team Raid, And Project Profiles
+
+Season progress increases from ongoing activity and unlocks milestones at 100, 250, and 500 points. The 500-point milestone can unlock a season relic.
+
+The Goals tab also shows workspace team raid progress. Your development activity contributes to the shared target and grants rewards when the target is cleared.
+
+Project profiles track EXP and raid clears per workspace or project key. This helps long-term users see where their Gitagotchi history came from.
+
+## Star Shards, Reincarnation, And Star Tree
+
+The Endgame tab includes long-term progression systems:
+
+- `Craft Star Shard`: spend EXP to craft a star shard when eligible.
+- `Reincarnate`: available after reaching level 30 Ultimate while alive.
+- `Star Tree`: spend reincarnation stars on permanent bonuses.
+
+Reincarnation resets the current life loop, including current level and active raid, but keeps long-term records such as stars, discoveries, and collection progress.
+
+Star tree nodes:
+
+- `Raid Might`: improves raid-oriented progression.
+- `Steady Care`: supports care stability.
+- `Season Memory`: supports season-oriented progress.
+
+## Decorations And Collection
+
+Decorations are collectible reminders of what your Gitagotchi has achieved. They can come from:
+
+- Daily quests.
+- Class quests.
+- Raid clears.
+- Season milestones.
+- Long-term endgame actions.
+
+Use the Collection tab to review the decoration book, raid history, project profiles, and weekly review. Click owned decorations on the pet card to equip or unequip them.
+
+## Dex
+
+The Dex tracks every Gitagotchi form you have discovered. Forms are discovered as your pet reaches new stages, lineages, affinities, and ultimate forms.
+
+Resetting your current pet does not clear Dex discoveries.
 
 ## Commands
 
@@ -72,32 +192,50 @@ Use these commands from the Command Palette:
 - `Gitagotchi: Pat Pet`
 - `Gitagotchi: Revive Pet`
 - `Gitagotchi: View Stats`
+- `Gitagotchi: View Skills`
 - `Gitagotchi: Open Dex`
 - `Gitagotchi: Check Commit`
+
+Some advanced actions, such as selecting quests, choosing classes, starting raids, investing stars, toggling decorations, copying weekly review text, and reincarnating, are available from the pet panel instead of the Command Palette.
 
 ## Saved State
 
 Gitagotchi stores pet state in VS Code global storage. Your pet state remains available when you reopen VS Code in the same environment.
 
-Reset clears:
+Reset clears the current pet loop:
 
 - Name
-- Level and EXP
-- Mood, fullness, energy, and health
-- Growth stage and lineage
+- Level and current EXP
+- Care stats
+- Current stage and current identity
 - Skills
-- Activity logs
+- Recent activity logs
 
-Reset keeps:
+Reset keeps long-term discoveries:
 
-- Gitagotchi forms already discovered in the Dex
+- Dex forms already discovered
+
+Reincarnation keeps more long-term progression than reset:
+
+- Reincarnation stars
+- Dex discoveries
+- Decorations and collection progress
+- Long-term endgame records
 
 ## Release Notes
 
-### 0.2.0
+### 1.0.0
 
+- Added the tabbed pet panel: Status, Goals, Endgame, and Collection.
+- Added daily quests with EXP, mood, and decoration rewards.
+- Added class builds, class quests, and class-specific rewards.
+- Added raid bosses, raid damage, raid clear records, and boss decorations.
+- Added season progress, milestones, workspace team raid progress, project profiles, and weekly review cards.
+- Added decoration collection and equip/unequip controls.
+- Added reincarnation stars, star shard crafting, and star tree investment.
+- Added evolution preview requirements and lineage skill tree display.
 - Rebalanced level EXP and evolution gates so Gitagotchi reaches visible growth stages sooner.
-- Changed the VS Code status bar summary to show a compact EXP percentage.
+- Changed the VS Code Status Bar summary to show a compact EXP percentage.
 - Backfilled skipped Dex forms when a large EXP reward jumps across multiple evolution stages.
 - Lowered revive cost to match the new growth curve.
 
@@ -107,7 +245,7 @@ Reset keeps:
 
 ### 0.1.8
 
-- Added a revive action for dead pets that spends 500 earned EXP and restores stable health, energy, mood, and fullness.
+- Added a revive action for dead pets that spends earned EXP and restores stable health, energy, mood, and fullness.
 - Added the Revive button, command, and guide text to the pet panel.
 - Prevented idle decay from killing pets directly and migrated pets that were previously killed by idle decay back to critical health.
 - Improved Korean, Japanese, and Chinese localization across commands, buttons, status text, logs, skills, Dex, and tooltips.

@@ -15,7 +15,10 @@ describe('i18n', () => {
     expect(createI18n('ko').t('ui.pat')).toBe('만져주기');
     expect(createI18n('ko').t('ui.revive')).toBe('부활');
     expect(createI18n('ko').t('ui.help')).toBe('도움말');
+    expect(createI18n('ko').t('guide.tabsTitle')).toBe('네 개의 탭');
+    expect(createI18n('ko').t('guide.endgameTitle')).toBe('엔드게임 루프');
     expect(createI18n('en').t('guide.title')).toBe('Gitagotchi Guide');
+    expect(createI18n('en').t('guide.goalsTitle')).toBe('Daily Goals');
     expect(createI18n('en').t('ui.mood')).toBe('Mood');
     expect(createI18n('ja').t('ui.mood')).toBe('気分');
     expect(createI18n('zh').t('ui.mood')).toBe('心情');

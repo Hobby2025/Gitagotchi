@@ -1,7 +1,6 @@
-import { resolveEvolution } from './evolutionEngine';
-import { resolveMonsterIdentity } from './monsterIdentity';
-import { clampStat, getLifeStatus, getRequiredExp, PetState } from './petState';
+import { clampStat, getRequiredExp, PetState } from './petState';
 import { I18n } from '../i18n';
+import { getLifeStatus, resolveEvolution, resolveMonsterIdentity } from '../domain/pet/petSystem';
 
 const DAILY_PAT_EXP = 10;
 const DAILY_PAT_MOOD = 8;

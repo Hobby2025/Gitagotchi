@@ -211,4 +211,35 @@ describe('growth engine', () => {
     expect(result.expDelta).toBe(167);
     expect(result.breakdown).toContainEqual({ id: 'base-diff', label: 'Code changes', expDelta: 167, moodDelta: 2, hungerDelta: -3, healthDelta: 1 });
   });
+
+  it('dampens repeated recent activity fingerprints before rewards are applied', () => {
+    const state = {
+      ...createInitialPetState('2026-04-27T00:00:00.000Z'),
+      endgame: {
+        ...createInitialPetState('2026-04-27T00:00:00.000Z').endgame,
+        recentActivityFingerprints: ['diff:src/repeat.ts']
+      }
+    };
+    const event: ActivityEvent = {
+      type: 'diff',
+      stats: {
+        added: 20,
+        deleted: 0,
+        files: 1,
+        touchedFiles: ['src/repeat.ts']
+      },
+      occurredAt: '2026-04-27T00:01:00.000Z'
+    };
+    const raw = createDefaultGrowthEngine().evaluate(event, state);
+
+    const next = applyActivity(state, event, createDefaultGrowthEngine());
+
+    expect(next.logs[0].expDelta).toBeLessThan(raw.expDelta);
+    expect(next.logs[0].breakdown).toContainEqual({
+      id: 'antiAbuse.repeat',
+      label: 'Repeated activity dampened',
+      expDelta: Math.floor(raw.expDelta * 0.5) - raw.expDelta
+    });
+    expect(next.endgame.recentActivityFingerprints[0]).toBe('diff:src/repeat.ts');
+  });
 });

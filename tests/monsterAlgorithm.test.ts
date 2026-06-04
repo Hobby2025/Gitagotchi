@@ -1,7 +1,7 @@
 import { ActivityEvent } from '../src/core/events';
 import { applyActivity, createDefaultGrowthEngine } from '../src/core/growthEngine';
 import { createInitialPetState, PetSkill } from '../src/core/petState';
-import { resolveMonsterIdentity } from '../src/core/monsterIdentity';
+import { resolveMonsterIdentity } from '../src/domain/pet/petSystem';
 import { calculateStyleDelta } from '../src/core/styleScoring';
 
 describe('monster-style growth algorithm', () => {

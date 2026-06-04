@@ -3,6 +3,7 @@ tests/**
 docs/**
 scripts/**
 .superpowers/**
+.code-review-graph/**
 .vscode/**
 .gitignore
 *.config.ts
