@@ -404,6 +404,7 @@ function applyProjectDailyCap(state: PetState, event: ActivityEvent, result: Gro
   }
 
   const cappedExp = Math.max(0, remaining);
+  const totalExp = getProjectDayExp(state, event);
   return {
     ...result,
     expDelta: cappedExp,
@@ -413,7 +414,7 @@ function applyProjectDailyCap(state: PetState, event: ActivityEvent, result: Gro
       {
         id: 'antiAbuse.projectCap',
         label: 'Project daily reward cap',
-        expDelta: cappedExp - result.expDelta
+        expDelta: Math.floor((cappedExp - result.expDelta) * (1 - projectDailyExpCap / totalExp))
       }
     ]
   };
